@@ -43,4 +43,5 @@ export interface AdaptorItem {
   categoryName: string;
   outputTypeName: string;
   chainName: string;
+  exampleCode: string;
 }

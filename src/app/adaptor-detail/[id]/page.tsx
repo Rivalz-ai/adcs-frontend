@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 import useAdaptorDetail from "@/libs/hooks/apis/useAdaptorDetail";
+import CodeBlock from "@/views/CodeBlock";
 
 export default function AdaptorDetailPage({
   params,
@@ -152,7 +153,7 @@ export default function AdaptorDetailPage({
       <Box bg="gray.800" p="4" borderRadius="lg">
         <Flex mb="4">
           <Text fontSize="lg" fontWeight="bold">
-            Details
+            Code Example
           </Text>
           <Spacer />
           <Text fontSize="lg" color="gray.400">
@@ -175,9 +176,7 @@ export default function AdaptorDetailPage({
           flexDirection="column"
           flexWrap="wrap"
         >
-          <Text as="pre" fontSize="sm" color="gray.300" whiteSpace="pre-wrap">
-            {detail?.description}
-          </Text>
+          <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
         </Box>
       </Box>
     </Box>
