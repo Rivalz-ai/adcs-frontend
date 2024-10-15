@@ -15,6 +15,10 @@ import {
 import { CopyIcon } from "@chakra-ui/icons";
 import useAdaptorDetail from "@/libs/hooks/apis/useAdaptorDetail";
 import CodeBlock from "@/views/CodeBlock";
+import GetPrice from "@/views/GetPrice";
+import { useState } from "react";
+
+type TabType = "code" | "about" | "docs" | "price";
 
 export default function AdaptorDetailPage({
   params,
@@ -22,6 +26,7 @@ export default function AdaptorDetailPage({
   params: { id: string };
 }) {
   const { data: detail } = useAdaptorDetail(params.id);
+  const [tab, setTab] = useState<TabType>("code");
 
   return (
     <Box p="6" minH="100vh" color="white">
@@ -80,6 +85,9 @@ export default function AdaptorDetailPage({
             icon={<CopyIcon />}
             colorScheme="purple"
             ml="2"
+            onClick={() => {
+              navigator.clipboard.writeText(detail?.jobId || "");
+            }}
           />
         </Tooltip>
       </Flex>
@@ -151,9 +159,23 @@ export default function AdaptorDetailPage({
 
       {/* Query Section */}
       <Box bg="gray.800" p="4" borderRadius="lg">
-        <Flex mb="4">
-          <Text fontSize="lg" fontWeight="bold">
+        <Flex mb="4" align="center">
+          <Text
+            fontSize="lg"
+            fontWeight={tab === "code" ? "bold" : "normal"}
+            onClick={() => setTab("code")}
+            cursor="pointer"
+          >
             Code Example
+          </Text>
+          <Flex w="1px" h="20px" bg="gray.700" mx="4" />
+          <Text
+            fontSize="lg"
+            fontWeight={tab === "price" ? "bold" : "normal"}
+            onClick={() => setTab("price")}
+            cursor="pointer"
+          >
+            Price
           </Text>
           <Spacer />
           <Text fontSize="lg" color="gray.400">
@@ -176,7 +198,10 @@ export default function AdaptorDetailPage({
           flexDirection="column"
           flexWrap="wrap"
         >
-          <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
+          {tab === "code" && (
+            <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
+          )}
+          {tab === "price" && <GetPrice />}
         </Box>
       </Box>
     </Box>
