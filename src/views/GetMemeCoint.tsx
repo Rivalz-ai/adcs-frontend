@@ -12,6 +12,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
 
 const FetchingComponent = () => (
   <Flex w="full" justify="center" align="center" gap={2}>
@@ -63,11 +64,7 @@ export default function GetMemeCoint() {
             {isLoading ? (
               <FetchingComponent />
             ) : (
-              <Text
-                dangerouslySetInnerHTML={{
-                  __html: data?.market_research || "",
-                }}
-              />
+              <ReactMarkdown>{data?.market_research}</ReactMarkdown>
             )}
           </AccordionPanel>
         </AccordionItem>
