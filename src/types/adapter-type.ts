@@ -45,3 +45,23 @@ export interface AdaptorItem {
   chainName: string;
   exampleCode: string;
 }
+
+export interface CoinData {
+  market_cap: number;
+  name: string;
+  price: number;
+  price_change_24h: number;
+  symbol: string;
+  volume: number;
+}
+
+export interface InferenceResponse {
+  final_decision: {
+    decision: boolean;
+    token_name: string;
+  };
+  market_research: string;
+  memecoins_data: {
+    [key: string]: CoinData | null;
+  };
+}

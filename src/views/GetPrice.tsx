@@ -1,7 +1,7 @@
 "use client";
 
 import { useCoins, useCurrency, useCoinPrice } from "@/libs/hooks/apis/prices";
-import { Flex, HStack, Stack, Text } from "@chakra-ui/react";
+import { Flex, Stack, Text } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import Dropdown from "./Dropdown";
 

@@ -15,10 +15,10 @@ import {
 import { CopyIcon } from "@chakra-ui/icons";
 import useAdaptorDetail from "@/libs/hooks/apis/useAdaptorDetail";
 import CodeBlock from "@/views/CodeBlock";
-import GetPrice from "@/views/GetPrice";
 import { useState } from "react";
+import PlaygroundContainer from "./playground-container";
 
-type TabType = "code" | "about" | "docs" | "price";
+type TabType = "code" | "about" | "docs" | "Playground";
 
 export default function AdaptorDetailPage({
   params,
@@ -171,11 +171,11 @@ export default function AdaptorDetailPage({
           <Flex w="1px" h="20px" bg="gray.700" mx="4" />
           <Text
             fontSize="lg"
-            fontWeight={tab === "price" ? "bold" : "normal"}
-            onClick={() => setTab("price")}
+            fontWeight={tab === "Playground" ? "bold" : "normal"}
+            onClick={() => setTab("Playground")}
             cursor="pointer"
           >
-            Price
+            Playground
           </Text>
           <Spacer />
           <Text fontSize="lg" color="gray.400">
@@ -201,7 +201,9 @@ export default function AdaptorDetailPage({
           {tab === "code" && (
             <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
           )}
-          {tab === "price" && <GetPrice />}
+          {tab === "Playground" && (
+            <PlaygroundContainer categoryId={detail?.categoryId || -1} />
+          )}
         </Box>
       </Box>
     </Box>
