@@ -7,7 +7,7 @@ export default function useAdaptorDetail(jobId?: string) {
     queryKey: ["adaptor-detail", jobId],
     queryFn: async (): Promise<AdaptorItem> => {
       const response: AdaptorItem = await axiosInstance.get(
-        `/adaptors/by-job-id?${jobId}`
+        `/adaptors/by-job-id?jobId=${jobId}`
       );
       return response;
     },
