@@ -62,6 +62,9 @@ export default function Navbar() {
             <Link href="/" mx="4" color="gray.300" fontWeight="bold">
               Adaptors
             </Link>
+            <Link href="/provider" mx="4" color="gray.300">
+              Provider
+            </Link>
             <Link href="#" mx="4" color="gray.300">
               Participants
             </Link>

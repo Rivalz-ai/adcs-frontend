@@ -97,7 +97,7 @@ export default function AdaptorDetailPage({
         p="4"
         borderRadius="lg"
         mb="6"
-        columns={{ base: 2, lg: 5 }}
+        columns={{ base: 2, lg: 6 }}
         gap="10px"
         rowGap="20px"
       >
@@ -152,6 +152,17 @@ export default function AdaptorDetailPage({
             </Text>
             <Flex align="center">
               <Text fontSize="lg">{detail?.outputType.name}</Text>
+            </Flex>
+          </Center>
+        </Box>
+
+        <Box>
+          <Center flexDirection="column">
+            <Text fontSize="sm" color="gray.400" textTransform="uppercase">
+              Provider
+            </Text>
+            <Flex align="center">
+              <Text fontSize="lg">{detail?.providerName || "--- ---"}</Text>
             </Flex>
           </Center>
         </Box>

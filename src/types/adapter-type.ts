@@ -44,6 +44,7 @@ export interface AdaptorItem {
   outputTypeName: string;
   chainName: string;
   exampleCode: string;
+  providerName: string;
 }
 
 export interface CoinData {
