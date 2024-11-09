@@ -78,15 +78,34 @@ export default function ProviderPageDetail({
             <Text fontSize="lg" fontWeight="bold" cursor="pointer">
               Playground
             </Text>
-            <Text
-              color="gray.400"
-              as="pre"
-              whiteSpace="pre-wrap"
-              overflow="hidden"
-              pr="50px"
+            <Flex
+              w="full"
+              flexDir="column"
+              gap="5px"
+              borderRadius="md"
+              p="4"
+              bgColor="gray.900"
+              mt="4"
             >
-              ({detail?.endpoint})
-            </Text>
+              <Text
+                color="gray.400"
+                as="pre"
+                whiteSpace="pre-wrap"
+                overflow="hidden"
+                pr="50px"
+              >
+                Endpoint: {detail?.endpoint}
+              </Text>
+              <Text
+                color="gray.400"
+                as="pre"
+                whiteSpace="pre-wrap"
+                overflow="hidden"
+                pr="50px"
+              >
+                Example: {detail?.exampleCall}
+              </Text>
+            </Flex>
           </Flex>
           <Spacer />
         </Flex>
