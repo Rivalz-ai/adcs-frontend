@@ -12,6 +12,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import ReactJson from "react-json-view";
 
 export default function ProviderPageDetail({
   params,
@@ -113,7 +114,7 @@ export default function ProviderPageDetail({
               Execute
             </Button>
 
-            {dataExecute && <Text>{JSON.stringify(dataExecute, null, 2)}</Text>}
+            {dataExecute && <ReactJson src={dataExecute} theme="railscasts" />}
           </Flex>
         </Box>
       </Box>
