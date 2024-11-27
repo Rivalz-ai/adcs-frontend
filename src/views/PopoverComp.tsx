@@ -12,6 +12,7 @@ import {
 import React from "react";
 
 interface PopoverCompProps {
+  isShowValue?: boolean;
   lable: string;
   data: { value: string | number; label: string; subLabel?: string }[];
   values: Array<string | number>;
@@ -19,6 +20,7 @@ interface PopoverCompProps {
 }
 
 export default function PopoverComp({
+  isShowValue,
   lable,
   data,
   values,
@@ -35,11 +37,22 @@ export default function PopoverComp({
           color="rgba(255, 255, 255, 0.48)"
           border="1px solid"
           borderColor="rgba(255,255,255, 0.08)"
-          bgGradient="linear(to-b, #1b103d, #181a37)"
+          bg="rgba(255,255,255, 0.08)"
+          minW="100px"
           rightIcon={<ChevronDownIcon />}
           _hover={{ bgGradient: "linear(to-b, #1b103d, #181a37)" }}
         >
-          {lable}
+          {!isShowValue && lable}
+          {isShowValue && values.length === 0 && lable}
+          {isShowValue && (
+            <Text>
+              {values
+                .map(
+                  (value) => data.find((item) => item.value === value)?.label
+                )
+                .join(", ")}
+            </Text>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -49,6 +62,7 @@ export default function PopoverComp({
         borderColor="rgba(255,255,255, 0.08)"
         zIndex={999}
         w="fit-content"
+        minW="200px"
       >
         <PopoverBody gap="25px" display="flex" flexDir="column" py="20px">
           {data.map((item, index) => (

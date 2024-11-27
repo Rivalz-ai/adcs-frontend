@@ -19,4 +19,5 @@ export interface ProviderItem {
   iconUrl: string;
   exampleCall: string;
   documentation?: string;
+  aiModel: string | null;
 }

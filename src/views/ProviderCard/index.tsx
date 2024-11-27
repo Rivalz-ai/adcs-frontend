@@ -2,6 +2,7 @@ import { ProviderItem } from "@/types/provider-type";
 import { Box, Flex, Image, Spacer, Text, Tooltip } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
+import AiTag from "./AiTag";
 
 interface ProviderCard {
   item: ProviderItem;
@@ -22,7 +23,10 @@ export default function ProviderCard({ item }: ProviderCard) {
         w="full"
         flexDir="column"
         cursor="pointer"
+        position="relative"
+        overflow="hidden"
       >
+        {item.aiModel && <AiTag aiModel={item.aiModel} />}
         <Flex alignItems="flex-start" mb="4" flexDir="column">
           <Image
             src={item.iconUrl || "/cat.jpeg"}

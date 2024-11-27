@@ -2,12 +2,11 @@
 import AdapterCard from "@/views/AdapterCard";
 import SearchBar from "@/views/SearchBar";
 import { Flex, SimpleGrid, Skeleton, Spacer, Text } from "@chakra-ui/react";
-import PopoverComp from "@/views/PopoverComp";
 import useGetAllAdaptor from "@/libs/hooks/apis/useGetAllAdaptor";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
 import { useMemo, useState } from "react";
-import useGetCategories from "@/libs/hooks/apis/useGetCategories";
-import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
+import OutputTypes from "@/views/components/OutputTypes";
+import Categories from "@/views/components/Categories";
 
 export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<
@@ -19,10 +18,6 @@ export default function Home() {
   >([]);
 
   const { data, isLoading } = useGetAllAdaptor();
-  const { categories } = useGetCategories();
-
-  const { outputData } = useGetOutPutTypes();
-
   const [search] = useSearchAdaptorState();
 
   const dataRender = useMemo(() => {
@@ -51,26 +46,6 @@ export default function Home() {
     });
   }, [search.keySearch, data, selectedCategories, selectedOutputType]);
 
-  const categoriesData = useMemo(() => {
-    return categories.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-        subLabel: item.name,
-      };
-    });
-  }, [categories]);
-
-  const outputDataRender = useMemo(() => {
-    return outputData.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-        subLabel: item.name,
-      };
-    });
-  }, [outputData]);
-
   return (
     <Flex
       flex={1}
@@ -85,11 +60,9 @@ export default function Home() {
         borderColor="rgba(255,255,255, 0.08)"
         pb="20px"
       >
-        <PopoverComp
-          lable="Categories"
-          data={categoriesData}
-          values={selectedCategories}
-          onSelected={(value) => {
+        <Categories
+          selectedCategories={selectedCategories}
+          setSelectedCategories={(value) => {
             setSelectedCategories((prev) => {
               if (prev.includes(value)) {
                 return prev.filter((item) => item !== value);
@@ -99,11 +72,9 @@ export default function Home() {
           }}
         />
         <Spacer />
-        <PopoverComp
-          lable="Output Types"
-          data={outputDataRender}
-          values={selectedOutputType}
-          onSelected={(value) => {
+        <OutputTypes
+          selectedOutputType={selectedOutputType}
+          setSelectedOutputType={(value) => {
             setSelectedOutputType((prev) => {
               if (prev.includes(value)) {
                 return prev.filter((item) => item !== value);

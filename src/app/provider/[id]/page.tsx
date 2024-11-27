@@ -1,6 +1,8 @@
 "use client";
+import useExcuteCrulProvider from "@/libs/hooks/apis/useExcuteCrulProvider";
 import useExecuteProvider from "@/libs/hooks/apis/useExecuteProvider";
 import useProviderDetail from "@/libs/hooks/apis/useProviderDetail";
+import { parseCurl } from "@/libs/utls/parse-curl";
 import {
   Box,
   Flex,
@@ -27,7 +29,19 @@ export default function ProviderPageDetail({
     detail?.exampleCall
   );
 
+  const {
+    mutate: executeCurl,
+    isPending: isLoadingExecuteCurl,
+    data: dataExecuteCurl,
+  } = useExcuteCrulProvider();
+
   const onHandleExecute = () => {
+    const parsed = parseCurl(detail?.exampleCall || "");
+    if (parsed.url && parsed.method && parsed.data) {
+      executeCurl(parsed);
+      return;
+    }
+
     if (!isTrigger) {
       setIsTrigger(true);
     } else {
@@ -127,13 +141,18 @@ export default function ProviderPageDetail({
               w="fit-content"
               bgColor="#6a667b"
               color="white"
-              isDisabled={isLoadingExecute}
-              isLoading={isLoadingExecute}
+              isDisabled={isLoadingExecute || isLoadingExecuteCurl}
+              isLoading={isLoadingExecute || isLoadingExecuteCurl}
             >
               Execute
             </Button>
 
-            {dataExecute && <ReactJson src={dataExecute} theme="railscasts" />}
+            {(dataExecute || dataExecuteCurl) && (
+              <ReactJson
+                src={dataExecute || dataExecuteCurl}
+                theme="railscasts"
+              />
+            )}
           </Flex>
         </Box>
       </Box>

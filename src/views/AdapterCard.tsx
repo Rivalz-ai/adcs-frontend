@@ -5,11 +5,18 @@ import React from "react";
 
 interface AdapterCardProps {
   item: AdaptorItem;
+  isMe?: boolean;
 }
 
-export default function AdapterCard({ item }: AdapterCardProps) {
+export default function AdapterCard({ item, isMe }: AdapterCardProps) {
   return (
-    <Link href={`/adaptor-detail/${item.jobId}`}>
+    <Link
+      href={
+        !isMe
+          ? `/adaptor/detail/${item.jobId}`
+          : `/adaptor/create?id=${item.id}`
+      }
+    >
       <Flex
         bgGradient="linear(to-b, #1b103d, #181a37)"
         p="6"
