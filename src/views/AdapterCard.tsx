@@ -14,7 +14,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
       href={
         !isMe
           ? `/adaptor/detail/${item.jobId}`
-          : `/adaptor/create?id=${item.id}`
+          : `/adaptor/create/${item.jobId}`
       }
     >
       <Flex

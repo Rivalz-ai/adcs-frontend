@@ -22,21 +22,22 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon, ChatIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMemo } from "react";
 import React from "react";
+import useLogin from "@/libs/hooks/apis/auths/useLogin";
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef(null);
+  const { logout } = useLogin();
 
   // Check if the screen size is mobile or desktop
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   const { openConnectModal } = useConnectModal();
   const { isConnected, address } = useAccount();
-  const { disconnect } = useDisconnect();
 
   const lable = useMemo(() => {
     if (address) return address.slice(0, 6) + "..." + address.slice(-4);
@@ -65,6 +66,7 @@ export default function Navbar() {
             <Link href="/provider" mx="4" color="gray.300">
               Provider
             </Link>
+
             <Link href="#" mx="4" color="gray.300">
               Participants
             </Link>
@@ -79,7 +81,11 @@ export default function Navbar() {
           <Spacer />
 
           <Flex align="center">
-            <Flex alignItems="center" display={{ base: "none", lg: "flex" }}>
+            <Flex
+              alignItems="center"
+              display={{ base: "none", lg: "flex" }}
+              gap="5px"
+            >
               <Link href="#" mx="4" color="gray.300">
                 <ChatIcon mr="2" />
                 Support
@@ -96,6 +102,25 @@ export default function Navbar() {
                   Rivalz 2
                 </MenuButton>
               </Menu>
+              {isConnected && (
+                <Link href="/adaptor/me">
+                  <Button
+                    size="sm"
+                    bg="transparent"
+                    border="1px solid"
+                    borderColor="gray.400"
+                    color="white"
+                    mr="-2"
+                    _hover={{
+                      bg: "gray.800",
+                      borderColor: "gray.400",
+                      color: "white",
+                    }}
+                  >
+                    Your Adaptor
+                  </Button>
+                </Link>
+              )}
             </Flex>
 
             {!isConnected && (
@@ -124,7 +149,6 @@ export default function Navbar() {
                   ml="4"
                   px="4"
                   _hover={{ bgGradient: "linear(to-b, #1b103d, #181a37)" }}
-                  onClick={() => alert(1)}
                 >
                   <Text as="span" fontWeight="bold" color="white">
                     {lable}
@@ -139,7 +163,7 @@ export default function Navbar() {
                 >
                   <MenuItem
                     bgGradient="linear(to-b, #1b103d, #181a37)"
-                    onClick={() => disconnect()}
+                    onClick={() => logout()}
                   >
                     Logout
                   </MenuItem>

@@ -45,6 +45,8 @@ export interface AdaptorItem {
   chainName: string;
   exampleCode: string;
   providerName: string;
+  aiPrompt: string;
+  dataProviderId: number;
 }
 
 export interface CoinData {
@@ -65,4 +67,16 @@ export interface InferenceResponse {
   memecoins_data: {
     [key: string]: CoinData | null;
   };
+}
+
+export interface AdaptorCreateModel {
+  name: string;
+  description: string;
+  variables: string;
+  categoryId: number;
+  outputTypeId: number;
+  dataProviderId: number;
+  chainId: number;
+  aiPrompt: string;
+  id: number;
 }
