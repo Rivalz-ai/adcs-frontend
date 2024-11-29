@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import useAdaptor from "@/libs/hooks/apis/adaptors/useAdaptor";
 import useCreateAdapter from "@/libs/hooks/apis/adaptors/useCreateAdapter";
@@ -128,10 +127,10 @@ export default function CreateProviderPage({
       });
       await new Promise((resolve) => setTimeout(resolve, 1000));
       router.push("/adaptor/me");
-    } catch {
+    } catch (error: unknown) {
       toast({
         title: "Error",
-        description: "Something went wrong",
+        description: (error as string) || "Something went wrong",
         status: "error",
       });
     }

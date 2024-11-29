@@ -80,9 +80,22 @@ export default function MyAdaptorPage() {
         </SimpleGrid>
         <Flex w="full" justifyContent="center">
           {data.length === 0 && !isLoading && (
-            <Text textAlign="center" color="rgba(255,255,255, 0.5)">
-              No data found
-            </Text>
+            <Flex flexDir="column" gap="20px" alignItems="center">
+              <Text
+                textAlign="center"
+                color="rgba(255,255,255, 0.8)"
+                fontSize="20px"
+                textTransform="capitalize"
+                fontWeight="bold"
+              >
+                Oh no, you don&apos;t have any adaptor yet.
+              </Text>
+              <Link href="/adaptor/create/new-adapter">
+                <Button leftIcon={<FaCirclePlus />}>
+                  Click here to create
+                </Button>
+              </Link>
+            </Flex>
           )}
         </Flex>
       </Flex>

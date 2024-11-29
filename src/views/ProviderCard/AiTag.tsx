@@ -2,14 +2,12 @@ import React from "react";
 import { Flex, FlexProps } from "@chakra-ui/react";
 
 interface AiTagProps extends FlexProps {
-  aiModel: string | null;
+  aiModel: string;
 }
 
 export default function AiTag({ aiModel, ...props }: AiTagProps) {
-  console.log(aiModel);
   return (
     <Flex
-      {...props}
       color="white"
       position="absolute"
       px="4"
@@ -25,6 +23,8 @@ export default function AiTag({ aiModel, ...props }: AiTagProps) {
       borderLeft="1px solid"
       borderBottom="1px solid"
       borderColor="rgba(255, 255, 255, 0.08)"
+      zIndex={999}
+      {...props}
     >
       {aiModel}
     </Flex>

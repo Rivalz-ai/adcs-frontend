@@ -36,6 +36,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             alt={item.name}
             boxSize="50px"
             borderRadius="md"
+            fallbackSrc="/logo.png"
           />
           <Box mt="10px">
             <Tooltip label={item.jobId}>
