@@ -3,14 +3,18 @@ FROM node:20-slim
 
 WORKDIR /src
 
-RUN apt update && apt install -y git
+# Install git and enable corepack for Yarn version management
+RUN apt update && apt install -y git && \
+    corepack enable && \
+    corepack prepare yarn@4.5.0 --activate
 
-# Copy built files from builder stage
+# Copy all project files
 COPY . .
 
-# Install production dependencies only
-RUN yarn
+# Install dependencies using the correct Yarn version
+RUN yarn install
 
+# Build the application
 RUN yarn build
 
 # Set the entrypoint
