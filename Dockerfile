@@ -1,21 +1,18 @@
-# Production stage
-FROM node:20-slim
+FROM oven/bun:1.1.34
 
-WORKDIR /src
+WORKDIR /app
 
-# Install git and enable corepack for Yarn version management
-RUN apt update && apt install -y git && \
-    corepack enable && \
-    corepack prepare yarn@4.5.0 --activate
+COPY package.json .
 
-# Copy all project files
-COPY . .
 
-# Install dependencies using the correct Yarn version
-RUN yarn install
+RUN bun install
 
-# Build the application
-RUN yarn build
+# we cant not use COPY . . because it will copy all files and bun.lockb is frozened by --production tag
+COPY src src
 
-# Set the entrypoint
-ENTRYPOINT ["yarn", "start"]
+COPY tsconfig.json .
+
+EXPOSE 8080
+
+ENV NODE_ENV production
+CMD ["bun", "run", "start"]
