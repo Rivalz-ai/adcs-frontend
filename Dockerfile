@@ -1,18 +1,18 @@
-FROM oven/bun:1.1.34
+# Production stage
+FROM node:20-slim
 
-WORKDIR /app
+WORKDIR /src
 
-COPY package.json .
+RUN apt update && apt install -y git curl unzip
+RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr bash
 
+# Copy built files from builder stage
+COPY . .
 
+# Install production dependencies only
 RUN bun install
 
-# we cant not use COPY . . because it will copy all files and bun.lockb is frozened by --production tag
-COPY src src
+RUN bun run build
 
-COPY tsconfig.json .
-
-EXPOSE 8080
-
-ENV NODE_ENV production
-CMD ["bun", "run", "start"]
+# Set the entrypoint
+ENTRYPOINT ["bun", "start"]
