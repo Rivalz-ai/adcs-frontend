@@ -1,4 +1,4 @@
-name: deploy-adcs-fe
+name: deploy-adcs-frontend
 
 on:
   push:
@@ -8,10 +8,10 @@ on:
 env:
   REPO_URL: "asia-southeast1-docker.pkg.dev/rivalz-be/adcs" #sjc.vultrcr.com/rome"
   NAMESPACE: "adcs"
-  SERVICE_NAME: "adcs-fe"
+  SERVICE_NAME: "adcs-frontend"
 
 jobs:
-  build-adcs-fe:
+  build-adcs-frontend:
     runs-on: rivalz-be
     outputs: 
       commit_hash: ${{ steps.build.outputs.COMMIT_HASH }}
@@ -27,22 +27,22 @@ jobs:
           echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" | base64 -d | docker login -u _json_key --password-stdin asia-southeast1-docker.pkg.dev
           docker push ${REPO_URL}/${SERVICE_NAME}:${commit_hash}
           echo "COMMIT_HASH=$commit_hash" >> $GITHUB_OUTPUT
-  deploy-prod-adcs-fe:
+  deploy-prod-adcs-frontend:
     runs-on: rivalz-dc
-    needs: build-adcs-fe
+    needs: build-adcs-frontend
     if: github.ref_name == 'main'
     env:
-      COMMIT_HASH: ${{ needs.build-adcs-fe.outputs.commit_hash }}
+      COMMIT_HASH: ${{ needs.build-adcs-frontend.outputs.commit_hash }}
     steps:
       - run: |
           echo "${{ vars.ROME_KUBECONFIG }}" | base64 -d >> rome_kubeconfig
           kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=${REPO_URL}/${SERVICE_NAME}:${COMMIT_HASH} -n ${NAMESPACE} --kubeconfig=rome_kubeconfig
-  deploy-dev-adcs-fe:
+  deploy-dev-adcs-frontend:
     runs-on: rivalz-dc
-    needs: build-adcs-fe
+    needs: build-adcs-frontend
     if: github.ref_name == 'testnet'
     env:
-      COMMIT_HASH: ${{ needs.build-adcs-fe.outputs.commit_hash }}
+      COMMIT_HASH: ${{ needs.build-adcs-frontend.outputs.commit_hash }}
     steps:
       - run: |
           echo "${{ vars.ROME_KUBECONFIG }}" | base64 -d >> rome_kubeconfig
