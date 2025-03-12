@@ -46,4 +46,4 @@ jobs:
     steps:
       - run: |
           echo "${{ vars.ROME_KUBECONFIG }}" | base64 -d >> rome_kubeconfig
-          kubectl set image deployment/testnet-${SERVICE_NAME} ${SERVICE_NAME}=${REPO_URL}/${SERVICE_NAME}:${COMMIT_HASH} -n testnet-${NAMESPACE} --kubeconfig=rome_kubeconfig
+          kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=${REPO_URL}/${SERVICE_NAME}:${COMMIT_HASH} -n testnet-${NAMESPACE} --kubeconfig=rome_kubeconfig
