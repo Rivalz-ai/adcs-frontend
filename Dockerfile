@@ -3,19 +3,16 @@ FROM node:20-slim
 
 WORKDIR /src
 
-# Install git and enable corepack for Yarn version management
-RUN apt update && apt install -y git && \
-    corepack enable && \
-    corepack prepare yarn@4.5.0 --activate
+RUN apt update && apt install -y git curl unzip
+RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr bash
 
-# Copy all project files
+# Copy built files from builder stage
 COPY . .
 
-# Install dependencies using the correct Yarn version
-RUN yarn install
+# Install production dependencies only
+RUN bun install
 
-# Build the application
-RUN yarn build
+RUN bun run build
 
 # Set the entrypoint
-ENTRYPOINT ["yarn", "start"]
+ENTRYPOINT ["bun", "start"]
