@@ -213,7 +213,10 @@ export default function AdaptorDetailPage({
             <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
           )}
           {tab === "Playground" && (
-            <PlaygroundContainer categoryId={detail?.categoryId || -1} />
+            <PlaygroundContainer
+              categoryId={detail?.categoryId || -1}
+              adaptor={detail}
+            />
           )}
         </Box>
       </Box>
