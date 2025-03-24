@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { AdaptorItem } from "@/types/adapter-type";
 import { Box, Flex, Image, Spacer, Text, Tooltip } from "@chakra-ui/react";
 import Link from "next/link";
@@ -13,8 +14,8 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
     <Link
       href={
         !isMe
-          ? `/adaptor/detail/${item.jobId}`
-          : `/adaptor/create/${item.jobId}`
+          ? /adaptor/detail/${item.jobId}
+          : /adaptor/create/${item.jobId}
       }
     >
       <Flex
@@ -83,6 +84,25 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
               textTransform="uppercase"
             >
               {item.categoryName}
+            </Text>
+          </Flex>
+          <Flex justifyContent="space-between" mt="2">
+            <Text
+              color="rgba(255, 255, 255, 0.48)"
+              fontSize="14px"
+              textTransform="uppercase"
+            >
+              Chain Type
+            </Text>
+            <Text
+              color="rgba(255, 255, 255, 0.48)"
+              fontSize="14px"
+              fontWeight="500"
+              textTransform="uppercase"
+            >
+              {
+              // @ts-ignore
+              item.chain.isevm === true ? "EVM":"Non-EVM"}
             </Text>
           </Flex>
         </Flex>
