@@ -26,6 +26,7 @@ export interface AdaptorItem {
   id: number;
   jobId: string;
   name: string;
+  chainType: string;
   description: string;
   variables: string;
   categoryId: number;
@@ -72,6 +73,7 @@ export interface InferenceResponse {
 export interface AdaptorCreateModel {
   name: string;
   description: string;
+  chainType: string;
   variables: string;
   categoryId: number;
   outputTypeId: number;
