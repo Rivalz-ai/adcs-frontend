@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { FaArrowLeft, FaPlus, FaSave, FaTrash } from "react-icons/fa";
 import ExcuteAiInferenceProvider from "@/views/ExcuteAiInferenceProvider";
+import ChainType from "@/views/components/ChainType";
 
 export default function CreateProviderPage({
   params,
@@ -33,6 +34,7 @@ export default function CreateProviderPage({
   const isEdit = params.adaptorId !== "new-adapter";
   const router = useRouter();
   const toast = useToast();
+
 
   const { data: item } = useAdaptor(isEdit ? params.adaptorId : undefined);
 
@@ -46,6 +48,7 @@ export default function CreateProviderPage({
   const [adaptor, setAdaptor] = useState<AdaptorCreateModel>({
     id: 0,
     name: "",
+    chainType: "",
     description: "",
     variables: "",
     categoryId: 0,
@@ -54,6 +57,8 @@ export default function CreateProviderPage({
     chainId: 0,
     aiPrompt: "decision should buy or sell BTC at this time",
   });
+
+console.log(adaptor)
 
   useEffect(() => {
     if (item) {
@@ -227,6 +232,51 @@ export default function CreateProviderPage({
               </Flex>
             </Flex>
 
+            <Flex
+              gap="20px"
+              alignItems="center"
+              borderBottom="1px solid #282828"
+              py="10px"
+            >
+              <Flex flex={1}>
+                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
+                  Chain Type
+                </Text>
+              </Flex>
+
+              <Flex gap="20px" justifyContent="flex-end">
+                {/* {chainsRender.map((item, index) => (
+                  <CheckBoxCustom
+                    item={item}
+                    isChecked={adaptor.chainId === item.value}
+                    onSelected={(value) => {
+                      setAdaptor({ ...adaptor, chainId: Number(value) });
+                    }}
+                    key={index}
+                  />
+                ))} */}
+
+                {/* <select
+                  onChange={(e) => {
+                    
+                    setAdaptor({ ...adaptor, chainType: e.target.value });
+                  }}
+                  name="chainType"
+                >
+                  <option value="EVM">EVM</option>
+                  <option value="NON_EVM">NON_EVM</option>
+                </select> */}
+   <ChainType
+  isShowValue
+  selectedChainType={adaptor.chainType}
+  setselectedchaintype={(value) => {
+    setAdaptor({ ...adaptor, chainType: value });
+  }}
+/>
+
+
+              </Flex>
+            </Flex>
             <Flex
               gap="20px"
               alignItems="center"
