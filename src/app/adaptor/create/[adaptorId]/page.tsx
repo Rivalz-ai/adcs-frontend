@@ -285,20 +285,23 @@ console.log(adaptor)
             >
               <Flex flex={1}>
                 <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Network
+                  Supported Chains
                 </Text>
               </Flex>
 
-              <Flex gap="20px" justifyContent="flex-end">
+              <Flex gap="20px" justifyContent="flex-end"  flex={1.5}>
                 {chainsRender.map((item, index) => (
-                  <CheckBoxCustom
-                    item={item}
-                    isChecked={adaptor.chainId === item.value}
-                    onSelected={(value) => {
-                      setAdaptor({ ...adaptor, chainId: Number(value) });
-                    }}
-                    key={index}
-                  />
+                   <Text
+                   key={index}
+                   color="gray.400"
+                   fontSize="14px"
+                   px="3"
+                   py="1"
+                   bg="#282828"
+                   borderRadius="md"
+                 >
+                   {item.label}
+                 </Text>
                 ))}
               </Flex>
             </Flex>
