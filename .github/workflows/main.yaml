@@ -5,45 +5,51 @@ on:
     branches: 
       - 'main'
       - 'testnet'
+      - 'staging'
 env:
-  REPO_URL: "asia-southeast1-docker.pkg.dev/rivalz-be/adcs" #sjc.vultrcr.com/rome"
-  NAMESPACE: "adcs"
+  REPO_URL: "asia-southeast1-docker.pkg.dev/rivalz-be/adcs"   #sjc.vultrcr.com/rome"
   SERVICE_NAME: "adcs-frontend"
+  NAMESPACE: "adcs"
 
 jobs:
-  build-adcs-frontend:
+  build:
     runs-on: rivalz-be
     outputs: 
-      commit_hash: ${{ steps.build.outputs.COMMIT_HASH }}
+      commit_hash: ${{ steps.build-image.outputs.COMMIT_HASH }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: build and push image
-        id: build
+        id: build-image
         run: |
           mv .env.${{ github.ref_name }} .env
           commit_hash=$(git rev-parse --short $GITHUB_SHA)
-          docker build -t ${REPO_URL}/${SERVICE_NAME}:${commit_hash} .
+          docker build -t ${REPO_URL}/${SERVICE_NAME}:${commit_hash} -t ${REPO_URL}/${SERVICE_NAME}:${{ github.ref_name }}-latest .
           echo "${{ secrets.SERVICE_ACCOUNT_JSON }}" | base64 -d | docker login -u _json_key --password-stdin asia-southeast1-docker.pkg.dev
           docker push ${REPO_URL}/${SERVICE_NAME}:${commit_hash}
+          docker push ${REPO_URL}/${SERVICE_NAME}:${{ github.ref_name }}-latest
           echo "COMMIT_HASH=$commit_hash" >> $GITHUB_OUTPUT
-  deploy-prod-adcs-frontend:
-    runs-on: rivalz-dc
-    needs: build-adcs-frontend
-    if: github.ref_name == 'main'
+  deploy:
+    runs-on: rivalz-be
+    needs: build 
     env:
-      COMMIT_HASH: ${{ needs.build-adcs-frontend.outputs.commit_hash }}
+      COMMIT_HASH: ${{ needs.build.outputs.commit_hash }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: "Rivalz-ai/rivalz-helm-chart.git"
+          path: rivalz-chart
+          ref: main
       - run: |
+          if [[ ${{ github.ref_name }} == "staging" ]]; then
+            NAMESPACE="staging-${NAMESPACE}"
+          fi
+          if [[ ${{ github.ref_name }} == "testnet" ]]; then
+            NAMESPACE="testnet-${NAMESPACE}"
+          fi
           echo "${{ vars.ROME_KUBECONFIG }}" | base64 -d >> rome_kubeconfig
-          kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=${REPO_URL}/${SERVICE_NAME}:${COMMIT_HASH} -n ${NAMESPACE} --kubeconfig=rome_kubeconfig
-  deploy-dev-adcs-frontend:
-    runs-on: rivalz-dc
-    needs: build-adcs-frontend
-    if: github.ref_name == 'testnet'
-    env:
-      COMMIT_HASH: ${{ needs.build-adcs-frontend.outputs.commit_hash }}
-    steps:
-      - run: |
-          echo "${{ vars.ROME_KUBECONFIG }}" | base64 -d >> rome_kubeconfig
-          kubectl set image deployment/${SERVICE_NAME} ${SERVICE_NAME}=${REPO_URL}/${SERVICE_NAME}:${COMMIT_HASH} -n testnet-${NAMESPACE} --kubeconfig=rome_kubeconfig
+          helm upgrade --install ${SERVICE_NAME} rivalz-chart -f values.${{ github.ref_name }}.yaml -n ${NAMESPACE} \
+            --kubeconfig rome_kubeconfig \
+            --set image.tag=${COMMIT_HASH} \
+            --create-namespace

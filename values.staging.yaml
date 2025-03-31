@@ -1,0 +1,46 @@
+replicaCount: 1
+type: app # There are app, worker, cronjob
+statefulset: false 
+nameOverride: "adcs-frontend"
+
+image:
+  repository: asia-southeast1-docker.pkg.dev/rivalz-be/adcs/adcs-frontend
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "staging-latest"
+  containerPort: 3000
+terminationGracePeriodSeconds: 60
+imagePullSecrets: 
+  - name: gar-registry
+
+secretMounts: []
+  # - name: env
+  #   secretName: environment
+  #   path: /app/.env
+
+extraEnvs: []
+envFrom: []
+
+podAnnotations: {}
+livenessProbe: []
+readinessProbe: []
+
+resources:
+  limits: {}
+  requests: 
+    cpu: "200m"
+    memory: "400Mi"
+
+ingress:
+  enabled: true
+  kind: gateway ### with 2 values: gateway and ingress
+  gateway: ingressgateway
+  gatewayname: istio-system/rivalz-ai
+  hosts: 
+    - 'staging-adcs-v2.rivalz.ai'
+  servers: 
+    - port: 80
+      name: http
+      protocol: HTTP
+  uri_prefix: "/" ### Please mention ending slash
+  # uri_rewrite: "/"
