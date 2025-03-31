@@ -85,6 +85,23 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
               {item.categoryName}
             </Text>
           </Flex>
+          <Flex justifyContent="space-between" mt="2">
+            <Text
+              color="rgba(255, 255, 255, 0.48)"
+              fontSize="14px"
+              textTransform="uppercase"
+            >
+              Chain Type
+            </Text>
+            <Text
+              color="rgba(255, 255, 255, 0.48)"
+              fontSize="14px"
+              fontWeight="500"
+              textTransform="uppercase"
+            >
+              {item.chainType}
+            </Text>
+          </Flex>
         </Flex>
       </Flex>
     </Link>

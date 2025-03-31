@@ -20,6 +20,7 @@ export default function useAdaptor(jobId?: string) {
         dataProviderId: response.dataProviderId,
         chainId: response.chainId,
         aiPrompt: response.aiPrompt,
+        chainType: response.chainType,
       };
       return adaptor;
     },
