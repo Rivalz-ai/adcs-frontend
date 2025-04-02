@@ -1,12 +1,12 @@
 import "@rainbow-me/rainbowkit/styles.css";
-
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "../providers/providers";
 import { Flex, Spacer } from "@chakra-ui/react";
-import Footer from "./Footer";
-import Navbar from "./Header";
+import Navbar from "../views/layout/Header";
+import Marquee from "../views/layout/Marquee";
+import FooterV2 from "../views/layout/footer/FooterV2";
 
 const euclidCircular = localFont({
   src: [
@@ -79,24 +79,37 @@ export default function RootLayout({
       <body
         className={`${euclidCircular.variable}`}
         style={{
-          background:
-            "linear-gradient(200deg, #1b103d 0%, #181a37 30%, #17161e 100%)",
+          background: "#0C0E12",
         }}
       >
         <Providers>
           <Flex
+            w="1500px"
+            h="1500px"
+            borderRadius="full"
+            bgColor="rgba(90, 254, 176, 0.10)"
+            zIndex={0}
+            position="absolute"
+            top="-50%"
+            left="-50%"
+            filter="blur(200px)"
+          />
+          <Marquee />
+          <Flex
             flexDir="column"
             w="full"
-            maxW="1288px"
+            maxW="1600px"
             mx="auto"
             minH="100vh"
             flex={1}
+            position="relative"
+            zIndex={1}
           >
             <Navbar />
             {children}
             <Spacer />
-            <Footer />
           </Flex>
+          <FooterV2 />
         </Providers>
       </body>
     </html>

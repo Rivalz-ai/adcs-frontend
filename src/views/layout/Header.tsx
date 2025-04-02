@@ -5,12 +5,9 @@ import {
   Link,
   Button,
   Menu,
-  MenuButton,
   MenuList,
   MenuItem,
-  Text,
   Spacer,
-  useBreakpointValue,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -19,22 +16,24 @@ import {
   useDisclosure,
   IconButton,
   HStack,
+  Image,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ChatIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { ChatIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useMemo } from "react";
 import React from "react";
 import useLogin from "@/libs/hooks/apis/auths/useLogin";
-
+import { usePathname } from "next/navigation";
+import { NAVS } from "@/libs/cons";
+import AppButton from "@/views/components/Button";
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef(null);
   const { logout } = useLogin();
 
-  // Check if the screen size is mobile or desktop
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const pathname = usePathname();
 
   const { openConnectModal } = useConnectModal();
   const { isConnected, address } = useAccount();
@@ -47,114 +46,77 @@ export default function Navbar() {
   return (
     <>
       <Box py="2" px="6">
-        <Flex align="center">
-          {isMobile && (
-            <IconButton
-              icon={<HamburgerIcon />}
-              variant="outline"
-              colorScheme="whiteAlpha"
-              aria-label="Open menu"
-              onClick={onOpen}
-              ref={btnRef}
+        <Flex
+          align="center"
+          bg="rgba(19, 22, 27, 0.75)"
+          rounded="10px"
+          px="25px"
+          py="12px"
+          border="1px solid rgba(244, 244, 244, 0.12)"
+          zIndex="10px"
+        >
+          <IconButton
+            icon={<HamburgerIcon />}
+            variant="outline"
+            colorScheme="whiteAlpha"
+            aria-label="Open menu"
+            onClick={onOpen}
+            ref={btnRef}
+            display={{ base: "flex", lg: "none" }}
+          />
+
+          <Link href="/">
+            <Image
+              src="logo-v2.png"
+              w="133px"
+              alt="Rivalz ADCS"
+              ml={{ base: "30px", lg: "unset" }}
             />
-          )}
+          </Link>
 
-          <Flex align="center" display={{ base: "none", lg: "flex" }}>
-            <Link href="/" mx="4" color="gray.300" fontWeight="bold">
-              Adaptors
-            </Link>
-            <Link href="/provider" mx="4" color="gray.300">
-              Provider
-            </Link>
-
-            <Link href="#" mx="4" color="gray.300">
-              Participants
-            </Link>
-            <Link href="#" mx="4" color="gray.300">
-              Network
-            </Link>
-            <Link href="#" mx="4" color="gray.300">
-              Docs
-            </Link>
+          <Flex
+            align="center"
+            display={{ base: "none", lg: "flex" }}
+            borderRadius="10px"
+          >
+            <Flex ml="67px">
+              {NAVS.map((nav) => (
+                <Link
+                  key={nav.label}
+                  href={nav.href}
+                  mx="4"
+                  color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
+                  fontWeight="medium"
+                  fontSize="16px"
+                  lineHeight="24px"
+                  _hover={{
+                    color: "#69FF93",
+                  }}
+                >
+                  {nav.label}
+                </Link>
+              ))}
+            </Flex>
           </Flex>
 
           <Spacer />
 
-          <Flex align="center">
-            <Flex
-              alignItems="center"
-              display={{ base: "none", lg: "flex" }}
-              gap="5px"
-            >
-              <Link href="#" mx="4" color="gray.300">
-                <ChatIcon mr="2" />
-                Support
+          <Flex align="center" display={{ base: "none", lg: "flex" }}>
+            {isConnected && (
+              <Link href="/adaptor/me">
+                <AppButton variant="secondary">Your Adaptor</AppButton>
               </Link>
-
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  variant="link"
-                  color="gray.300"
-                  leftIcon={<FaEthereum />}
-                >
-                  Rivalz 2
-                </MenuButton>
-              </Menu>
-              {isConnected && (
-                <Link href="/adaptor/me">
-                  <Button
-                    size="sm"
-                    bg="transparent"
-                    border="1px solid"
-                    borderColor="gray.400"
-                    color="white"
-                    mr="-2"
-                    _hover={{
-                      bg: "gray.800",
-                      borderColor: "gray.400",
-                      color: "white",
-                    }}
-                  >
-                    Your Adaptor
-                  </Button>
-                </Link>
-              )}
-            </Flex>
+            )}
 
             {!isConnected && (
-              <Button
-                as={Button}
-                variant="solid"
-                bg="gray.800"
-                ml="4"
-                px="4"
-                _hover={{ bgGradient: "linear(to-b, #1b103d, #181a37)" }}
-                onClick={() => openConnectModal?.()}
-              >
-                <Text as="span" fontWeight="bold" color="white">
-                  {lable}
-                </Text>
-              </Button>
+              <AppButton onClick={() => openConnectModal?.()}>
+                Connect Wallet
+              </AppButton>
             )}
 
             {isConnected && (
               <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  variant="solid"
-                  bg="gray.800"
-                  ml="4"
-                  px="4"
-                  _hover={{ bgGradient: "linear(to-b, #1b103d, #181a37)" }}
-                >
-                  <Text as="span" fontWeight="bold" color="white">
-                    {lable}
-                  </Text>
-                </MenuButton>
-
+                <AppButton ml="30px">{lable}</AppButton>
                 <MenuList
                   bgGradient="linear(to-b, #1b103d, #181a37)"
                   color="white"
