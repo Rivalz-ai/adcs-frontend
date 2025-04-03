@@ -45,7 +45,7 @@ export default function Navbar() {
 
   return (
     <>
-      <Box py="2" px="6">
+      <Box py="" px="">
         <Flex
           align="center"
           bg="rgba(19, 22, 27, 0.75)"

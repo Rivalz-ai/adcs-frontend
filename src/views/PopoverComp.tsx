@@ -32,22 +32,32 @@ export default function PopoverComp({
    <Popover>
      <PopoverTrigger>
        <Button
-         borderRadius="full"
+         borderRadius="6px"
          py="unset"
          fontWeight="normal"
+         sx={{ textAlign: "left !important" }}
          bgColor="transparent"
          color="rgba(255, 255, 255, 0.48)"
          border="1px solid"
-         borderColor="rgba(255,255,255, 0.08)"
+         borderColor="#2d2f34"
+         backgroundColor={"#111419"}
          bg="rgba(255,255,255, 0.08)"
-         minW="100px"
-         rightIcon={<ChevronDownIcon />}
-         _hover={{ bgGradient: "linear(to-b, #1b103d, #181a37)" }}
+         minW="196px"
+         
+         _hover={{ bg: "rgba(78, 167, 103, 0.4)", color: "rgb(57, 161, 90)" }}
        >
+        <ChevronDownIcon
+            color="rgba(255, 255, 255, 0.48)"
+            w="20px"
+            h="20px"
+            position="absolute"
+            right="20px"
+            zIndex={10}
+          />
          {!isShowValue && lable}
          {isShowValue && values.length === 0 && lable}
          {isShowValue && (
-           <Text>
+           <Text textAlign={"left"}>
              {values
                .map(
                  (value) => data.find((item) => item.value === value)?.label
@@ -58,10 +68,11 @@ export default function PopoverComp({
        </Button>
      </PopoverTrigger>
      <PopoverContent
-       bgGradient="linear(to-b, #1b103d, #181a37)"
+       
        color="rgba(255, 255, 255, 0.48)"
        border="1px solid"
-       borderColor="rgba(255,255,255, 0.08)"
+       borderColor="#2d2f34"
+       backgroundColor={"#111419"}
        zIndex={999}
        w="fit-content"
        minW="200px"
@@ -81,7 +92,7 @@ export default function PopoverComp({
                cursor="pointer"
              
              >
-               {values.includes(item.value) && <ChevronDownIcon />}
+               {values.includes(item.value) && <ChevronDownIcon color={"white"} />}
              </Flex>
              <Text color="rgba(255,255,255, 0.5)">{item.label}</Text>
              <Text

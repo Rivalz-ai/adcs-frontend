@@ -7,6 +7,9 @@ import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
 import { useMemo, useState } from "react";
 import OutputTypes from "@/views/components/OutputTypes";
 import Categories from "@/views/components/Categories";
+import { SearchIcon } from "@chakra-ui/icons";
+import { Input } from "@chakra-ui/react";
+
 
 export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<
@@ -18,8 +21,7 @@ export default function Home() {
   >([]);
 
   const { data, isLoading } = useGetAllAdaptor();
-  const [search] = useSearchAdaptorState();
-
+  const [search, setSearch] = useSearchAdaptorState();
   const dataRender = useMemo(() => {
     if (data.length === 0) return [];
 
@@ -56,33 +58,79 @@ export default function Home() {
       <SearchBar />
       <Flex
         w="full"
-        borderBottom="1px solid"
         borderColor="rgba(255,255,255, 0.08)"
-        pb="20px"
+        pt="22px"
+        justify="space-between"
+        align="center"
+        // border={"1px solid #272637"}
       >
-        <Categories
-          selectedCategories={selectedCategories}
-          setSelectedCategories={(value) => {
-            setSelectedCategories((prev) => {
-              if (prev.includes(value)) {
-                return prev.filter((item) => item !== value);
-              }
-              return [...prev, value];
-            });
-          }}
-        />
-        <Spacer />
-        <OutputTypes
-          selectedOutputType={selectedOutputType}
-          setSelectedOutputType={(value) => {
-            setSelectedOutputType((prev) => {
-              if (prev.includes(value)) {
-                return prev.filter((item) => item !== value);
-              }
-              return [...prev, value];
-            });
-          }}
-        />
+        <Flex
+          backgroundColor={"#111419"}
+          rounded="xl"
+          border="1px solid"
+          borderColor="#2d2f34"
+          opacity={"0.7"}
+          boxShadow="lg"
+          w={{ base: "60%" }}
+          minH={{ lg: "44px" }}
+          borderRadius="6px"
+          overflow="hidden"
+          px="5px"
+          alignItems="center"
+          position="relative"
+        >
+          <Input
+            flex={1}
+            border="0px"
+            focusBorderColor="transparent"
+            placeholder="Search by name, creator or ID"
+            _placeholder={{ color: "#94979C" }}
+            color="#94979C"
+            fontSize={{ base: "14px", lg: "18px" }}
+            fontWeight={500}
+            pl="10px"
+            py="10px"
+            value={search.keySearch}
+            onChange={(e) => {
+              setSearch({ keySearch: e.target.value });
+            }}
+          />
+          <SearchIcon
+            color="rgba(255, 255, 255, 0.48)"
+            w="20px"
+            h="20px"
+            position="absolute"
+            right="20px"
+            zIndex={10}
+          />
+        </Flex>
+
+        <Flex gap={"20px"}>
+          <Categories
+            selectedCategories={selectedCategories}
+            setSelectedCategories={(value) => {
+              setSelectedCategories((prev) => {
+                if (prev.includes(value)) {
+                  return prev.filter((item) => item !== value);
+                }
+                return [...prev, value];
+              });
+            }}
+          />
+
+          {/* <Spacer /> */}
+          <OutputTypes
+            selectedOutputType={selectedOutputType}
+            setSelectedOutputType={(value) => {
+              setSelectedOutputType((prev) => {
+                if (prev.includes(value)) {
+                  return prev.filter((item) => item !== value);
+                }
+                return [...prev, value];
+              });
+            }}
+          />
+        </Flex>
       </Flex>
       <SimpleGrid w="full" columns={{ base: 1, lg: 5 }} gap="20px">
         {dataRender.map((item, i) => (
