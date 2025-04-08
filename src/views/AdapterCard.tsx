@@ -1,5 +1,5 @@
 import { AdaptorItem } from "@/types/adapter-type";
-import { Box, Flex, Image, Spacer, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, Image, Text, Tooltip } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
 
@@ -18,13 +18,13 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
       }
     >
       <Flex
-        bgGradient="linear(to-b, #1b103d, #181a37)"
-        p="6"
+        backgroundColor={"rgba(17,20,25,0.5)"}
+        padding="20px"
         rounded="xl"
         border="1px solid"
-        borderColor="rgba(255, 255, 255, 0.08)"
+        borderColor="#272637"
+        _hover={{ borderColor: "#2D7D44" }}
         boxShadow="lg"
-        h="322px"
         gap="10px"
         w="full"
         flexDir="column"
@@ -34,17 +34,30 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
           <Image
             src={item.iconUrl || "/cat.jpeg"}
             alt={item.name}
-            boxSize="50px"
+            boxSize="80px"
             borderRadius="md"
             fallbackSrc="/logo.png"
           />
           <Box mt="10px">
-            <Tooltip label={item.jobId}>
-              <Text color="gray.400" fontSize="xs">
-                {item.jobId.substring(0, 10)}...
-              </Text>
+          <Tooltip label={item.jobId}>
+              <Flex gap={"10px"} alignItems={"center"}>
+                <div
+                  style={{
+                    height: "22px",
+                    width: "22px",
+                    backgroundColor: "#49B267",
+                    borderRadius: "100%",
+                  }}
+                >
+                  &nbsp;
+                </div>
+                <Text color="#94979C" fontSize="16px">
+                  {item.jobId.substring(0, 10)}...
+                </Text>
+              </Flex>
             </Tooltip>
             <Text
+              pt={"10px"}
               fontWeight="semibold"
               fontSize="lg"
               color="white"
@@ -52,12 +65,16 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             >
               {item.name}
             </Text>
+            <Text pt={"10px"} fontSize="16px" color="#94979C">
+  Description of the Adaptor, general information.
+</Text>
           </Box>
         </Flex>
 
-        <Spacer />
+        {/* <Spacer /> */}
 
         <Flex mt="4" flexDir="column" gap="5px">
+        <Flex w="full" h="1px" bg="rgba(255, 255, 255, 0.08)" />
           <Flex justifyContent="space-between">
             <Text color="rgba(255, 255, 255, 0.48)" fontSize="14px">
               REQUESTS
@@ -67,7 +84,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             </Text>
           </Flex>
 
-          <Flex w="full" h="1px" bg="rgba(255, 255, 255, 0.08)" />
+          
           <Flex justifyContent="space-between" mt="2">
             <Text
               color="rgba(255, 255, 255, 0.48)"
