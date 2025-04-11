@@ -67,7 +67,7 @@ export default function Navbar() {
 
           <Link href="/">
             <Image
-              src="logo-v2.png"
+              src="/logo-v2.png"
               w="133px"
               alt="Rivalz ADCS"
               ml={{ base: "30px", lg: "unset" }}
