@@ -3,7 +3,7 @@ import useAdaptor from "@/libs/hooks/apis/adaptors/useAdaptor";
 import useCreateAdapter from "@/libs/hooks/apis/adaptors/useCreateAdapter";
 import useDeleteAdapter from "@/libs/hooks/apis/adaptors/useDeleteAdapter";
 import useUpdateAdapter from "@/libs/hooks/apis/adaptors/useUpdateAdapter";
-import useAllChain from "@/libs/hooks/apis/useAllChain";
+// import useAllChain from "@/libs/hooks/apis/useAllChain";
 import useGetCategories from "@/libs/hooks/apis/useGetCategories";
 import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
 import ProtectedPage from "@/libs/utls/ProtectedPage";
@@ -22,15 +22,10 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  FaArrowLeft,
-  FaCheckDouble,
-  FaPlus,
-  FaSave,
-  FaTrash,
-} from "react-icons/fa";
+import { FaArrowLeft, FaCheckDouble, FaSave, FaTrash } from "react-icons/fa";
 import ExcuteAiInferenceProvider from "@/views/ExcuteAiInferenceProvider";
-import ChainType from "@/views/components/ChainType";
+// import ChainType from "@/views/components/ChainType";
+// import { Plus } from "lucide-react";
 
 export default function CreateProviderPage({
   params,
@@ -62,6 +57,18 @@ export default function CreateProviderPage({
     chainId: 1,
     aiPrompt: "decision should buy or sell BTC at this time",
   });
+  const [network, setnetwork] = useState<AdaptorCreateModel>({
+    id: 0,
+    name: "",
+    chainType: "",
+    description: "",
+    variables: "",
+    categoryId: 0,
+    outputTypeId: 0,
+    dataProviderId: 0,
+    chainId: 1,
+    aiPrompt: "decision should buy or sell BTC at this time",
+  });
 
   console.log(adaptor);
 
@@ -73,7 +80,7 @@ export default function CreateProviderPage({
 
   const { outputData } = useGetOutPutTypes();
   const { categories } = useGetCategories();
-  const { chains } = useAllChain();
+  // const { chains } = useAllChain();
 
   const outputDataRender = useMemo(() => {
     return outputData.map((item) => {
@@ -95,15 +102,15 @@ export default function CreateProviderPage({
     });
   }, [categories]);
 
-  const chainsRender = useMemo(() => {
-    return chains.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-        subLabel: item.name,
-      };
-    });
-  }, [chains]);
+  // const chainsRender = useMemo(() => {
+  //   return chains.map((item) => {
+  //     return {
+  //       label: item.name,
+  //       value: item.id,
+  //       subLabel: item.name,
+  //     };
+  //   });
+  // }, [chains]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -164,15 +171,17 @@ export default function CreateProviderPage({
     }
   };
 
+  console.log(categoriesRender, "------------");
+
   return (
     <ProtectedPage>
       <Flex
         flex={1}
         flexDir="column"
         gap="30px"
-        px={{ base: "20px", lg: "unset" }}
+        // px={{ base: "20px", lg: "unset" }}
         mx="auto"
-        maxW="1260px"
+        maxW="1250px"
         w="full"
       >
         <Flex
@@ -206,7 +215,8 @@ export default function CreateProviderPage({
             </Text>
           )}
         </Flex>
-        <Flex w="80%" mx="auto">
+
+        <Flex w={{ base: "100%", lg: "80%" }} mx="auto">
           <Link href="/adaptor/me">
             <Button
               leftIcon={<FaArrowLeft />}
@@ -222,31 +232,33 @@ export default function CreateProviderPage({
             </Button>
           </Link>
         </Flex>
+
         <form onSubmit={onSubmit}>
           <Flex
-            w="80%"
+            w={{ base: "100%", lg: "80%" }}
             flexDir="column"
-            gap="20px"
-            bg="gray.800"
+            // gap="20px"
+            mb={"40px"}
             rounded="xl"
             border="1px solid"
             borderColor="#2d2f34"
             backgroundColor={"#111419"}
             boxShadow="lg"
-            py="8px"
+            py="6px"
             px="20px"
             borderRadius="10px"
             mx="auto"
           >
             <Flex
-              gap="20px"
+              gap={{ base: "10px", lg: "20px" }}
               alignItems="center"
+              flexWrap={"wrap"}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="14px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Provider
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Provider:
                 </Text>
               </Flex>
 
@@ -263,40 +275,21 @@ export default function CreateProviderPage({
               </Flex>
             </Flex>
 
-            <Flex
-              gap="20px"
+            {/* <Flex
+               gap={{ base: "10px", lg: "20px" }}
               alignItems="center"
+              flexWrap={"wrap"}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="17px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Chain Type
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Chain&nbsp;Type:
                 </Text>
               </Flex>
 
               <Flex gap="20px" justifyContent="flex-end">
-                {/* {chainsRender.map((item, index) => (
-                 <CheckBoxCustom
-                   item={item}
-                   isChecked={adaptor.chainId === item.value}
-                   onSelected={(value) => {
-                     setAdaptor({ ...adaptor, chainId: Number(value) });
-                   }}
-                   key={index}
-                 />
-               ))} */}
-
-                {/* <select
-                 onChange={(e) => {
-                  
-                   setAdaptor({ ...adaptor, chainType: e.target.value });
-                 }}
-                 name="chainType"
-               >
-                 <option value="EVM">EVM</option>
-                 <option value="NON_EVM">NON_EVM</option>
-               </select> */}
+               
                 <ChainType
                   isShowValue
                   selectedChainType={adaptor.chainType}
@@ -305,20 +298,21 @@ export default function CreateProviderPage({
                   }}
                 />
               </Flex>
-            </Flex>
-            <Flex
-              gap="20px"
-              alignItems="center"
+            </Flex> */}
+            {/* <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems= {{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", lg: "row" }}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="17px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Supported Chain
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Supported Chain:
                 </Text>
               </Flex>
 
-              <Flex gap="20px" justifyContent="flex-end">
+              <Flex gap={{base:"10px", lg:"20px"}}  flexWrap={"wrap"}>
                 {chainsRender.map((item, index) => (
                   <Text
                     key={index}
@@ -338,26 +332,44 @@ export default function CreateProviderPage({
                   </Text>
                 ))}
               </Flex>
-            </Flex>
+            </Flex> */}
+
             <Flex
-              gap="20px"
-              alignItems="center"
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", lg: "row" }}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="26px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Category
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Network:
                 </Text>
               </Flex>
 
-              <Flex gap="20px" justifyContent="flex-end">
-                {categoriesRender.map((item, index) => (
+              <Flex gap="24px" flexWrap={"wrap"}>
+                {[
+                  {
+                    label: "Rivalz",
+                    subLabel: "Rivalz",
+                    value: 12,
+                  },
+                  {
+                    label: "Arbitrum",
+                    subLabel: "Arbitrum",
+                    value: 14,
+                  },
+                  {
+                    label: "Base",
+                    subLabel: "Base",
+                    value: 51,
+                  },
+                ].map((item, index) => (
                   <CheckBoxCustom
                     item={item}
-                    isChecked={adaptor.categoryId === item.value}
+                    isChecked={network.categoryId === item.value}
                     onSelected={(value) => {
-                      setAdaptor({ ...adaptor, categoryId: Number(value) });
+                      setnetwork({ ...network, categoryId: Number(value) });
                     }}
                     key={index}
                   />
@@ -366,18 +378,103 @@ export default function CreateProviderPage({
             </Flex>
 
             <Flex
+              py="20px"
+              flexDirection={"column"}
               gap="20px"
-              alignItems="center"
               borderBottom="1px solid #282828"
-              py="10px"
+            >
+              <Flex
+                gap={{ base: "10px", lg: "20px" }}
+                alignItems={{ base: "start", lg: "center" }}
+                flexDirection={{ base: "column", lg: "row" }}
+                // borderBottom="1px solid #282828"
+              >
+                <Flex flex={1}>
+                  <Text color="white" fontSize="18px" fontWeight="semibold">
+                    Category:
+                  </Text>
+                </Flex>
+
+                <Flex gap="20px" flexWrap={"wrap"}>
+                  {categoriesRender.map((item, index) => (
+                    <CheckBoxCustom
+                      item={item}
+                      isChecked={adaptor.categoryId === item.value}
+                      onSelected={(value) => {
+                        setAdaptor({ ...adaptor, categoryId: Number(value) });
+                      }}
+                      key={index}
+                    />
+                  ))}
+                </Flex>
+              </Flex>
+
+              <Flex
+                gap={{ base: "10px", lg: "20px" }}
+                alignItems={{ base: "start", lg: "center" }}
+                flexDirection={{ base: "column", sm: "row" }}
+              >
+                <Flex flex={1}>
+                  <Text color="white" fontSize="16px" fontWeight="400">
+                    Add Your Own Category:
+                  </Text>
+                </Flex>
+
+                <Flex
+                  gap="20px"
+                  justifyContent="flex-end"
+                  w={{ base: "100%", sm: "fit-content" }}
+                  flex={1.7}
+                >
+                  <Input
+                    name="value"
+                    placeholder="Category Name"
+                    border="1px solid #272637"
+                    borderRadius={"10px"}
+                    bgColor="#13161B"
+                    color="#94979C"
+                    py={"22px"}
+                    _placeholder={{ color: "#94979C", fontSize: "16px" }}
+                    value={adaptor.name}
+                    onChange={(e) =>
+                      setAdaptor({ ...adaptor, name: e.target.value })
+                    }
+                  />
+                </Flex>
+              </Flex>
+              <Flex justifyContent={"space-between"}>
+                <div>&nbsp;</div>
+                <Button
+                  // leftIcon={<FaPlus />}
+                  bg="rgb(15,18,22)"
+                  border={"1px solid #2D7D44"}
+                  color={"#3BB25D"}
+                  borderRadius={"10px"}
+                  py={"21px"}
+                  _hover={{
+                    bg: "#69FF93",
+                    color: "black",
+                  }}
+                >
+                  +&nbsp;Add Category
+                </Button>
+              </Flex>
+            </Flex>
+
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", lg: "row" }}
+              borderBottom="1px solid #282828"
+              py="26px"
             >
               <Flex>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Output Types
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Output&nbsp;Types:
                 </Text>
               </Flex>
               <Spacer />
-              <Flex gap="20px" justifyContent="flex-end">
+              <Flex gap="20px" flexWrap={"wrap"}>
                 {outputDataRender.map((item, index) => (
                   <CheckBoxCustom
                     item={item}
@@ -392,22 +489,23 @@ export default function CreateProviderPage({
             </Flex>
 
             <Flex
-              gap="20px"
-              alignItems="center"
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", sm: "row" }}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="17px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Adaptor Name
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Adaptor Name:
                 </Text>
               </Flex>
 
               <Flex
                 gap="20px"
                 justifyContent="flex-end"
-                w="fit-content"
-                flex={1.5}
+                w={{ base: "100%", sm: "fit-content" }}
+                flex={1.7}
               >
                 <Input
                   name="value"
@@ -416,6 +514,7 @@ export default function CreateProviderPage({
                   borderRadius={"10px"}
                   bgColor="#13161B"
                   color="#94979C"
+                  py={"22px"}
                   _placeholder={{ color: "#94979C", fontSize: "16px" }}
                   value={adaptor.name}
                   onChange={(e) =>
@@ -426,30 +525,32 @@ export default function CreateProviderPage({
             </Flex>
 
             <Flex
-              gap="20px"
-              alignItems="center"
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", sm: "row" }}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="17px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Description
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Description:
                 </Text>
               </Flex>
 
               <Flex
                 gap="20px"
                 justifyContent="flex-end"
-                w="fit-content"
-                flex={1.5}
+                w={{ base: "100%", sm: "fit-content" }}
+                flex={1.7}
               >
                 <Textarea
                   name="value"
                   placeholder="Description"
-                  border="1px solid #949191"
-                  bgColor="#282828"
-                  color="gray.400"
-                  _placeholder={{ color: "gray.400", fontSize: "12px" }}
+                  border="1px solid #272637"
+                  borderRadius={"10px"}
+                  bgColor="#13161B"
+                  color="#94979C"
+                  _placeholder={{ color: "#94979C", fontSize: "12px" }}
                   value={adaptor.description}
                   onChange={(e) =>
                     setAdaptor({ ...adaptor, description: e.target.value })
@@ -459,30 +560,33 @@ export default function CreateProviderPage({
             </Flex>
 
             <Flex
-              gap="20px"
-              alignItems="center"
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", sm: "row" }}
               borderBottom="1px solid #282828"
-              py="10px"
+              py="17px"
             >
               <Flex flex={1}>
-                <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                  Prompt
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Prompt:
                 </Text>
               </Flex>
 
               <Flex
                 gap="20px"
                 justifyContent="flex-end"
-                w="fit-content"
-                flex={1.5}
+                w={{ base: "100%", sm: "fit-content" }}
+                flex={1.7}
               >
                 <Input
                   name="value"
                   placeholder="Prompt"
-                  border="1px solid #949191"
-                  bgColor="#282828"
-                  color="gray.400"
-                  _placeholder={{ color: "gray.400", fontSize: "12px" }}
+                  border="1px solid #272637"
+                  borderRadius={"10px"}
+                  bgColor="#13161B"
+                  color="#94979C"
+                  py={"22px"}
+                  _placeholder={{ color: "#94979C", fontSize: "12px" }}
                   value={adaptor.aiPrompt}
                   onChange={(e) =>
                     setAdaptor({ ...adaptor, aiPrompt: e.target.value })
