@@ -38,10 +38,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
                   display: "inline-block",
                   width: "30px",
                   userSelect: "none",
-                  opacity: "0.5",
                   paddingRight: "12px",
                   textAlign: "right",
-                  color: "#666",
+                  color: "#49B267",
                 }}
               >
                 {i + 1}
