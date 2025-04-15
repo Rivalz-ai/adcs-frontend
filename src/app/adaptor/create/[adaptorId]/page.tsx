@@ -3,7 +3,7 @@ import useAdaptor from "@/libs/hooks/apis/adaptors/useAdaptor";
 import useCreateAdapter from "@/libs/hooks/apis/adaptors/useCreateAdapter";
 import useDeleteAdapter from "@/libs/hooks/apis/adaptors/useDeleteAdapter";
 import useUpdateAdapter from "@/libs/hooks/apis/adaptors/useUpdateAdapter";
-// import useAllChain from "@/libs/hooks/apis/useAllChain";
+import useAllChain from "@/libs/hooks/apis/useAllChain";
 import useGetCategories from "@/libs/hooks/apis/useGetCategories";
 import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
 import ProtectedPage from "@/libs/utls/ProtectedPage";
@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { FaArrowLeft, FaCheckDouble, FaSave, FaTrash } from "react-icons/fa";
 import ExcuteAiInferenceProvider from "@/views/ExcuteAiInferenceProvider";
-// import ChainType from "@/views/components/ChainType";
+import ChainType from "@/views/components/ChainType";
 // import { Plus } from "lucide-react";
 
 export default function CreateProviderPage({
@@ -57,20 +57,27 @@ export default function CreateProviderPage({
     chainId: 1,
     aiPrompt: "decision should buy or sell BTC at this time",
   });
-  const [network, setnetwork] = useState<AdaptorCreateModel>({
-    id: 0,
-    name: "",
-    chainType: "",
-    description: "",
-    variables: "",
-    categoryId: 0,
-    outputTypeId: 0,
-    dataProviderId: 0,
-    chainId: 1,
-    aiPrompt: "decision should buy or sell BTC at this time",
-  });
+  // const [network, setnetwork] = useState<AdaptorCreateModel>({
+  //   id: 0,
+  //   name: "",
+  //   chainType: "",
+  //   description: "",
+  //   variables: "",
+  //   categoryId: 0,
+  //   outputTypeId: 0,
+  //   dataProviderId: 0,
+  //   chainId: 1,
+  //   aiPrompt: "decision should buy or sell BTC at this time",
+  // });
 
-  console.log(adaptor);
+  const [categoryInput, setCategoryInput] = useState("");
+
+  // Function to handle the input change
+  const handleCategoryInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCategoryInput(e.target.value);
+  };
 
   useEffect(() => {
     if (item) {
@@ -80,7 +87,7 @@ export default function CreateProviderPage({
 
   const { outputData } = useGetOutPutTypes();
   const { categories } = useGetCategories();
-  // const { chains } = useAllChain();
+  const { chains } = useAllChain();
 
   const outputDataRender = useMemo(() => {
     return outputData.map((item) => {
@@ -102,15 +109,15 @@ export default function CreateProviderPage({
     });
   }, [categories]);
 
-  // const chainsRender = useMemo(() => {
-  //   return chains.map((item) => {
-  //     return {
-  //       label: item.name,
-  //       value: item.id,
-  //       subLabel: item.name,
-  //     };
-  //   });
-  // }, [chains]);
+  const chainsRender = useMemo(() => {
+    return chains.map((item) => {
+      return {
+        label: item.name,
+        value: item.id,
+        subLabel: item.name,
+      };
+    });
+  }, [chains]);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -171,7 +178,45 @@ export default function CreateProviderPage({
     }
   };
 
-  console.log(categoriesRender, "------------");
+  const handleAddCategory = () => {
+    // Don't do anything if the input is empty
+    if (!categoryInput.trim()) return;
+
+    // Check if the category already exists
+    const existingCategory = categoriesRender.find(
+      (cat) => cat.label.toLowerCase() === categoryInput.toLowerCase()
+    );
+
+    if (existingCategory) {
+      // If it exists, select it
+      setAdaptor((prev) => ({
+        ...prev,
+        categoryId: existingCategory.value,
+      }));
+    } else {
+      // If it doesn't exist, create a new one
+      // Find the maximum ID in the categories array
+      const maxId = Math.max(...categories.map((cat) => cat.id), 0);
+
+      // Create a new category with id = maxId + 1 and add to categories array
+      const newCategory = {
+        id: maxId + 1,
+        label: categoryInput,
+        value: maxId + 1,
+        subLabel: categoryInput,
+      };
+
+      categoriesRender.push(newCategory);
+      // Select the new category
+      setAdaptor((prev) => ({
+        ...prev,
+        categoryId: newCategory.id,
+      }));
+    }
+
+    // Clear the input
+    setCategoryInput("");
+  };
 
   return (
     <ProtectedPage>
@@ -275,8 +320,8 @@ export default function CreateProviderPage({
               </Flex>
             </Flex>
 
-            {/* <Flex
-               gap={{ base: "10px", lg: "20px" }}
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
               alignItems="center"
               flexWrap={"wrap"}
               borderBottom="1px solid #282828"
@@ -289,7 +334,6 @@ export default function CreateProviderPage({
               </Flex>
 
               <Flex gap="20px" justifyContent="flex-end">
-               
                 <ChainType
                   isShowValue
                   selectedChainType={adaptor.chainType}
@@ -298,13 +342,13 @@ export default function CreateProviderPage({
                   }}
                 />
               </Flex>
-            </Flex> */}
-            {/* <Flex
+            </Flex>
+            <Flex
               gap={{ base: "10px", lg: "20px" }}
-              alignItems= {{ base: "start", lg: "center" }}
+              alignItems={{ base: "start", lg: "center" }}
               flexDirection={{ base: "column", lg: "row" }}
               borderBottom="1px solid #282828"
-              py="17px"
+              py="26px"
             >
               <Flex flex={1}>
                 <Text color="white" fontSize="18px" fontWeight="semibold">
@@ -312,7 +356,7 @@ export default function CreateProviderPage({
                 </Text>
               </Flex>
 
-              <Flex gap={{base:"10px", lg:"20px"}}  flexWrap={"wrap"}>
+              <Flex gap={{ base: "10px", lg: "20px" }} flexWrap={"wrap"}>
                 {chainsRender.map((item, index) => (
                   <Text
                     key={index}
@@ -330,49 +374,6 @@ export default function CreateProviderPage({
                   >
                     {item.label}
                   </Text>
-                ))}
-              </Flex>
-            </Flex> */}
-
-            <Flex
-              gap={{ base: "10px", lg: "20px" }}
-              alignItems={{ base: "start", lg: "center" }}
-              flexDirection={{ base: "column", lg: "row" }}
-              borderBottom="1px solid #282828"
-              py="26px"
-            >
-              <Flex flex={1}>
-                <Text color="white" fontSize="18px" fontWeight="semibold">
-                  Network:
-                </Text>
-              </Flex>
-
-              <Flex gap="24px" flexWrap={"wrap"}>
-                {[
-                  {
-                    label: "Rivalz",
-                    subLabel: "Rivalz",
-                    value: 12,
-                  },
-                  {
-                    label: "Arbitrum",
-                    subLabel: "Arbitrum",
-                    value: 14,
-                  },
-                  {
-                    label: "Base",
-                    subLabel: "Base",
-                    value: 51,
-                  },
-                ].map((item, index) => (
-                  <CheckBoxCustom
-                    item={item}
-                    isChecked={network.categoryId === item.value}
-                    onSelected={(value) => {
-                      setnetwork({ ...network, categoryId: Number(value) });
-                    }}
-                    key={index}
-                  />
                 ))}
               </Flex>
             </Flex>
@@ -401,7 +402,13 @@ export default function CreateProviderPage({
                       item={item}
                       isChecked={adaptor.categoryId === item.value}
                       onSelected={(value) => {
-                        setAdaptor({ ...adaptor, categoryId: Number(value) });
+                        setAdaptor((prev: AdaptorCreateModel) => ({
+                          ...prev,
+                          categoryId:
+                            prev.categoryId === Number(value)
+                              ? 0
+                              : Number(value),
+                        }));
                       }}
                       key={index}
                     />
@@ -435,10 +442,9 @@ export default function CreateProviderPage({
                     color="#94979C"
                     py={"22px"}
                     _placeholder={{ color: "#94979C", fontSize: "16px" }}
-                    value={adaptor.name}
-                    onChange={(e) =>
-                      setAdaptor({ ...adaptor, name: e.target.value })
-                    }
+                    value={categoryInput}
+                    onChange={handleCategoryInputChange}
+                    isDisabled={!!adaptor.categoryId}
                   />
                 </Flex>
               </Flex>
@@ -455,6 +461,8 @@ export default function CreateProviderPage({
                     bg: "#69FF93",
                     color: "black",
                   }}
+                  isDisabled={!!adaptor.categoryId}
+                  onClick={handleAddCategory}
                 >
                   +&nbsp;Add Category
                 </Button>
