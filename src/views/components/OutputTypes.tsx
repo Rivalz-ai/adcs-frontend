@@ -7,11 +7,13 @@ import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
 interface OutputTypesProps {
   selectedOutputType: Array<string | number>;
   setSelectedOutputType: (value: string | number) => void;
+  label?: string;
 }
 
 export default function OutputTypes({
   selectedOutputType,
   setSelectedOutputType,
+  label
 }: OutputTypesProps) {
   const { outputData } = useGetOutPutTypes();
 
@@ -27,7 +29,7 @@ export default function OutputTypes({
 
   return (
     <PopoverComp
-      lable="Output Types"
+      lable={`${label || "Output Types"} `}
       data={outputDataRender}
       values={selectedOutputType}
       onSelected={(value) => {
