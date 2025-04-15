@@ -11,519 +11,643 @@ import { AdaptorCreateModel } from "@/types/adapter-type";
 import CheckBoxCustom from "@/views/components/CheckBox";
 import ProvidersCom from "@/views/components/ProvidersCom";
 import {
- Button,
- Flex,
- Input,
- Spacer,
- Text,
- Textarea,
- useToast,
+  Button,
+  Flex,
+  Input,
+  Spacer,
+  Text,
+  Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { FaArrowLeft, FaPlus, FaSave, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaCheckDouble, FaSave, FaTrash } from "react-icons/fa";
 import ExcuteAiInferenceProvider from "@/views/ExcuteAiInferenceProvider";
 import ChainType from "@/views/components/ChainType";
-
+// import { Plus } from "lucide-react";
 
 export default function CreateProviderPage({
- params,
+  params,
 }: {
- params: { adaptorId: string };
+  params: { adaptorId: string };
 }) {
- const isEdit = params.adaptorId !== "new-adapter";
- const router = useRouter();
- const toast = useToast();
+  const isEdit = params.adaptorId !== "new-adapter";
+  const router = useRouter();
+  const toast = useToast();
 
+  const { data: item } = useAdaptor(isEdit ? params.adaptorId : undefined);
 
- const { data: item } = useAdaptor(isEdit ? params.adaptorId : undefined);
+  const { createAdaptor, isLoading: isLoadingCreateAdaptor } =
+    useCreateAdapter();
+  const { updateAdaptor, isLoading: isLoadingUpdateAdaptor } =
+    useUpdateAdapter();
+  const { deleteAdaptor, isLoading: isLoadingDeleteAdaptor } =
+    useDeleteAdapter();
 
+  const [adaptor, setAdaptor] = useState<AdaptorCreateModel>({
+    id: 0,
+    name: "",
+    chainType: "",
+    description: "",
+    variables: "",
+    categoryId: 0,
+    outputTypeId: 0,
+    dataProviderId: 0,
+    chainId: 1,
+    aiPrompt: "decision should buy or sell BTC at this time",
+  });
+  // const [network, setnetwork] = useState<AdaptorCreateModel>({
+  //   id: 0,
+  //   name: "",
+  //   chainType: "",
+  //   description: "",
+  //   variables: "",
+  //   categoryId: 0,
+  //   outputTypeId: 0,
+  //   dataProviderId: 0,
+  //   chainId: 1,
+  //   aiPrompt: "decision should buy or sell BTC at this time",
+  // });
 
- const { createAdaptor, isLoading: isLoadingCreateAdaptor } =
-   useCreateAdapter();
- const { updateAdaptor, isLoading: isLoadingUpdateAdaptor } =
-   useUpdateAdapter();
- const { deleteAdaptor, isLoading: isLoadingDeleteAdaptor } =
-   useDeleteAdapter();
+  const [categoryInput, setCategoryInput] = useState("");
 
+  // Function to handle the input change
+  const handleCategoryInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCategoryInput(e.target.value);
+  };
 
- const [adaptor, setAdaptor] = useState<AdaptorCreateModel>({
-   id: 0,
-   name: "",
-   chainType: "",
-   description: "",
-   variables: "",
-   categoryId: 0,
-   outputTypeId: 0,
-   dataProviderId: 0,
-   chainId: 1,
-   aiPrompt: "decision should buy or sell BTC at this time",
- });
+  useEffect(() => {
+    if (item) {
+      setAdaptor(item);
+    }
+  }, [item]);
 
+  const { outputData } = useGetOutPutTypes();
+  const { categories } = useGetCategories();
+  const { chains } = useAllChain();
 
- console.log(adaptor);
+  const outputDataRender = useMemo(() => {
+    return outputData.map((item) => {
+      return {
+        label: item.name,
+        value: item.id,
+        subLabel: item.name,
+      };
+    });
+  }, [outputData]);
 
+  const categoriesRender = useMemo(() => {
+    return categories.map((item) => {
+      return {
+        label: item.name,
+        value: item.id,
+        subLabel: item.name,
+      };
+    });
+  }, [categories]);
 
- useEffect(() => {
-   if (item) {
-     setAdaptor(item);
-   }
- }, [item]);
+  const chainsRender = useMemo(() => {
+    return chains.map((item) => {
+      return {
+        label: item.name,
+        value: item.id,
+        subLabel: item.name,
+      };
+    });
+  }, [chains]);
 
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
- const { outputData } = useGetOutPutTypes();
- const { categories } = useGetCategories();
- const { chains } = useAllChain();
+    if (
+      !adaptor.name ||
+      !adaptor.description ||
+      !adaptor.aiPrompt ||
+      !adaptor.categoryId ||
+      !adaptor.outputTypeId ||
+      !adaptor.dataProviderId ||
+      !adaptor.chainId
+    ) {
+      toast({
+        title: "Error",
+        description: "Please fill all the fields",
+        status: "warning",
+      });
+      return;
+    }
+    try {
+      if (isEdit) {
+        await updateAdaptor(adaptor);
+      } else {
+        await createAdaptor(adaptor);
+      }
+      toast({
+        title: "Success",
+        description: "Adaptor created successfully",
+        status: "success",
+      });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      router.push("/adaptor/me");
+    } catch (error: unknown) {
+      toast({
+        title: "Error",
+        description: (error as string) || "Something went wrong",
+        status: "error",
+      });
+    }
+  };
 
+  const onDeleteAdaptor = async () => {
+    try {
+      await deleteAdaptor(adaptor.id);
+      toast({
+        title: "Success",
+        description: "Adaptor deleted successfully",
+        status: "success",
+      });
+      router.push("/adaptor/me");
+    } catch {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        status: "error",
+      });
+    }
+  };
 
- const outputDataRender = useMemo(() => {
-   return outputData.map((item) => {
-     return {
-       label: item.name,
-       value: item.id,
-       subLabel: item.name,
-     };
-   });
- }, [outputData]);
+  const handleAddCategory = () => {
+    // Don't do anything if the input is empty
+    if (!categoryInput.trim()) return;
 
+    // Check if the category already exists
+    const existingCategory = categoriesRender.find(
+      (cat) => cat.label.toLowerCase() === categoryInput.toLowerCase()
+    );
 
- const categoriesRender = useMemo(() => {
-   return categories.map((item) => {
-     return {
-       label: item.name,
-       value: item.id,
-       subLabel: item.name,
-     };
-   });
- }, [categories]);
+    if (existingCategory) {
+      // If it exists, select it
+      setAdaptor((prev) => ({
+        ...prev,
+        categoryId: existingCategory.value,
+      }));
+    } else {
+      // If it doesn't exist, create a new one
+      // Find the maximum ID in the categories array
+      const maxId = Math.max(...categories.map((cat) => cat.id), 0);
 
+      // Create a new category with id = maxId + 1 and add to categories array
+      const newCategory = {
+        id: maxId + 1,
+        label: categoryInput,
+        value: maxId + 1,
+        subLabel: categoryInput,
+      };
 
- const chainsRender = useMemo(() => {
-   return chains.map((item) => {
-     return {
-       label: item.name,
-       value: item.id,
-       subLabel: item.name,
-     };
-   });
- }, [chains]);
+      categoriesRender.push(newCategory);
+      // Select the new category
+      setAdaptor((prev) => ({
+        ...prev,
+        categoryId: newCategory.id,
+      }));
+    }
 
+    // Clear the input
+    setCategoryInput("");
+  };
 
- const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-   e.preventDefault();
+  return (
+    <ProtectedPage>
+      <Flex
+        flex={1}
+        flexDir="column"
+        gap="30px"
+        // px={{ base: "20px", lg: "unset" }}
+        mx="auto"
+        maxW="1250px"
+        w="full"
+      >
+        <Flex
+          w="full"
+          flexDir="column"
+          gap="8px"
+          justifyContent="center"
+          alignItems="center"
+          mb="32px"
+          pt={{ base: "20px", lg: "50px" }}
+        >
+          <Text
+            color="white"
+            as="h1"
+            fontSize={{ base: "20px", lg: "48px" }}
+            fontWeight="bold"
+          >
+            {isEdit ? "Adaptor Detail" : "Create Adaptor"}
+          </Text>
+          {isEdit ? (
+            ""
+          ) : (
+            <Text
+              color="#94979C"
+              fontSize="xl"
+              maxW="59rem"
+              lineHeight="tight"
+              textAlign="center"
+            >
+              Description of the Adapter, general information.
+            </Text>
+          )}
+        </Flex>
 
+        <Flex w={{ base: "100%", lg: "80%" }} mx="auto">
+          <Link href="/adaptor/me">
+            <Button
+              leftIcon={<FaArrowLeft />}
+              variant="link"
+              color="#94979C"
+              border={"1px solid #94979C"}
+              px="20px"
+              py="16px"
+              borderRadius={"10px"}
+              _hover={{ bg: "white", color: "black" }}
+            >
+              Adaptor List
+            </Button>
+          </Link>
+        </Flex>
 
-   if (
-     !adaptor.name ||
-     !adaptor.description ||
-     !adaptor.aiPrompt ||
-     !adaptor.categoryId ||
-     !adaptor.outputTypeId ||
-     !adaptor.dataProviderId ||
-     !adaptor.chainId
-   ) {
-     toast({
-       title: "Error",
-       description: "Please fill all the fields",
-       status: "warning",
-     });
-     return;
-   }
-   try {
-     if (isEdit) {
-       await updateAdaptor(adaptor);
-     } else {
-       await createAdaptor(adaptor);
-     }
-     toast({
-       title: "Success",
-       description: "Adaptor created successfully",
-       status: "success",
-     });
-     await new Promise((resolve) => setTimeout(resolve, 1000));
-     router.push("/adaptor/me");
-   } catch (error: unknown) {
-     toast({
-       title: "Error",
-       description: (error as string) || "Something went wrong",
-       status: "error",
-     });
-   }
- };
+        <form onSubmit={onSubmit}>
+          <Flex
+            w={{ base: "100%", lg: "80%" }}
+            flexDir="column"
+            // gap="20px"
+            mb={"40px"}
+            rounded="xl"
+            border="1px solid"
+            borderColor="#2d2f34"
+            backgroundColor={"#111419"}
+            boxShadow="lg"
+            py="6px"
+            px="20px"
+            borderRadius="10px"
+            mx="auto"
+          >
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems="center"
+              flexWrap={"wrap"}
+              borderBottom="1px solid #282828"
+              py="14px"
+            >
+              <Flex flex={1}>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Provider:
+                </Text>
+              </Flex>
 
+              <Flex gap="20px" justifyContent="flex-end" w="fit-content">
+                <ProvidersCom
+                  isShowValue
+                  selectedProviders={
+                    adaptor.dataProviderId ? [adaptor.dataProviderId] : []
+                  }
+                  setSelectedProviders={(value) => {
+                    setAdaptor({ ...adaptor, dataProviderId: Number(value) });
+                  }}
+                />
+              </Flex>
+            </Flex>
 
- const onDeleteAdaptor = async () => {
-   try {
-     await deleteAdaptor(adaptor.id);
-     toast({
-       title: "Success",
-       description: "Adaptor deleted successfully",
-       status: "success",
-     });
-     router.push("/adaptor/me");
-   } catch {
-     toast({
-       title: "Error",
-       description: "Something went wrong",
-       status: "error",
-     });
-   }
- };
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems="center"
+              flexWrap={"wrap"}
+              borderBottom="1px solid #282828"
+              py="17px"
+            >
+              <Flex flex={1}>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Chain&nbsp;Type:
+                </Text>
+              </Flex>
 
+              <Flex gap="20px" justifyContent="flex-end">
+                <ChainType
+                  isShowValue
+                  selectedChainType={adaptor.chainType}
+                  setselectedchaintype={(value) => {
+                    setAdaptor({ ...adaptor, chainType: value });
+                  }}
+                />
+              </Flex>
+            </Flex>
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", lg: "row" }}
+              borderBottom="1px solid #282828"
+              py="26px"
+            >
+              <Flex flex={1}>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Supported Chain:
+                </Text>
+              </Flex>
 
- return (
-   <ProtectedPage>
-     <Flex
-       flex={1}
-       flexDir="column"
-       gap="30px"
-       px={{ base: "20px", lg: "unset" }}
-     >
-       <Flex
-         w="full"
-         flexDir="column"
-         gap="20px"
-         justifyContent="center"
-         alignItems="center"
-         mb="40px"
-         pt={{ base: "20px", lg: "50px" }}
-       >
-         <Text
-           color="white"
-           as="h1"
-           fontSize={{ base: "20px", lg: "48px" }}
-           fontWeight="bold"
-         >
-           {isEdit ? "Adaptor Detail" : "Create Adaptor"}
-         </Text>
-       </Flex>
-       <Flex w="80%" mx="auto">
-         <Link href="/adaptor/me">
-           <Button leftIcon={<FaArrowLeft />} variant="link" color="gray.400">
-             Adaptor List
-           </Button>
-         </Link>
-       </Flex>
-       <form onSubmit={onSubmit}>
-         <Flex
-           w="80%"
-           flexDir="column"
-           gap="20px"
-           bg="gray.800"
-           rounded="xl"
-           border="1px solid"
-           borderColor="rgba(255, 255, 255, 0.08)"
-           boxShadow="lg"
-           py="20px"
-           px="20px"
-           borderRadius="20px"
-           mx="auto"
-         >
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Provider
-               </Text>
-             </Flex>
+              <Flex gap={{ base: "10px", lg: "20px" }} flexWrap={"wrap"}>
+                {chainsRender.map((item, index) => (
+                  <Text
+                    key={index}
+                    fontSize="12px"
+                    p={1}
+                    bg="rgba(255,255,255, 0.08)"
+                    borderRadius="md"
+                    px="5px"
+                    fontWeight={500}
+                    textTransform="uppercase"
+                    color="rgba(255,255,255, 0.5)"
+                    onClick={() =>
+                      setAdaptor({ ...adaptor, chainId: Number(item.value) })
+                    }
+                  >
+                    {item.label}
+                  </Text>
+                ))}
+              </Flex>
+            </Flex>
 
+            <Flex
+              py="20px"
+              flexDirection={"column"}
+              gap="20px"
+              borderBottom="1px solid #282828"
+            >
+              <Flex
+                gap={{ base: "10px", lg: "20px" }}
+                alignItems={{ base: "start", lg: "center" }}
+                flexDirection={{ base: "column", lg: "row" }}
+                // borderBottom="1px solid #282828"
+              >
+                <Flex flex={1}>
+                  <Text color="white" fontSize="18px" fontWeight="semibold">
+                    Category:
+                  </Text>
+                </Flex>
 
-             <Flex gap="20px" justifyContent="flex-end" w="fit-content">
-               <ProvidersCom
-                 isShowValue
-                 selectedProviders={
-                   adaptor.dataProviderId ? [adaptor.dataProviderId] : []
-                 }
-                 setSelectedProviders={(value) => {
-                   setAdaptor({ ...adaptor, dataProviderId: Number(value) });
-                 }}
-               />
-             </Flex>
-           </Flex>
+                <Flex gap="20px" flexWrap={"wrap"}>
+                  {categoriesRender.map((item, index) => (
+                    <CheckBoxCustom
+                      item={item}
+                      isChecked={adaptor.categoryId === item.value}
+                      onSelected={(value) => {
+                        setAdaptor((prev: AdaptorCreateModel) => ({
+                          ...prev,
+                          categoryId:
+                            prev.categoryId === Number(value)
+                              ? 0
+                              : Number(value),
+                        }));
+                      }}
+                      key={index}
+                    />
+                  ))}
+                </Flex>
+              </Flex>
 
+              <Flex
+                gap={{ base: "10px", lg: "20px" }}
+                alignItems={{ base: "start", lg: "center" }}
+                flexDirection={{ base: "column", sm: "row" }}
+              >
+                <Flex flex={1}>
+                  <Text color="white" fontSize="16px" fontWeight="400">
+                    Add Your Own Category:
+                  </Text>
+                </Flex>
 
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Chain Type
-               </Text>
-             </Flex>
+                <Flex
+                  gap="20px"
+                  justifyContent="flex-end"
+                  w={{ base: "100%", sm: "fit-content" }}
+                  flex={1.7}
+                >
+                  <Input
+                    name="value"
+                    placeholder="Category Name"
+                    border="1px solid #272637"
+                    borderRadius={"10px"}
+                    bgColor="#13161B"
+                    color="#94979C"
+                    py={"22px"}
+                    _placeholder={{ color: "#94979C", fontSize: "16px" }}
+                    value={categoryInput}
+                    onChange={handleCategoryInputChange}
+                    isDisabled={!!adaptor.categoryId}
+                  />
+                </Flex>
+              </Flex>
+              <Flex justifyContent={"space-between"}>
+                <div>&nbsp;</div>
+                <Button
+                  // leftIcon={<FaPlus />}
+                  bg="rgb(15,18,22)"
+                  border={"1px solid #2D7D44"}
+                  color={"#3BB25D"}
+                  borderRadius={"10px"}
+                  py={"21px"}
+                  _hover={{
+                    bg: "#69FF93",
+                    color: "black",
+                  }}
+                  isDisabled={!!adaptor.categoryId}
+                  onClick={handleAddCategory}
+                >
+                  +&nbsp;Add Category
+                </Button>
+              </Flex>
+            </Flex>
 
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", lg: "row" }}
+              borderBottom="1px solid #282828"
+              py="26px"
+            >
+              <Flex>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Output&nbsp;Types:
+                </Text>
+              </Flex>
+              <Spacer />
+              <Flex gap="20px" flexWrap={"wrap"}>
+                {outputDataRender.map((item, index) => (
+                  <CheckBoxCustom
+                    item={item}
+                    isChecked={adaptor.outputTypeId === item.value}
+                    onSelected={(value) => {
+                      setAdaptor({ ...adaptor, outputTypeId: Number(value) });
+                    }}
+                    key={index}
+                  />
+                ))}
+              </Flex>
+            </Flex>
 
-             <Flex gap="20px" justifyContent="flex-end">
-               {/* {chainsRender.map((item, index) => (
-                 <CheckBoxCustom
-                   item={item}
-                   isChecked={adaptor.chainId === item.value}
-                   onSelected={(value) => {
-                     setAdaptor({ ...adaptor, chainId: Number(value) });
-                   }}
-                   key={index}
-                 />
-               ))} */}
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", sm: "row" }}
+              borderBottom="1px solid #282828"
+              py="17px"
+            >
+              <Flex flex={1}>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Adaptor Name:
+                </Text>
+              </Flex>
 
+              <Flex
+                gap="20px"
+                justifyContent="flex-end"
+                w={{ base: "100%", sm: "fit-content" }}
+                flex={1.7}
+              >
+                <Input
+                  name="value"
+                  placeholder="Adaptor Name"
+                  border="1px solid #272637"
+                  borderRadius={"10px"}
+                  bgColor="#13161B"
+                  color="#94979C"
+                  py={"22px"}
+                  _placeholder={{ color: "#94979C", fontSize: "16px" }}
+                  value={adaptor.name}
+                  onChange={(e) =>
+                    setAdaptor({ ...adaptor, name: e.target.value })
+                  }
+                />
+              </Flex>
+            </Flex>
 
-               {/* <select
-                 onChange={(e) => {
-                  
-                   setAdaptor({ ...adaptor, chainType: e.target.value });
-                 }}
-                 name="chainType"
-               >
-                 <option value="EVM">EVM</option>
-                 <option value="NON_EVM">NON_EVM</option>
-               </select> */}
-               <ChainType
-                 isShowValue
-                 selectedChainType={adaptor.chainType}
-                 setselectedchaintype={(value) => {
-                   setAdaptor({ ...adaptor, chainType: value });
-                 }}
-               />
-             </Flex>
-           </Flex>
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Supported Chain
-               </Text>
-             </Flex>
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", sm: "row" }}
+              borderBottom="1px solid #282828"
+              py="17px"
+            >
+              <Flex flex={1}>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Description:
+                </Text>
+              </Flex>
 
+              <Flex
+                gap="20px"
+                justifyContent="flex-end"
+                w={{ base: "100%", sm: "fit-content" }}
+                flex={1.7}
+              >
+                <Textarea
+                  name="value"
+                  placeholder="Description"
+                  border="1px solid #272637"
+                  borderRadius={"10px"}
+                  bgColor="#13161B"
+                  color="#94979C"
+                  _placeholder={{ color: "#94979C", fontSize: "12px" }}
+                  value={adaptor.description}
+                  onChange={(e) =>
+                    setAdaptor({ ...adaptor, description: e.target.value })
+                  }
+                />
+              </Flex>
+            </Flex>
 
-             <Flex gap="20px" justifyContent="flex-end">
-               {chainsRender.map((item, index) => (
-                 <Text
-                   key={index}
-                   fontSize="12px"
-                   p={1}
-                   bg="rgba(255,255,255, 0.08)"
-                   borderRadius="md"
-                   px="5px"
-                   fontWeight={500}
-                   textTransform="uppercase"
-                   color="rgba(255,255,255, 0.5)"
-                   onClick={() =>
-                     setAdaptor({ ...adaptor, chainId: Number(item.value) })
-                   }
-                 >
-                   {item.label}
-                 </Text>
-               ))}
-             </Flex>
-           </Flex>
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Category
-               </Text>
-             </Flex>
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "center" }}
+              flexDirection={{ base: "column", sm: "row" }}
+              borderBottom="1px solid #282828"
+              py="17px"
+            >
+              <Flex flex={1}>
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Prompt:
+                </Text>
+              </Flex>
 
+              <Flex
+                gap="20px"
+                justifyContent="flex-end"
+                w={{ base: "100%", sm: "fit-content" }}
+                flex={1.7}
+              >
+                <Input
+                  name="value"
+                  placeholder="Prompt"
+                  border="1px solid #272637"
+                  borderRadius={"10px"}
+                  bgColor="#13161B"
+                  color="#94979C"
+                  py={"22px"}
+                  _placeholder={{ color: "#94979C", fontSize: "12px" }}
+                  value={adaptor.aiPrompt}
+                  onChange={(e) =>
+                    setAdaptor({ ...adaptor, aiPrompt: e.target.value })
+                  }
+                />
+              </Flex>
+            </Flex>
 
-             <Flex gap="20px" justifyContent="flex-end">
-               {categoriesRender.map((item, index) => (
-                 <CheckBoxCustom
-                   item={item}
-                   isChecked={adaptor.categoryId === item.value}
-                   onSelected={(value) => {
-                     setAdaptor({ ...adaptor, categoryId: Number(value) });
-                   }}
-                   key={index}
-                 />
-               ))}
-             </Flex>
-           </Flex>
+            <Flex
+              gap="20px"
+              alignItems="center"
+              py="20px"
+              justifyContent="flex-end"
+            >
+              {isEdit && (
+                <Button
+                  bg="red.500"
+                  color="white"
+                  leftIcon={<FaTrash />}
+                  onClick={onDeleteAdaptor}
+                  isLoading={isLoadingDeleteAdaptor}
+                  isDisabled={isLoadingDeleteAdaptor}
+                >
+                  Delete
+                </Button>
+              )}
+              <Button
+                leftIcon={!isEdit ? <FaCheckDouble /> : <FaSave />}
+                bg="rgb(15,18,22)"
+                border={"1px solid #2D7D44"}
+                color={"#3BB25D"}
+                borderRadius={"10px"}
+                py={"21px"}
+                _hover={{
+                  bg: "#69FF93",
+                  color: "black",
+                }}
+                type="submit"
+                isLoading={isLoadingCreateAdaptor || isLoadingUpdateAdaptor}
+              >
+                {isEdit ? "Update Adaptor" : "Create Adaptor"}
+              </Button>
+            </Flex>
+          </Flex>
+        </form>
 
-
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Output Types
-               </Text>
-             </Flex>
-             <Spacer />
-             <Flex gap="20px" justifyContent="flex-end">
-               {outputDataRender.map((item, index) => (
-                 <CheckBoxCustom
-                   item={item}
-                   isChecked={adaptor.outputTypeId === item.value}
-                   onSelected={(value) => {
-                     setAdaptor({ ...adaptor, outputTypeId: Number(value) });
-                   }}
-                   key={index}
-                 />
-               ))}
-             </Flex>
-           </Flex>
-
-
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Adaptor Name
-               </Text>
-             </Flex>
-
-
-             <Flex
-               gap="20px"
-               justifyContent="flex-end"
-               w="fit-content"
-               flex={1.5}
-             >
-               <Input
-                 name="value"
-                 placeholder="Adaptor Name"
-                 border="1px solid #949191"
-                 bgColor="#282828"
-                 color="gray.400"
-                 _placeholder={{ color: "gray.400", fontSize: "12px" }}
-                 value={adaptor.name}
-                 onChange={(e) =>
-                   setAdaptor({ ...adaptor, name: e.target.value })
-                 }
-               />
-             </Flex>
-           </Flex>
-
-
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Description
-               </Text>
-             </Flex>
-
-
-             <Flex
-               gap="20px"
-               justifyContent="flex-end"
-               w="fit-content"
-               flex={1.5}
-             >
-               <Textarea
-                 name="value"
-                 placeholder="Description"
-                 border="1px solid #949191"
-                 bgColor="#282828"
-                 color="gray.400"
-                 _placeholder={{ color: "gray.400", fontSize: "12px" }}
-                 value={adaptor.description}
-                 onChange={(e) =>
-                   setAdaptor({ ...adaptor, description: e.target.value })
-                 }
-               />
-             </Flex>
-           </Flex>
-
-
-           <Flex
-             gap="20px"
-             alignItems="center"
-             borderBottom="1px solid #282828"
-             py="10px"
-           >
-             <Flex flex={1}>
-               <Text color="gray.400" fontSize="18px" fontWeight="semibold">
-                 Prompt
-               </Text>
-             </Flex>
-
-
-             <Flex
-               gap="20px"
-               justifyContent="flex-end"
-               w="fit-content"
-               flex={1.5}
-             >
-               <Input
-                 name="value"
-                 placeholder="Prompt"
-                 border="1px solid #949191"
-                 bgColor="#282828"
-                 color="gray.400"
-                 _placeholder={{ color: "gray.400", fontSize: "12px" }}
-                 value={adaptor.aiPrompt}
-                 onChange={(e) =>
-                   setAdaptor({ ...adaptor, aiPrompt: e.target.value })
-                 }
-               />
-             </Flex>
-           </Flex>
-
-
-           <Flex
-             gap="20px"
-             alignItems="center"
-             py="20px"
-             justifyContent="flex-end"
-           >
-             {isEdit && (
-               <Button
-                 bg="red.500"
-                 color="white"
-                 leftIcon={<FaTrash />}
-                 onClick={onDeleteAdaptor}
-                 isLoading={isLoadingDeleteAdaptor}
-                 isDisabled={isLoadingDeleteAdaptor}
-               >
-                 Delete
-               </Button>
-             )}
-             <Button
-               leftIcon={!isEdit ? <FaPlus /> : <FaSave />}
-               bg="rgba(255,255,255, 0.5)"
-               type="submit"
-               isLoading={isLoadingCreateAdaptor || isLoadingUpdateAdaptor}
-             >
-               {isEdit ? "Update Adaptor" : "Create Adaptor"}
-             </Button>
-           </Flex>
-         </Flex>
-       </form>
-
-
-       <ExcuteAiInferenceProvider
-         providerId={adaptor.dataProviderId}
-         content={adaptor.aiPrompt}
-         dataTypeId={adaptor.outputTypeId}
-         categoryId={adaptor.categoryId}
-       />
-     </Flex>
-   </ProtectedPage>
- );
+        <ExcuteAiInferenceProvider
+          providerId={adaptor.dataProviderId}
+          content={adaptor.aiPrompt}
+          dataTypeId={adaptor.outputTypeId}
+          categoryId={adaptor.categoryId}
+        />
+      </Flex>
+    </ProtectedPage>
+  );
 }
