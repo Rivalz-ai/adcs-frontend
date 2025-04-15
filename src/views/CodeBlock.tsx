@@ -9,7 +9,7 @@ interface CodeBlockProps {
 const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
   return (
     <Highlight
-      theme={themes.gruvboxMaterialDark}
+      theme={themes.vsDark}
       code={code}
       language={language}
     >
@@ -19,15 +19,63 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ code, language }) => {
             ...style,
             padding: "10px",
             borderRadius: "5px",
-            backgroundColor: "transparent",
+            backgroundColor: "black",
+            overflowX: "auto",
+            fontFamily: "monospace",
           }}
         >
           {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ line })}>
-              <span>{i + 1}</span>
-              {line.map((token, key) => (
-                <span key={key} {...getTokenProps({ token })} />
-              ))}
+            <div 
+              key={i} 
+              {...getLineProps({ line })}
+              style={{
+                display: "flex",
+                lineHeight: "1.5",
+              }}
+            >
+              <span 
+                style={{
+                  display: "inline-block",
+                  width: "30px",
+                  userSelect: "none",
+                  paddingRight: "12px",
+                  textAlign: "right",
+                  color: "#49B267",
+                }}
+              >
+                {i + 1}
+              </span>
+              <span style={{ flex: 1 }}>
+                {line.map((token, key) => {
+                  // Override specific token colors to match the image
+                  let customStyle = {};
+                  if (
+                    token.types.includes("keyword") || 
+                    token.types.includes("function") || 
+                    token.types.includes("constant") ||
+                    token.types.includes("builtin")
+                  ) {
+                    customStyle = { color: "#49B267" };
+                  } else if (token.types.includes("comment")) {
+                    customStyle = { color: "#49B267", fontStyle: "italic" };
+                  } else if (
+                    token.types.includes("string") || 
+                    token.types.includes("operator")
+                  ) {
+                    customStyle = { color: "#49B267" };
+                  } else {
+                    customStyle = { color: "#49B267" };
+                  }
+                  
+                  return (
+                    <span 
+                      key={key} 
+                      {...getTokenProps({ token })} 
+                      style={{ ...getTokenProps({ token }).style, ...customStyle }}
+                    />
+                  );
+                })}
+              </span>
             </div>
           ))}
         </pre>
