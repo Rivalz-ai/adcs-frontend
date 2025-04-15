@@ -25,11 +25,10 @@ import { CopyIcon } from "@chakra-ui/icons";
 import useAdaptorDetail from "@/libs/hooks/apis/useAdaptorDetail";
 import CodeBlock from "@/views/CodeBlock";
 import { useState } from "react";
-// import PlaygroundContainer from "./playground-container";
+import PlaygroundContainer from "./playground-container";
 import SearchBar from "@/views/SearchBar";
-import ReactJson from "react-json-view";
-import { FaGlobeAfrica, FaPlay } from "react-icons/fa";
-import { Github } from "lucide-react";
+import { FaGlobeAfrica } from "react-icons/fa";
+import { CheckIcon, Github } from "lucide-react";
 
 type TabType = "code" | "About" | "docs" | "Playground";
 
@@ -40,23 +39,28 @@ export default function AdaptorDetailPage({
 }) {
   const { data: detail } = useAdaptorDetail(params.id);
   const [tab, setTab] = useState<TabType>("code");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // resets after 2 seconds
+  };
 
   return (
     <>
-    {tab === "code" && (
-
-      <Flex
-        w="1500px"
-        h="1500px"
-        borderRadius="full"
-        bgColor="rgba(90, 254, 176, 0.10)"
-        zIndex={-1}
-        position="absolute"
-        top="-50%"
-        left="-50%"
-        filter="blur(200px)"
-      />
-    )}
+      {tab === "code" && (
+        <Flex
+          w="1500px"
+          h="1500px"
+          borderRadius="full"
+          bgColor="rgba(90, 254, 176, 0.10)"
+          zIndex={-1}
+          position="absolute"
+          top="-50%"
+          left="-50%"
+          filter="blur(200px)"
+        />
+      )}
 
       <Box minH="100vh" color="white">
         <SearchBar />
@@ -232,13 +236,14 @@ export default function AdaptorDetailPage({
                   bg: "#69FF93",
                   color: "black",
                 }}
-                leftIcon={<CopyIcon />}
+                leftIcon={copied ? <CheckIcon /> : <CopyIcon />}
                 onClick={() => {
                   navigator.clipboard.writeText(detail?.jobId || "");
+                  handleCopy();
                 }}
                 colorScheme="purple"
               >
-                Copy Job ID
+                {copied ? "Copied!" : "Copy Job ID"}
               </Button>
             </Tooltip>
           </Box>
@@ -445,20 +450,20 @@ export default function AdaptorDetailPage({
             overflowX={"auto"}
           >
             {tab === "code" && (
-              <Box 
-              position={"relative"}
-              >
-
-              <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
+              <Box position={"relative"}>
+                <CodeBlock
+                  code={detail?.exampleCode || ""}
+                  language="solidity"
+                />
               </Box>
             )}
             {tab === "Playground" && (
-              // <PlaygroundContainer
-              //   categoryId={detail?.categoryId || -1}
-              //   adaptor={detail}
-              // />
               <>
-                <Box
+                <PlaygroundContainer
+                  categoryId={detail?.categoryId || -1}
+                  adaptor={detail}
+                />
+                {/* <Box
                   w={"full"}
                   minH="30vh"
                   borderBottomRadius={"lg"}
@@ -487,28 +492,9 @@ export default function AdaptorDetailPage({
                       Example:
                     </Text>
                   </Flex>
-                </Box>
+                </Box> */}
 
-                <Button
-                  leftIcon={<FaPlay />}
-                  bg="rgb(15,18,22)"
-                  border={"1px solid #2D7D44"}
-                  color={"#3BB25D"}
-                  borderRadius={"10px"}
-                  _hover={{
-                    bg: "#69FF93",
-                    color: "black",
-                  }}
-                  w="fit-content"
-                  px={"16px"}
-                  py={"10px"}
-                  my={"4"}
-                  bgColor="transparent"
-                >
-                  Execute
-                </Button>
-
-                <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
+                {/* <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
                   <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
                     <ReactJson
                       theme={{
@@ -546,9 +532,9 @@ export default function AdaptorDetailPage({
                   color="#69FF93"
                 >
                   Results
-                </Text>
+                </Text> */}
 
-                <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
+                {/* <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
                   <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
                     <ReactJson
                       theme={{
@@ -592,7 +578,7 @@ export default function AdaptorDetailPage({
                   bgColor="transparent"
                 >
                   Copy Results
-                </Button>
+                </Button> */}
               </>
             )}
             {tab === "About" && (
@@ -707,13 +693,25 @@ export default function AdaptorDetailPage({
                       <Text fontSize="16px" color="#94979C">
                         CREATED:
                       </Text>
-                      <Text fontSize="16px">a year ago</Text>
+                      <Text fontSize="16px">
+                        {detail?.createdAt
+                          ? new Date(detail.createdAt).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : "N/A"}
+                      </Text>
                     </Box>
                     <Box>
                       <Text fontSize="16px" color="#94979C">
                         LAST UPDATED:
                       </Text>
-                      <Text fontSize="16px">7 month ago</Text>
+                      <Text fontSize="16px">
+                        {detail?.updatedAt
+                          ? new Date(detail.updatedAt).toLocaleDateString(
+                              "en-GB"
+                            )
+                          : "N/A"}
+                      </Text>
                     </Box>
                   </Flex>
 
