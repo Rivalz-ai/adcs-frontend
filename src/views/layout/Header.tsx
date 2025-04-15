@@ -15,8 +15,10 @@ import {
   DrawerOverlay,
   useDisclosure,
   IconButton,
+  MenuButton,
   HStack,
   Image,
+  ChakraProvider,
 } from "@chakra-ui/react";
 import { ChatIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
@@ -115,22 +117,42 @@ export default function Navbar() {
             )}
 
             {isConnected && (
-              <Menu>
-                <AppButton ml="30px">{lable}</AppButton>
-                <MenuList
-                  bgGradient="linear(to-b, #1b103d, #181a37)"
-                  color="white"
-                  border="1px solid"
-                  borderColor="rgba(255,255,255, 0.08)"
-                >
-                  <MenuItem
-                    bgGradient="linear(to-b, #1b103d, #181a37)"
-                    onClick={() => logout()}
+              <ChakraProvider>
+                <Menu>
+                  <MenuButton
+                    rounded="10px"
+                    px="16px"
+                    py="10px"
+                    border="1px solid #94979C"
+                    fontSize="16px"
+                    fontWeight="medium"
+                    lineHeight="24px"
+                    bg="transparent"
+                    borderColor={"#2D7D44"}
+                    _hover={{ bg: "rgba(45, 125, 68, 0.1)" }}
+                    color={"#3BB25D"}
+                    as={Button}
+                    ml="30px"
                   >
-                    Logout
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+                    {lable}
+                  </MenuButton>
+                  <MenuList
+                    bg="rgba(19, 22, 27, 0.75)"
+                    rounded="10px"
+                    border="1px solid"
+                    color={"white"}
+                    borderColor="rgba(255,255,255, 0.08)"
+                  >
+                    <MenuItem
+                    bg={"transparent"}
+                    color={"white"}
+                      onClick={() => logout()}
+                    >
+                      Logout
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
+              </ChakraProvider>
             )}
           </Flex>
         </Flex>
