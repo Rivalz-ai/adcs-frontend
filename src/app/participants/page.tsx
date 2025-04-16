@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Text, Box } from "@chakra-ui/react";
+import { Flex, Text, Box, SimpleGrid } from "@chakra-ui/react";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 import React from "react";
@@ -7,8 +7,6 @@ import React from "react";
 const ProjectCard = () => {
   return (
     <Box
-      width="382px"
-      height="232px"
       borderRadius="10px"
       borderWidth="1px"
       borderColor="#272637"
@@ -21,7 +19,7 @@ const ProjectCard = () => {
       gap="20px"
       overflow="hidden"
     >
-      <Flex alignItems="flex-start">
+      <Flex alignItems="flex-start" >
         <Box
           width="100px"
           height="100px"
@@ -52,6 +50,8 @@ const ProjectCard = () => {
           </Text>
         </Flex>
       </Flex>
+
+
       <Text color="#94979C" fontSize="16px" mt={"20px"}>
         Project description, general brief information about the project,
         something else.
@@ -62,7 +62,7 @@ const ProjectCard = () => {
 
 function page() {
   return (
-    <div>
+    <div style={{ marginBottom: "20px" }}>
       <Flex
         w="full"
         flexDir="column"
@@ -78,17 +78,13 @@ function page() {
         </Text>
       </Flex>
 
-      <Flex
-        // justifyContent={"space-between"}
-        alignItems={"center"}
-        flexWrap={"wrap"}
-        w="full"
-        gap={4}
+      <SimpleGrid
+      w="full" columns={{ base: 1,md:2,xl:3, "2xl": 4 }} gap="20px"
       >
         {[...Array(4)].map((_, i) => (
           <ProjectCard key={i} />
         ))}
-      </Flex>
+      </SimpleGrid>
     </div>
   );
 }
