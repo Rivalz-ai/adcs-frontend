@@ -3,61 +3,59 @@ import React, { useMemo, useState } from "react";
 import ProviderCard from "@/views/ProviderCard";
 import { Flex, Input, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import useGetAllProvider from "@/libs/hooks/apis/useGetAllProvider";
-import OutputTypes from "@/views/components/OutputTypes";
 import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
+import OutputTypesProvider from "@/views/components/OutputTypesProvider";
 
 export default function ProviderPage() {
   const { data, isLoading } = useGetAllProvider();
 
   const [search, setSearch] = useSearchAdaptorState();
-  
+
   const [selectedCategories, setSelectedCategories] = useState<
     Array<string | number>
   >([]);
-  
+
   const [selectedOutputType, setSelectedOutputType] = useState<
     Array<string | number>
   >([]);
-  
+
   const dataRender = useMemo(() => {
     if (!data || data.length === 0) return [];
-  
+
     let output = [...data];
-  
+
     // Filter by selected categories (if applicable)
     if (selectedCategories.length > 0) {
       output = output.filter((item) =>
-        selectedCategories.includes(item.category_id)
+        selectedCategories.includes(item.categoryId)
       );
     }
-  
+
     // Filter by selected output type (if applicable)
     if (selectedOutputType.length > 0) {
-      output = output.filter((item) =>
-        selectedOutputType.includes(item.outputTypeId)
+      output = output.filter(
+        (item) => selectedOutputType.includes(item.type) // Changed from outputTypeId to type
       );
     }
-  
+
     // Apply search filter
     if (search.keySearch) {
       const value = search.keySearch.toLowerCase();
       output = output.filter((item) => {
         return (
           item?.name.toLowerCase().includes(value) ||
-          item?.aiModel?.toLowerCase().includes(value) || 
+          item?.aiModel?.toLowerCase().includes(value) ||
           item?.description.toLowerCase().includes(value) ||
           item?.id.toString().includes(value) ||
           item?.endpoint.toLowerCase().includes(value)
         );
       });
     }
-  
+
     return output;
   }, [search.keySearch, data, selectedCategories, selectedOutputType]);
-  
-  
 
 
   return (
@@ -65,7 +63,6 @@ export default function ProviderPage() {
       flex={1}
       flexDir="column"
       gap="30px"
-      // px={{ base: "20px", lg: "unset" }}
     >
       <Flex
         w="full"
@@ -105,7 +102,7 @@ export default function ProviderPage() {
           borderColor="#2d2f34"
           opacity={"0.7"}
           boxShadow="lg"
-          w={{ base: "full", md:"60%" }}
+          w={{ base: "full", md: "60%" }}
           minH={{ lg: "44px" }}
           borderRadius="6px"
           overflow="hidden"
@@ -139,8 +136,10 @@ export default function ProviderPage() {
           />
         </Flex>
 
-        <Flex  w={{base:"full",sm:"unset"}} 
-        gap={{ base: "10px", lg: "20px" }}>
+        <Flex
+          w={{ base: "full", sm: "unset" }}
+          gap={{ base: "10px", lg: "20px" }}
+        >
           <Categories
             selectedCategories={selectedCategories}
             setSelectedCategories={(value) => {
@@ -153,9 +152,10 @@ export default function ProviderPage() {
             }}
           />
 
-          {/* <Spacer /> */}
-          <OutputTypes
-          label="Data Provider"
+     
+
+          <OutputTypesProvider
+            label="Data Provider"
             selectedOutputType={selectedOutputType}
             setSelectedOutputType={(value) => {
               setSelectedOutputType((prev) => {
@@ -165,11 +165,12 @@ export default function ProviderPage() {
                 return [...prev, value];
               });
             }}
+            data={data}
           />
         </Flex>
       </Flex>
 
-      <SimpleGrid w="full" columns={{ base: 1,lg:3, "2xl": 5 }} gap="20px">
+      <SimpleGrid w="full" columns={{ base: 1, lg: 3, "2xl": 5 }} gap="20px">
         {dataRender.map((item, i) => (
           <ProviderCard item={item} key={i} />
         ))}
