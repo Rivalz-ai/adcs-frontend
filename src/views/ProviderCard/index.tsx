@@ -12,13 +12,15 @@ export default function ProviderCard({ item }: ProviderCard) {
   return (
     <Link href={`/provider/${item.id}`}>
       <Flex
-        bgGradient="linear(to-b, #1b103d, #181a37)"
-        p="6"
+        bg="radial-gradient(70.61% 50% at 50% 50%, rgba(31, 31, 31, 0.5) 0%, rgba(19, 22, 27, 0.5) 100%)"
+        border="1px solid #272637"
+        backdropFilter="blur(10px)"
+        _hover={{ borderColor: "#2D7D44" }}
+        px="20px"
+        pt={"42px"}
+        pb={"20px"}
         rounded="xl"
-        border="1px solid"
-        borderColor="rgba(255, 255, 255, 0.08)"
-        boxShadow="lg"
-        minH="322px"
+        minH="384px"
         gap="10px"
         w="full"
         flexDir="column"
@@ -29,21 +31,29 @@ export default function ProviderCard({ item }: ProviderCard) {
         {item.aiModel && <AiTag aiModel={item.aiModel} />}
         <Flex alignItems="flex-start" mb="4" flexDir="column">
           <Image
-            src={item.iconUrl || "/cat.jpeg"}
+            src={
+              item.iconUrl && item.iconUrl !== "null"
+                ? item.iconUrl
+                : "/cat.jpeg"
+            }
+            fallbackSrc="/cat.jpeg"
             alt={item.name}
+            width="80px"
+            height="80px"
             borderRadius="md"
           />
-          <Box mt="10px">
+
+          <Box mt="26px">
             <Text
               fontWeight="semibold"
-              fontSize="lg"
+              fontSize="20px"
               color="white"
               textTransform="uppercase"
             >
               {item.name}
             </Text>
             <Tooltip label={item.name}>
-              <Text color="gray.400" fontSize="xs">
+              <Text mt={"9px"} color="#94979C" fontSize="16px">
                 {item.description}
               </Text>
             </Tooltip>
@@ -52,7 +62,7 @@ export default function ProviderCard({ item }: ProviderCard) {
 
         <Spacer />
 
-        <Flex mt="4" flexDir="column" gap="5px">
+        <Flex mt="12" flexDir="column" gap="5px">
           <Flex w="full" h="1px" bg="rgba(255, 255, 255, 0.08)" />
           <Flex justifyContent="space-between" mt="2">
             <Text
@@ -60,12 +70,12 @@ export default function ProviderCard({ item }: ProviderCard) {
               fontSize="14px"
               textTransform="uppercase"
             >
-              Type
+              Type:
             </Text>
             <Text
-              color="rgba(255, 255, 255, 0.48)"
+              color="white"
               fontSize="14px"
-              fontWeight="500"
+              fontWeight="bold"
               textTransform="uppercase"
             >
               {item.type}

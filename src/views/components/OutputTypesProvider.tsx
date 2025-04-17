@@ -2,30 +2,34 @@
 
 import React, { useMemo } from "react";
 import PopoverComp from "../PopoverComp";
-import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
+import { ProviderItem } from "@/types/provider-type";
+
+
+
+
 
 interface OutputTypesProps {
   selectedOutputType: Array<string | number>;
   setSelectedOutputType: (value: string | number) => void;
   label?: string;
+  data: Array<ProviderItem>;
 }
 
 export default function OutputTypes({
   selectedOutputType,
   setSelectedOutputType,
-  label
+  label,
+  data,
 }: OutputTypesProps) {
-  const { outputData } = useGetOutPutTypes();
-
   const outputDataRender = useMemo(() => {
-    return outputData.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-        subLabel: item.name,
-      };
-    });
-  }, [outputData]);
+    const uniqueTypes = Array.from(new Set(data.map((item) => item.type)));
+
+    return uniqueTypes.map((type) => ({
+      label: type,
+      value: type,
+      subLabel: type,
+    }));
+  }, [data]);
 
   return (
     <PopoverComp

@@ -20,4 +20,6 @@ export interface ProviderItem {
   exampleCall: string;
   documentation?: string;
   aiModel: string | null;
+  categoryId: number;
+  outputTypeId: number;
 }
