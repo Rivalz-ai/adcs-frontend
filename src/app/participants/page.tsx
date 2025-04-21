@@ -79,7 +79,9 @@ function page() {
       </Flex>
 
       <SimpleGrid
-      w="full" columns={{ base: 1,md:2,xl:3, "2xl": 4 }} gap="20px"
+     w="full"
+     columns={{ base: 1, md: 2, xl: 3, "2xl": 4 }}
+     gap="20px"
       >
         {[...Array(4)].map((_, i) => (
           <ProjectCard key={i} />

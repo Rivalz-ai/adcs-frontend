@@ -1,7 +1,7 @@
 "use client";
 import AdapterCard from "@/views/AdapterCard";
 import SearchBar from "@/views/SearchBar";
-import { Flex, SimpleGrid, Skeleton, Spacer, Text } from "@chakra-ui/react";
+import { Flex, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import useGetAllAdaptor from "@/libs/hooks/apis/useGetAllAdaptor";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
 import { useMemo, useState } from "react";
@@ -12,6 +12,7 @@ import { Input } from "@chakra-ui/react";
 
 
 export default function Home() {
+  
   const [selectedCategories, setSelectedCategories] = useState<
     Array<string | number>
   >([]);
@@ -49,12 +50,7 @@ export default function Home() {
   }, [search.keySearch, data, selectedCategories, selectedOutputType]);
 
   return (
-    <Flex
-      flex={1}
-      flexDir="column"
-      gap="30px"
-      px={{ base: "20px", lg: "unset" }}
-    >
+    <Flex flex={1} flexDir="column" gap="30px">
       <SearchBar />
       <Flex
         w="full"
@@ -62,7 +58,8 @@ export default function Home() {
         pt="22px"
         justify="space-between"
         align="center"
-        // border={"1px solid #272637"}
+        gap={{ base: "10px", lg: "20px" }}
+        flexDirection={{ base: "column", md: "row" }}
       >
         <Flex
           backgroundColor={"#111419"}
@@ -71,9 +68,9 @@ export default function Home() {
           borderColor="#2d2f34"
           opacity={"0.7"}
           boxShadow="lg"
-          w={{ base: "60%" }}
-          minH={{ lg: "44px" }}
-          borderRadius="6px"
+          w={{ base: "full", md: "60%" }}
+          h={{ base: "44px" }}
+          borderRadius="8px"
           overflow="hidden"
           px="5px"
           alignItems="center"
@@ -105,7 +102,10 @@ export default function Home() {
           />
         </Flex>
 
-        <Flex gap={"20px"}>
+        <Flex
+           w={{ base: "full", sm: "unset" }}
+           gap={{ base: "10px", lg: "20px" }}
+         >
           <Categories
             selectedCategories={selectedCategories}
             setSelectedCategories={(value) => {
@@ -118,7 +118,7 @@ export default function Home() {
             }}
           />
 
-          {/* <Spacer /> */}
+          
           <OutputTypes
             selectedOutputType={selectedOutputType}
             setSelectedOutputType={(value) => {
@@ -132,7 +132,7 @@ export default function Home() {
           />
         </Flex>
       </Flex>
-      <SimpleGrid w="full" columns={{ base: 1, lg: 5 }} gap="20px">
+      <SimpleGrid w="full" columns={{ base: 1, lg: 3, "2xl": 5 }} gap="20px">
         {dataRender.map((item, i) => (
           <AdapterCard item={item} key={i} />
         ))}

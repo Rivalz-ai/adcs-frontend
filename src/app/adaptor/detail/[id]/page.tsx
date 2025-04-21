@@ -379,47 +379,16 @@ export default function AdaptorDetailPage({
           borderRadius="lg"
           mb={"20px"}
         >
-          {/* <Flex mb="4" align="center">
-          <Text
-            fontSize="lg"
-            fontWeight={tab === "code" ? "bold" : "normal"}
-            onClick={() => setTab("code")}
-            cursor="pointer"
-          >
-            Code Example
-          </Text>
-          <Flex w="1px" h="20px" bg="gray.700" mx="4" />
-          <Text
-            fontSize="lg"
-            fontWeight={tab === "Playground" ? "bold" : "normal"}
-            onClick={() => setTab("Playground")}
-            cursor="pointer"
-          >
-            Playground
-          </Text>
-          <Spacer />
-          <Text fontSize="lg" color="gray.400">
-            About
-          </Text>
-
-          <Text fontSize="lg" color="gray.400" ml="4">
-            Docs
-          </Text>
-        </Flex> */}
 
           <Grid
             templateColumns="repeat(3, 1fr)"
             alignItems="center"
-            // borderBottom="1px solid"
-            // borderColor="gray.700"
-            // bg="blackAlpha.900"
             borderRadius="md"
           >
             {[
               { name: "Code Example", key: "code" },
               { name: "Playground", key: "Playground" },
               { name: "About", key: "About" },
-              // { name: "Docs", key: "Docs" },
             ].map(({ name, key }) => (
               <GridItem key={key}>
                 <Box
@@ -429,7 +398,7 @@ export default function AdaptorDetailPage({
                   color={tab === key ? "#69FF93" : "#7E8084"}
                   fontWeight={tab === key ? "bold" : "bold"}
                   cursor="pointer"
-                  fontSize={{ base: "12px", md: "16px" }}
+                  fontSize={{ base: "8px", sm: "12px", md: "16px" }}
                   onClick={() => setTab(key as TabType)}
                   _hover={{ color: "#69FF93", bg: "#23262e" }}
                 >
@@ -441,7 +410,6 @@ export default function AdaptorDetailPage({
 
           <Box
             bg="transarparent"
-            // p="4"
             minH="30vh"
             borderRadius="md"
             display="flex"
@@ -463,122 +431,6 @@ export default function AdaptorDetailPage({
                   categoryId={detail?.categoryId || -1}
                   adaptor={detail}
                 />
-                {/* <Box
-                  w={"full"}
-                  minH="30vh"
-                  borderBottomRadius={"lg"}
-                  bg={"#0C0E12"}
-                  color={"#49B267"}
-                >
-                  <Flex w="full" flexDir="column" gap="5px" p="4">
-                    <Text
-                      fontFamily="monospace"
-                      as="pre"
-                      whiteSpace="pre-wrap"
-                      overflow="hidden"
-                      pr="50px"
-                      fontSize={"16px"}
-                    >
-                      Endpoint:
-                    </Text>
-                    <Text
-                      fontFamily="monospace"
-                      as="pre"
-                      whiteSpace="pre-wrap"
-                      overflow="hidden"
-                      pr="50px"
-                      fontSize={"16px"}
-                    >
-                      Example:
-                    </Text>
-                  </Flex>
-                </Box> */}
-
-                {/* <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
-                  <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
-                    <ReactJson
-                      theme={{
-                        base00: "#13161b", // Background color
-                        base01: "#1c1f26", // Lighter background
-                        base02: "#2e323c", // Selection background
-                        base03: "#3e4451", // Comments, invisibles, line highlighting
-                        base04: "#4b5263", // Darker foreground
-                        base05: "#FFFFFF", // Default foreground
-                        base06: "#d3dae3", // Light foreground
-                        base07: "#e6e9ef", // Light background
-                        base08: "#f2777a", // Variables, XML tags, markup link text, markup lists, diff deleted
-                        base09: "#F9C981", // Integers, booleans, constants, XML attributes, markup link URLs
-                        base0A: "#ffcc66", // Classes, markup bold, search text background
-                        base0B: "#F9C981", // Strings, inherited class, markup code, diff inserted
-                        base0C: "#99cc99", // Support, regular expressions, escape characters, markup quotes
-                        base0D: "#94979C", // Functions, methods, attribute IDs, headings
-                        base0E: "#cc99cc", // Keywords, storage, selector, markup italic, diff changed
-                        base0F: "#d27b53", // Deprecated, opening/closing embedded language tags, e.g. <?php ?>
-                      }}
-                      src={{}}
-
-                      // theme="railscasts"
-                    />
-                  </Box>
-                </Box>
-                <Text
-                  w="fit-content"
-                  px={"16px"}
-                  py={"10px"}
-                  my={"4"}
-                  fontWeight="700"
-                  fontSize="20px"
-                  lineHeight="16px"
-                  color="#69FF93"
-                >
-                  Results
-                </Text> */}
-
-                {/* <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
-                  <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
-                    <ReactJson
-                      theme={{
-                        base00: "#13161b", // Background color
-                        base01: "#1c1f26", // Lighter background
-                        base02: "#2e323c", // Selection background
-                        base03: "#3e4451", // Comments, invisibles, line highlighting
-                        base04: "#4b5263", // Darker foreground
-                        base05: "#FFFFFF", // Default foreground
-                        base06: "#d3dae3", // Light foreground
-                        base07: "#e6e9ef", // Light background
-                        base08: "#f2777a", // Variables, XML tags, markup link text, markup lists, diff deleted
-                        base09: "#F9C981", // Integers, booleans, constants, XML attributes, markup link URLs
-                        base0A: "#ffcc66", // Classes, markup bold, search text background
-                        base0B: "#F9C981", // Strings, inherited class, markup code, diff inserted
-                        base0C: "#99cc99", // Support, regular expressions, escape characters, markup quotes
-                        base0D: "#94979C", // Functions, methods, attribute IDs, headings
-                        base0E: "#cc99cc", // Keywords, storage, selector, markup italic, diff changed
-                        base0F: "#d27b53", // Deprecated, opening/closing embedded language tags, e.g. <?php ?>
-                      }}
-                      src={{}}
-
-                      // theme="railscasts"
-                    />
-                  </Box>
-                </Box>
-                <Button
-                  leftIcon={<CopyIcon />}
-                  bg="rgb(15,18,22)"
-                  border={"1px solid #2D7D44"}
-                  color={"#3BB25D"}
-                  borderRadius={"10px"}
-                  _hover={{
-                    bg: "#69FF93",
-                    color: "black",
-                  }}
-                  w="fit-content"
-                  px={"16px"}
-                  py={"10px"}
-                  my={"4"}
-                  bgColor="transparent"
-                >
-                  Copy Results
-                </Button> */}
               </>
             )}
             {tab === "About" && (

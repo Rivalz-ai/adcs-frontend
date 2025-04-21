@@ -19,33 +19,33 @@ export default function Dropdown({
     <Menu>
       <MenuButton
         as={Button}
-        borderRadius="full"
+        rightIcon={<ChevronDownIcon />}
+         borderRadius="10px"
+         minH={{ lg: "44px" }}
         py="unset"
         fontWeight="normal"
         bgColor="transparent"
         color="rgba(255, 255, 255, 0.48)"
         border="1px solid"
-        borderColor="rgba(255,255,255, 0.08)"
-        bgGradient="linear(to-b, #1b103d, #181a37)"
-        rightIcon={<ChevronDownIcon />}
-        _hover={{ bgGradient: "linear(to-b, #1b103d, #181a37)" }}
-        minW="150px"
-        _active={{
-          bgGradient: "linear(to-b, #1b103d, #181a37)",
-          fontWeight: "bold",
-          color: "rgba(255, 255, 255, 0.8)",
-        }}
+        borderColor="#2d2f34"
+         backgroundColor={"#111419"}
+         minW={{ base: "unset", lg: "196px" }}
+         w={{ base: "full", lg: "unset" }}
+         gap={"4px"}
+         position="relative"
+         justifyContent="space-between"
       >
         {data.find((item) => item.value === value)?.label || lable}
       </MenuButton>
       <MenuList
-        bgGradient="linear(to-b, #1b103d, #181a37)"
+        bgColor="#131518"
         color="rgba(255, 255, 255, 0.48)"
         border="1px solid"
         borderColor="rgba(255,255,255, 0.08)"
         minH="50px"
         maxH="150px"
         overflowY="auto"
+        zIndex={"9999"}
         css={{
           "&::-webkit-scrollbar": {
             width: "4px",

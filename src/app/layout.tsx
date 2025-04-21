@@ -104,6 +104,7 @@ export default function RootLayout({
             flex={1}
             position="relative"
             zIndex={1}
+            px={{ base: "15px", xl: "10px" }}
           >
             <Navbar />
             {children}

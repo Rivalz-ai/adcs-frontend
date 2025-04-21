@@ -39,7 +39,7 @@ export default function GetPrice() {
         alignItems="center"
         direction={{ base: "column", md: "row" }}
       >
-        <Flex alignItems="center" gap="10px" py={"20px"} >
+        <Flex alignItems="center" gap="10px" py={"20px"}>
           <Text>Select: </Text>
           <Dropdown
             lable={"Select Coin"}
@@ -48,9 +48,7 @@ export default function GetPrice() {
             onSelected={(value: string | number) =>
               setSelectedCoin(value as string)
             }
-            
           />
-
           <Dropdown
             lable={"Select Currency"}
             data={currencyData}

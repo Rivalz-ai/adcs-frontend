@@ -57,19 +57,7 @@ export default function CreateProviderPage({
     chainId: 1,
     aiPrompt: "decision should buy or sell BTC at this time",
   });
-  // const [network, setnetwork] = useState<AdaptorCreateModel>({
-  //   id: 0,
-  //   name: "",
-  //   chainType: "",
-  //   description: "",
-  //   variables: "",
-  //   categoryId: 0,
-  //   outputTypeId: 0,
-  //   dataProviderId: 0,
-  //   chainId: 1,
-  //   aiPrompt: "decision should buy or sell BTC at this time",
-  // });
-
+  
   const [categoryInput, setCategoryInput] = useState("");
 
   // Function to handle the input change

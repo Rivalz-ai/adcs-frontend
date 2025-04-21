@@ -179,7 +179,7 @@ export default function Navbar() {
 
           <DrawerBody>
             <Link
-              href="#"
+              href="/"
               mx="4"
               color="gray.300"
               fontWeight="bold"
@@ -190,7 +190,17 @@ export default function Navbar() {
               Adaptors
             </Link>
             <Link
-              href="#"
+              href="/provider"
+              mx="4"
+              color="gray.300"
+              display="block"
+              borderBottom="1px solid rgba(255,255,255, 0.08)"
+              py="10px"
+            >
+              Provider
+            </Link>
+            <Link
+              href="/participants"
               mx="4"
               color="gray.300"
               display="block"
@@ -198,16 +208,6 @@ export default function Navbar() {
               py="10px"
             >
               Participants
-            </Link>
-            <Link
-              href="#"
-              mx="4"
-              color="gray.300"
-              display="block"
-              borderBottom="1px solid rgba(255,255,255, 0.08)"
-              py="10px"
-            >
-              Network
             </Link>
             <Link
               href="#"
