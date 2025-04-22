@@ -60,18 +60,16 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
               pt={"10px"}
               fontSize="16px"
               color="#94979C"
+              h={"58px"}
               sx={{
                 display: "-webkit-box",
-                WebkitLineClamp: 1,
+                WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
               }}
             >
               {item.description}
             </Text>
-            <Text pt={"10px"} fontSize="16px" color="#94979C">
-  Description of the Adaptor, general information.
-</Text>
           </Box>
         </Flex>
         <Flex mt="4" flexDir="column" gap="5px">
