@@ -1,7 +1,7 @@
 "use client";
 import AdapterCard from "@/views/AdapterCard";
 import SearchBar from "@/views/SearchBar";
-import { Flex, SimpleGrid, Skeleton, Spacer, Text } from "@chakra-ui/react";
+import { Flex, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import useGetAllAdaptor from "@/libs/hooks/apis/useGetAllAdaptor";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
 import { useMemo, useState } from "react";
