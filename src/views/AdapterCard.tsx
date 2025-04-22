@@ -62,10 +62,23 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
               fontSize="lg"
               color="white"
               textTransform="uppercase"
+               sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
             >
               {item.name}
             </Text>
-            <Text pt={"10px"} fontSize="16px" color="#94979C">
+            <Text 
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+              pt={"10px"} fontSize="16px" color="#94979C">
   Description of the Adaptor, general information.
 </Text>
           </Box>
