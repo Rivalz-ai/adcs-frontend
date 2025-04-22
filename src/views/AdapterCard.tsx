@@ -58,10 +58,14 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             </Tooltip>
             <Text
               pt={"10px"}
-              fontWeight="semibold"
-              fontSize="lg"
-              color="white"
-              textTransform="uppercase"
+              fontSize="16px"
+              color="#94979C"
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
             >
               {item.description}
             </Text>
