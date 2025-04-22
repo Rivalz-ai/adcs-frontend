@@ -49,11 +49,24 @@ export default function ProviderCard({ item }: ProviderCard) {
               fontSize="20px"
               color="white"
               textTransform="uppercase"
+               sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
             >
               {item.name}
             </Text>
             <Tooltip label={item.name}>
-              <Text mt={"9px"} color="#94979C" fontSize="16px">
+              <Text 
+                 sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+                mt={"9px"} color="#94979C" fontSize="16px">
                 {item.description}
               </Text>
             </Tooltip>
