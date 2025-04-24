@@ -59,11 +59,7 @@ export default function ProviderPage() {
 
 
   return (
-    <Flex
-      flex={1}
-      flexDir="column"
-      gap="30px"
-    >
+    <Flex flex={1} flexDir="column" gap="30px">
       <Flex
         w="full"
         flexDir="column"
@@ -151,9 +147,6 @@ export default function ProviderPage() {
               });
             }}
           />
-
-     
-
           <OutputTypesProvider
             label="Data Provider"
             selectedOutputType={selectedOutputType}

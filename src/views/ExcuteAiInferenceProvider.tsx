@@ -111,29 +111,29 @@ export default function ExcuteAiInferenceProvider({
           {dataExecuteCurl && (
             <>
               
-            <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
-              
-              <ReactJson 
-              theme={{
-                base00: "#13161b", // Background color
-                base01: "#1c1f26", // Lighter background
-                base02: "#2e323c", // Selection background
-                base03: "#3e4451", // Comments, invisibles, line highlighting
-                base04: "#4b5263", // Darker foreground
-                base05: "#FFFFFF", // Default foreground
-                base06: "#d3dae3", // Light foreground
-                base07: "#e6e9ef", // Light background
-                base08: "#f2777a", // Variables, XML tags, markup link text, markup lists, diff deleted
-                base09: "#F9C981", // Integers, booleans, constants, XML attributes, markup link URLs
-                base0A: "#ffcc66", // Classes, markup bold, search text background
-                base0B: "#F9C981", // Strings, inherited class, markup code, diff inserted
-                base0C: "#99cc99", // Support, regular expressions, escape characters, markup quotes
-                base0D: "#94979C", // Functions, methods, attribute IDs, headings
-                base0E: "#cc99cc", // Keywords, storage, selector, markup italic, diff changed
-                base0F: "#d27b53", // Deprecated, opening/closing embedded language tags, e.g. <?php ?>
-              }}
-              src={dataExecuteCurl}  />
-            </Box>
+              <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
+                 <ReactJson
+                   theme={{
+                     base00: "#13161b", // Background color
+                     base01: "#1c1f26", // Lighter background
+                     base02: "#2e323c", // Selection background
+                     base03: "#3e4451", // Comments, invisibles, line highlighting
+                     base04: "#4b5263", // Darker foreground
+                     base05: "#FFFFFF", // Default foreground
+                     base06: "#d3dae3", // Light foreground
+                     base07: "#e6e9ef", // Light background
+                     base08: "#f2777a", // Variables, XML tags, markup link text, markup lists, diff deleted
+                     base09: "#F9C981", // Integers, booleans, constants, XML attributes, markup link URLs
+                     base0A: "#ffcc66", // Classes, markup bold, search text background
+                     base0B: "#F9C981", // Strings, inherited class, markup code, diff inserted
+                     base0C: "#99cc99", // Support, regular expressions, escape characters, markup quotes
+                     base0D: "#94979C", // Functions, methods, attribute IDs, headings
+                     base0E: "#cc99cc", // Keywords, storage, selector, markup italic, diff changed
+                     base0F: "#d27b53", // Deprecated, opening/closing embedded language tags, e.g. <?php ?>
+                   }}
+                   src={dataExecuteCurl}
+                 />
+               </Box>
             </>
           )}
         </Flex>

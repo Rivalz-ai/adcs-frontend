@@ -26,7 +26,7 @@ export default function FooterV2() {
         display="flex"
         flexDir={{ base: "column", lg: "row" }}
         gap="40px"
-        px={{ base: "24px", lg: "0px" }}
+        px={{ base: "24px", "2xl": "10px" }}
       >
         <Flex flex={1} flexDir="column" gap="40px" minH="188px">
           <Image src="/rivalz-logo.png" w="154px" alt="Rivalz Logo" />

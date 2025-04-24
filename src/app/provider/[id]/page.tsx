@@ -60,10 +60,8 @@ export default function ProviderPageDetail({
     }
   };
 
-  console.log(detail, "0--------0");
-
   return (
-    <Box p="6" minH="100vh" color="white">
+    <Box pb={"6"} minH="100vh" color="white">
       <Flex
         w="full"
         flexDir="column"
@@ -132,12 +130,7 @@ export default function ProviderPageDetail({
           </Box>
         </Flex>
 
-        <Flex
-          maxW={{ base: "full" }}
-          w={"full"}
-          py={{ base: "15px", lg: "0" }}
-          borderBottom={{ base: "0.5px solid #272637", lg: "none" }}
-        >
+        <Flex maxW={{ base: "full" }} w={"full"} py={{ base: "15px", lg: "0" }}>
           <TableContainer w={"full"}>
             <Table variant="unstyled" size="sm">
               <Tbody>
@@ -196,7 +189,6 @@ export default function ProviderPageDetail({
         </Flex>
       </Flex>
 
-      {/* -------------------------------------------------------------------------------------------------------------------------- */}
       <Box
         background="radial-gradient(70.61% 50% at 50% 50%, rgba(31, 31, 31, 0.5) 0%, rgba(19, 22, 27, 0.5) 100%)"
         backdropFilter="blur(10px)"
@@ -235,16 +227,14 @@ export default function ProviderPageDetail({
         <Box
           fontFamily="monospace"
           bg="transparent"
-          // p="4"
+      
           minH="30vh"
           borderRadius="md"
           display="flex"
           flexDirection="column"
           flexWrap="wrap"
         >
-          {/* {tab === "code" && (
-                  <CodeBlock code={detail?.exampleCode || ""} language="solidity" />
-                )} */}
+        
           {tab === "Playground" && (
             <>
               <Box
@@ -324,8 +314,6 @@ export default function ProviderPageDetail({
                           base0F: "#d27b53", // Deprecated, opening/closing embedded language tags, e.g. <?php ?>
                         }}
                         src={dataExecute || dataExecuteCurl}
-
-                        // theme="railscasts"
                       />
                     )}
                   </Box>
@@ -357,7 +345,6 @@ export default function ProviderPageDetail({
               </Text>
 
               <Flex
-                //  flexDirection={{ base: "column", md: "row" }}
                 flexWrap={"wrap"}
                 gap={{ base: "4px", md: "20px" }}
                 mt={"6px"}

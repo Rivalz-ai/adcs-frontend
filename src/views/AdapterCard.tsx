@@ -39,7 +39,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             fallbackSrc="/logo.png"
           />
           <Box mt="10px">
-          <Tooltip label={item.jobId}>
+            <Tooltip label={item.jobId}>
               <Flex gap={"10px"} alignItems={"center"}>
                 <div
                   style={{
@@ -58,23 +58,22 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             </Tooltip>
             <Text
               pt={"10px"}
-              fontWeight="semibold"
-              fontSize="lg"
-              color="white"
-              textTransform="uppercase"
+              fontSize="16px"
+              color="#94979C"
+              h={"58px"}
+              sx={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
             >
-              {item.name}
+              {item.description}
             </Text>
-            <Text pt={"10px"} fontSize="16px" color="#94979C">
-  Description of the Adaptor, general information.
-</Text>
           </Box>
         </Flex>
-
-        {/* <Spacer /> */}
-
         <Flex mt="4" flexDir="column" gap="5px">
-        <Flex w="full" h="1px" bg="rgba(255, 255, 255, 0.08)" />
+          <Flex w="full" h="1px" bg="rgba(255, 255, 255, 0.08)" />
           <Flex justifyContent="space-between">
             <Text color="rgba(255, 255, 255, 0.48)" fontSize="14px">
               REQUESTS
@@ -84,7 +83,6 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             </Text>
           </Flex>
 
-          
           <Flex justifyContent="space-between" mt="2">
             <Text
               color="rgba(255, 255, 255, 0.48)"
