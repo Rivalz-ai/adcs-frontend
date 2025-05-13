@@ -7,9 +7,12 @@ import {
   Button,
   Text,
   useBreakpointValue,
+  useToast,
 } from "@chakra-ui/react";
 import { X } from "lucide-react";
 import { FaArrowLeft, FaCheckDouble } from "react-icons/fa";
+import axios from "axios";
+import { useState } from "react";
 
 export default function ProviderSubmissionForm() {
   // Responsive values based on screen size
@@ -19,6 +22,112 @@ export default function ProviderSubmissionForm() {
     md: "42px",
     lg: "48px",
   });
+  const toast = useToast();
+  const [loading, setloading] = useState(false);
+  const [formData, setFormData] = useState({
+    apiEndpoint: "",
+    apiKey: "",
+    githubPR: "",
+    documentationLink: "",
+    playground: "",
+    method: "",
+    input: "",
+    ConfigurationFile: "",
+  });
+  const [verified, setVerified] = useState(false);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleVerify = () => {
+    if (formData.apiEndpoint && formData.apiKey && formData.githubPR) {
+      setVerified(true);
+      toast({
+        title: "Verified",
+        description: "All required fields are filled.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } else {
+      setVerified(false);
+      toast({
+        title: "Verification Failed",
+        description: "Please fill in all required fields.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!verified) {
+      toast({
+        title: "Submission Failed",
+        description: "Please verify the form before submitting.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    const submissionData = {
+      url: formData.apiEndpoint,
+      apiKey: {
+        "api-key": formData.apiKey,
+      },
+      prUrl: formData.githubPR,
+      documentLink: formData.documentationLink,
+      configUrl: formData.ConfigurationFile,
+    };
+
+    try {
+      setloading(true);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/providers/submission`,
+        submissionData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setloading(false);
+        toast({
+          title: "Submitted",
+          description: "Your data has been submitted successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Submission Error",
+          description:
+            response.data.message || "An error occurred during submission.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Network Error",
+        description: "Failed to submit data. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setloading(false);
+    }
+  };
 
   return (
     <Box
@@ -124,16 +233,48 @@ export default function ProviderSubmissionForm() {
             pb={"20px"}
           >
             {/* API Endpoint */}
-            <FormField label="API Endpoint:" placeholder="Enter Link" />
+            <FormField
+              label="API Endpoint:"
+              placeholder="Enter Link"
+              name="apiEndpoint"
+              value={formData.apiEndpoint}
+              onChange={handleChange}
+            />
 
             {/* API Key */}
-            <FormField label="API Key (k-v):" placeholder="Enter Key" />
+            <FormField
+              label="API Key (k-v):"
+              placeholder="Enter Key"
+              name="apiKey"
+              value={formData.apiKey}
+              onChange={handleChange}
+            />
 
             {/* Github PR */}
-            <FormField label="Github PR:" placeholder="Enter Link" />
+            <FormField
+              label="Github PR:"
+              placeholder="Enter Link"
+              name="githubPR"
+              value={formData.githubPR}
+              onChange={handleChange}
+            />
 
             {/* Documentation Link */}
-            <FormField label="Documentation Link" placeholder="Enter Link" />
+            <FormField
+              label="Documentation Link"
+              placeholder="Enter Link"
+              name="documentationLink"
+              value={formData.documentationLink}
+              onChange={handleChange}
+            />
+
+            <FormField
+              label="Configuration File"
+              placeholder="Enter Link"
+              name="ConfigurationFile"
+              value={formData.ConfigurationFile}
+              onChange={handleChange}
+            />
 
             {/* Verification message */}
             <Flex
@@ -154,13 +295,44 @@ export default function ProviderSubmissionForm() {
                 are filled in correctly.
               </Text>
               <Button
-                bg="#373A40"
-                color="#616264"
+                bg={
+                  !formData.apiEndpoint ||
+                  !formData.apiKey ||
+                  !formData.githubPR
+                    ? "#373A40"
+                    : "rgb(15,18,22)"
+                }
+                color={
+                  !formData.apiEndpoint ||
+                  !formData.apiKey ||
+                  !formData.githubPR
+                    ? "#616264"
+                    : "#3BB25D"
+                }
+                border={
+                  !formData.apiEndpoint ||
+                  !formData.apiKey ||
+                  !formData.githubPR
+                    ? "none"
+                    : "1px solid #2D7D44"
+                }
                 fontSize={{ base: "14px", md: "16px" }}
                 px={{ base: "12px", md: "16px" }}
                 py={{ base: "8px", md: "10px" }}
                 borderRadius="10px"
-                _hover={{ bg: "#1C2A3A" }}
+                _hover={
+                  !formData.apiEndpoint ||
+                  !formData.apiKey ||
+                  !formData.githubPR
+                    ? { bg: "#1C2A3A" }
+                    : { bg: "#69FF93", color: "black" }
+                }
+                disabled={
+                  !formData.apiEndpoint ||
+                  !formData.apiKey ||
+                  !formData.githubPR
+                }
+                onClick={handleVerify}
                 h={{ base: "40px", md: "44px" }}
                 maxW={{ base: "120px", md: "140px" }}
                 w={"full"}
@@ -170,7 +342,13 @@ export default function ProviderSubmissionForm() {
             </Flex>
 
             {/* Playground */}
-            <FormField label="Playground:" placeholder="" />
+            <FormField
+              label="Playground:"
+              placeholder=""
+              name="playground"
+              value={formData.playground}
+              onChange={handleChange}
+            />
 
             {/* Method */}
             <FormField label="Method:" placeholder="" />
@@ -182,16 +360,24 @@ export default function ProviderSubmissionForm() {
             <Flex justify={{ base: "center", sm: "flex-end" }} mt={6}>
               <Button
                 leftIcon={<FaCheckDouble />}
-                bg="#373A40"
-                color="#616264"
-                fontSize={{ base: "14px", md: "16px" }}
-                px={{ base: "12px", md: "16px" }}
-                py={{ base: "8px", md: "10px" }}
+                bg={verified ? "rgb(15,18,22)" : "#373A40"}
+                color={verified ? "#3BB25D" : "#616264"}
+                border={verified ? "1px solid #2D7D44" : ""}
                 borderRadius="10px"
-                _hover={{ bg: "#1C2A3A" }}
+                _hover={
+                  verified
+                    ? {
+                        bg: "#69FF93",
+                        color: "black",
+                      }
+                    : { bg: "#1C2A3A" }
+                }
                 h={{ base: "40px", md: "44px" }}
                 maxW={{ base: "120px", md: "140px" }}
                 w={"full"}
+                onClick={handleSubmit}
+                isLoading={loading}
+                disabled={!verified}
               >
                 Submit
               </Button>
@@ -207,9 +393,15 @@ export default function ProviderSubmissionForm() {
 function FormField({
   label,
   placeholder,
+  name,
+  value,
+  onChange,
 }: {
   label: string;
   placeholder: string;
+  name: string;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <Flex
@@ -236,8 +428,10 @@ function FormField({
         flex={{ base: 1, sm: 1.8 }}
       >
         <Input
-          name="value"
+          name={name}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
           border="1px solid #272637"
           borderRadius={"10px"}
           bgColor="#13161B"
