@@ -54,7 +54,7 @@ export default function ProviderSubmissionForm() {
       try {
         setloading("verifying");
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/open/v1/providers/verifySubmission`,
+          `${process.env.NEXT_PUBLIC_API_URL}/providers/verifySubmission`,
           submissionData,
           {
             headers: {
