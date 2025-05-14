@@ -36,31 +36,65 @@ export default function ProviderSubmissionForm() {
   });
   const [verified, setVerified] = useState(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVerified(false);
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleVerify = () => {
-    if (formData.apiEndpoint && formData.apiKey && formData.githubPR) {
-      setVerified(true);
-      toast({
-        title: "Verified",
-        description: "All required fields are filled.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
-      setVerified(false);
-      toast({
-        title: "Verification Failed",
-        description: "Please fill in all required fields.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
+  const handleVerify = async () => {
+      const submissionData = {
+        url: formData.apiEndpoint,
+        apiKey: {
+          "api-key": formData.apiKey,
+        },
+        prUrl: formData.githubPR,
+        documentLink: formData.documentationLink,
+        configUrl: formData.ConfigurationFile,
+      };
+      try {
+        setloading("verifying");
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/open/v1/providers/verifySubmission`,
+          submissionData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (response.status === 200 || response.status === 201) {
+          setVerified(true);
+          toast({
+            title: "Verified",
+            description: "Your data has been Verified successfully.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Verified Error",
+            description:
+              response.data.message || "An error occurred during verification.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error("Error verification form:", error);
+        toast({
+          title: "Network Error",
+          description: "Failed to verify data. Please try again.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setloading("");
+      }
+    };
 
   const handleSubmit = async () => {
     if (!verified) {
@@ -125,7 +159,7 @@ export default function ProviderSubmissionForm() {
         isClosable: true,
       });
     } finally {
-      setloading(false);
+      setloading("");
     }
   };
 
@@ -333,6 +367,7 @@ export default function ProviderSubmissionForm() {
                   !formData.githubPR
                 }
                 onClick={handleVerify}
+                isLoading={loading === "verifying"}
                 h={{ base: "40px", md: "44px" }}
                 maxW={{ base: "120px", md: "140px" }}
                 w={"full"}
@@ -351,10 +386,10 @@ export default function ProviderSubmissionForm() {
             />
 
             {/* Method */}
-            <FormField label="Method:" placeholder="" />
+            <FormField label="Method:" placeholder="" name={""} value={""}/>
 
             {/* Input */}
-            <FormField label="Input:" placeholder="" />
+            <FormField label="Input:" placeholder="" name={""} value={""}/>
 
             {/* Submit button */}
             <Flex justify={{ base: "center", sm: "flex-end" }} mt={6}>
@@ -376,7 +411,7 @@ export default function ProviderSubmissionForm() {
                 maxW={{ base: "120px", md: "140px" }}
                 w={"full"}
                 onClick={handleSubmit}
-                isLoading={loading}
+                isLoading={loading === "submitting"}
                 disabled={!verified}
               >
                 Submit
