@@ -1,5 +1,7 @@
 "use client";
 
+import { CurlGenerator } from "curl-generator";
+import MethodsType from "@/views/components/Methods";
 import {
   Box,
   Flex,
@@ -8,14 +10,24 @@ import {
   Text,
   useBreakpointValue,
   useToast,
+  Textarea,
 } from "@chakra-ui/react";
 import { X } from "lucide-react";
 import { FaArrowLeft, FaCheckDouble } from "react-icons/fa";
 import axios from "axios";
 import { useState } from "react";
 
+interface VerifyData {
+  method_name: string;
+  description: string;
+  input_schema: Record<string, string>;
+  input_type: string;
+  output_schema: Record<string, string | number>;
+  type: string;
+  playground: string;
+}
+
 export default function ProviderSubmissionForm() {
-  // Responsive values based on screen size
   const headerFontSize = useBreakpointValue({
     base: "24px",
     sm: "32px",
@@ -23,8 +35,21 @@ export default function ProviderSubmissionForm() {
     lg: "48px",
   });
   const toast = useToast();
-  const [loading, setloading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [loading, setloading] = useState("");
+
+  interface FormDataType {
+    apiEndpoint: string;
+    apiKey: string;
+    githubPR: string;
+    documentationLink: string;
+    playground: string;
+    method: string;
+    input: string;
+    ConfigurationFile: string;
+    [key: string]: string;
+  }
+
+  const [formData, setFormData] = useState<FormDataType>({
     apiEndpoint: "",
     apiKey: "",
     githubPR: "",
@@ -34,11 +59,92 @@ export default function ProviderSubmissionForm() {
     input: "",
     ConfigurationFile: "",
   });
+
   const [verified, setVerified] = useState(false);
+  const [verifyData, setverifyData] = useState<VerifyData[]>([]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVerified(false);
     const { name, value } = e.target;
+    if (name === "method" && verifyData) {
+      const selectedMethod = verifyData.find(
+        (m: VerifyData) => m.method_name === value
+      );
+
+      if (selectedMethod) {
+        const methodType = selectedMethod.type.toUpperCase() as
+          | "GET"
+          | "POST"
+          | "PUT"
+          | "PATCH"
+          | "DELETE";
+        const curl = CurlGenerator({
+          method: methodType,
+          url: selectedMethod.playground,
+          headers: {
+            Authorization: `Bearer ${formData.apiKey}`,
+          },
+        });
+
+        setFormData((prev) => ({
+          ...prev,
+          method: value,
+          playground: curl,
+        }));
+        return;
+      }
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const curlExecutor = async () => {
+    const selectedMethod = verifyData.find(
+      (m: VerifyData) => m.method_name === formData.method
+    );
+
+    try {
+      if (!selectedMethod) {
+        throw new Error("No method selected");
+      }
+
+      const { type, playground, input_type, input_schema } = selectedMethod;
+
+      const params: { [key: string]: string } = {};
+      for (const key of Object.keys(input_schema)) {
+        if (formData[key]) {
+          params[key] = formData[key];
+        } else {
+          console.warn(`Missing parameter: ${key}`);
+        }
+      }
+
+      const options: {
+        method: string;
+        url: string;
+        params?: { [key: string]: string };
+        data?: { [key: string]: string };
+      } = {
+        method: type,
+        url: playground,
+      };
+
+      if (input_type === "QueryParams") {
+        options.params = params;
+      } else if (input_type === "BodyParams") {
+        options.data = params;
+      }
+
+      const response = await axios(options);
+
+      if (response.status === 200 || response.status === 201) {
+        setVerified(true);
+      }
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Request Error:",
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+    }
   };
 
   const handleVerify = async () => {
@@ -64,7 +170,7 @@ export default function ProviderSubmissionForm() {
         );
   
         if (response.status === 200 || response.status === 201) {
-          setVerified(true);
+          setverifyData(response.data.methods);
           toast({
             title: "Verified",
             description: "Your data has been Verified successfully.",
@@ -119,7 +225,7 @@ export default function ProviderSubmissionForm() {
     };
 
     try {
-      setloading(true);
+      setloading("submitting");
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/providers/submission`,
         submissionData,
@@ -328,7 +434,34 @@ export default function ProviderSubmissionForm() {
                 <br />
                 are filled in correctly.
               </Text>
+            </Flex>
+
+            {/* Playground */}
+            <FormField
+              label="Playground:"
+              placeholder=""
+              name="playground"
+              verifyData={verifyData}
+              value={formData.playground}
+              onChange={handleChange}
+              curlExecutor={curlExecutor}
+            />
+
+            {/* Method */}
+            <FormField label="Method:" placeholder="" name="method" value={formData.method} verifyData={verifyData} onChange={handleChange}/>
+
+            {/* Input */}
+            <FormField label="Input:" placeholder="" name={""} value={""}/>
+
+            {/* Submit button */}
+            <Flex justify={{ base: "center", sm: "flex-end" }} gap={2} mt={6}>
               <Button
+                fontSize={{ base: "14px", md: "16px" }}
+                px={{ base: "12px", md: "16px" }}
+                py={{ base: "8px", md: "10px" }}
+                h={{ base: "40px", md: "44px" }}
+                maxW={{ base: "120px", md: "140px" }}
+                w="full"
                 bg={
                   !formData.apiEndpoint ||
                   !formData.apiKey ||
@@ -343,6 +476,7 @@ export default function ProviderSubmissionForm() {
                     ? "#616264"
                     : "#3BB25D"
                 }
+                borderRadius="10px"
                 border={
                   !formData.apiEndpoint ||
                   !formData.apiKey ||
@@ -350,10 +484,6 @@ export default function ProviderSubmissionForm() {
                     ? "none"
                     : "1px solid #2D7D44"
                 }
-                fontSize={{ base: "14px", md: "16px" }}
-                px={{ base: "12px", md: "16px" }}
-                py={{ base: "8px", md: "10px" }}
-                borderRadius="10px"
                 _hover={
                   !formData.apiEndpoint ||
                   !formData.apiKey ||
@@ -368,37 +498,15 @@ export default function ProviderSubmissionForm() {
                 }
                 onClick={handleVerify}
                 isLoading={loading === "verifying"}
-                h={{ base: "40px", md: "44px" }}
-                maxW={{ base: "120px", md: "140px" }}
-                w={"full"}
               >
                 Verify
               </Button>
-            </Flex>
-
-            {/* Playground */}
-            <FormField
-              label="Playground:"
-              placeholder=""
-              name="playground"
-              value={formData.playground}
-              onChange={handleChange}
-            />
-
-            {/* Method */}
-            <FormField label="Method:" placeholder="" name={""} value={""}/>
-
-            {/* Input */}
-            <FormField label="Input:" placeholder="" name={""} value={""}/>
-
-            {/* Submit button */}
-            <Flex justify={{ base: "center", sm: "flex-end" }} mt={6}>
               <Button
                 leftIcon={<FaCheckDouble />}
                 bg={verified ? "rgb(15,18,22)" : "#373A40"}
-                color={verified ? "#3BB25D" : "#616264"}
                 border={verified ? "1px solid #2D7D44" : ""}
-                borderRadius="10px"
+                color={verified ? "#3BB25D" : "#616264"}
+                borderRadius={"10px"}
                 _hover={
                   verified
                     ? {
@@ -407,9 +515,9 @@ export default function ProviderSubmissionForm() {
                       }
                     : { bg: "#1C2A3A" }
                 }
-                h={{ base: "40px", md: "44px" }}
                 maxW={{ base: "120px", md: "140px" }}
                 w={"full"}
+                h={{ base: "40px", md: "44px" }}
                 onClick={handleSubmit}
                 isLoading={loading === "submitting"}
                 disabled={!verified}
@@ -430,14 +538,29 @@ function FormField({
   placeholder,
   name,
   value,
+  curlExecutor,
+  verifyData,
   onChange,
+  
 }: {
   label: string;
   placeholder: string;
   name: string;
   value: string;
+  verifyData?: VerifyData[];
+  curlExecutor?: () => Promise<unknown>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
+  const options = useMemo(() => {
+    return verifyData
+      ? verifyData?.map((method: VerifyData) => ({
+          label: method.method_name,
+          value: method.method_name,
+          subLabel: method.description,
+        }))
+      : [];
+  }, [verifyData]);
+
   return (
     <Flex
       gap={{ base: "10px", lg: "20px" }}
@@ -462,23 +585,80 @@ function FormField({
         w="100%"
         flex={{ base: 1, sm: 1.8 }}
       >
-        <Input
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          border="1px solid #272637"
-          borderRadius={"10px"}
-          bgColor="#13161B"
-          color="#94979C"
-          py={{ base: "18px", md: "22px" }}
-          _placeholder={{
-            color: "#94979C",
-            fontSize: { base: "14px", md: "16px" },
-          }}
-          w="100%"
-          size={{ base: "sm", md: "md" }}
-        />
+        {name === "method" ? (
+          <MethodsType
+            isShowValue
+            selectedMethodsType={value}
+            options={options}
+            setselectedMethodstype={(newValue) => {
+              if (onChange) {
+                const syntheticEvent = {
+                  target: {
+                    name,
+                    value: newValue,
+                  },
+                } as React.ChangeEvent<HTMLInputElement>;
+                onChange(syntheticEvent);
+              }
+            }}
+          />
+        ) : name === "playground" ? (
+          <Flex flexDirection={"column"} gap={2} w="100%" alignItems={"end"}>
+            <Textarea
+              name={name}
+              placeholder={placeholder}
+              value={value}
+              rows={value.length > 0 ? 4 : 1}
+              py={{ base: "18px", md: "22px" }}
+              border="1px solid #272637"
+              borderRadius="10px"
+              bgColor="transparent"
+              color="#69FF93"
+              _placeholder={{
+                color: "#94979C",
+                fontSize: { base: "14px", md: "16px" },
+              }}
+              w="100%"
+              size={{ base: "sm", md: "md" }}
+            />
+
+            <Button
+              fontSize={{ base: "14px", md: "16px" }}
+              px={{ base: "12px", md: "16px" }}
+              py={{ base: "8px", md: "10px" }}
+              h={{ base: "40px", md: "44px" }}
+              maxW={{ base: "120px", md: "140px" }}
+              w="full"
+              display={name === "playground" && value != "" ? "block" : "none"}
+              bg={"rgb(15,18,22)"}
+              color={"#3BB25D"}
+              borderRadius="10px"
+              border={"1px solid #2D7D44"}
+              _hover={{ bg: "#69FF93", color: "black" }}
+              onClick={curlExecutor}
+            >
+              Play
+            </Button>
+          </Flex>
+        ) : (
+          <Input
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            border="1px solid #272637"
+            borderRadius={"10px"}
+            bgColor="transparent"
+            color="#94979C"
+            py={{ base: "18px", md: "22px" }}
+            _placeholder={{
+              color: "#94979C",
+              fontSize: { base: "14px", md: "16px" },
+            }}
+            w="100%"
+            size={{ base: "sm", md: "md" }}
+          />
+        )}
       </Flex>
     </Flex>
   );
