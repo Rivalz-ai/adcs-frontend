@@ -10,22 +10,41 @@ import {
   Switch,
   InputGroup,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react";
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle,CheckIcon,X } from "lucide-react";
 import { FaCheckDouble } from "react-icons/fa";
 import { CopyIcon } from "@chakra-ui/icons";
+import axios from "axios";
+import { useAccount, useSignMessage } from "wagmi";
+
+
+
 
 export default function CreateApiKeyModal() {
   const [keyName, setKeyName] = useState("");
   const [spendingLimit, setSpendingLimit] = useState("");
   const [enableLimit, setEnableLimit] = useState(false);
   const [isNameError, setIsNameError] = useState(true);
+  const [Loading, setLoading] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [copied, setcopied] = useState(false);
+  const toast = useToast();
+  const { isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
 
   interface HandleNameChangeEvent {
     target: {
       value: string;
     };
   }
+
+  interface HandleSpendingLimitChangeEvent {
+    target: {
+      value: string;
+    };
+  }
+  
 
   const handleNameChange = (e: HandleNameChangeEvent): void => {
     setKeyName(e.target.value);
@@ -36,11 +55,7 @@ export default function CreateApiKeyModal() {
     }
   };
 
-  interface HandleSpendingLimitChangeEvent {
-    target: {
-      value: string;
-    };
-  }
+  
 
   const handleSpendingLimitChange = (
     e: HandleSpendingLimitChangeEvent
@@ -48,6 +63,81 @@ export default function CreateApiKeyModal() {
     // Only allow numeric input
     const value = e.target.value.replace(/[^0-9]/g, "");
     setSpendingLimit(value);
+  };
+
+  const handleGenerateApiKey = async () => {
+    if (!keyName) {
+      toast({
+        title: "Fields Missing",
+        description: "Please enter API Key Name.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      if (!isConnected) {
+        toast({
+          title: "Wallet Not Connected",
+          description: "Please connect your wallet.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        setLoading(false);
+        return;
+      }
+
+      const message = "Welcome to ADCS.";
+      const signature = await signMessageAsync({ message });
+
+      const verifyResponse = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}auth/verify`,
+        { message, signature }
+      );
+
+      const accessToken = verifyResponse.data.accessToken;
+
+      const apiKeyResponse = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}auth/api-key/${keyName}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const generatedApiKey = apiKeyResponse.data.data;
+      setApiKey(generatedApiKey);
+      setKeyName("");
+
+      toast({
+        title: "API Key Generated",
+        description: "API Key generated successfully",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : "An error occurred.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -293,6 +383,8 @@ export default function CreateApiKeyModal() {
           >
             <Button
               leftIcon={<FaCheckDouble />}
+              onClick={handleGenerateApiKey}
+              isLoading={Loading}
               bg="rgb(15,18,22)"
               border={"1px solid #2D7D44"}
               color={"#3BB25D"}
@@ -309,18 +401,25 @@ export default function CreateApiKeyModal() {
             </Button>
 
             <Button
-              leftIcon={<CopyIcon />}
-              bg="#373A40"
-              color={"#616264"}
+              leftIcon={copied ? <CheckIcon /> : <CopyIcon />}
+              color={"#3BB25D"}
               borderRadius={"10px"}
+              border={"1px solid #2D7D44"}
+              bg="rgb(15,18,22)"
               py={{ base: "1px", lg: "21px" }}
               w={{ base: "full", sm: "unset" }}
               _hover={{
                 bg: "#69FF93",
                 color: "black",
               }}
+              disabled={!apiKey}
+              onClick={() => {
+                navigator.clipboard.writeText(apiKey);
+                setcopied(true);
+                setTimeout(() => setcopied(false), 2000);
+              }}
             >
-              Copy Key
+              {copied ? "Copied!" : "Copy Key"}
             </Button>
           </Flex>
         </Box>
