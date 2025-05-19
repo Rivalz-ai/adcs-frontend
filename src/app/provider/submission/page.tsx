@@ -27,6 +27,18 @@ interface VerifyData {
   playground: string;
 }
 
+interface FormDataType {
+  apiEndpoint: string;
+  apiKey: string;
+  githubPR: string;
+  documentationLink: string;
+  playground: string;
+  method: string;
+  input: string;
+  ConfigurationFile: string;
+  [key: string]: string;
+}
+
 export default function ProviderSubmissionForm() {
   const headerFontSize = useBreakpointValue({
     base: "24px",
@@ -36,19 +48,6 @@ export default function ProviderSubmissionForm() {
   });
   const toast = useToast();
   const [loading, setLoading] = useState("");
-
-  interface FormDataType {
-    apiEndpoint: string;
-    apiKey: string;
-    githubPR: string;
-    documentationLink: string;
-    playground: string;
-    method: string;
-    input: string;
-    ConfigurationFile: string;
-    [key: string]: string;
-  }
-
   const [formData, setFormData] = useState<FormDataType>({
     apiEndpoint: "",
     apiKey: "",
@@ -65,38 +64,51 @@ export default function ProviderSubmissionForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === "method" && verifyData) {
-      const selectedMethod = verifyData.find(
-        (m: VerifyData) => m.method_name === value
-      );
+    setFormData((prev) => {
+      const updatedFormData = { ...prev, [name]: value };
+      if (updatedFormData.method && verifyData) {
+        const selectedMethod = verifyData.find(
+          (m: VerifyData) => m.method_name === updatedFormData.method
+        );
 
-      if (selectedMethod) {
-        const methodType = selectedMethod.type.toUpperCase() as
-          | "GET"
-          | "POST"
-          | "PUT"
-          | "PATCH"
-          | "DELETE";
-        const curl = CurlGenerator({
-          method: methodType,
-          url: selectedMethod.playground,
-          headers: {
-            Authorization: `Bearer ${formData.apiKey}`,
-          },
-        });
+        if (selectedMethod) {
+          const methodType = selectedMethod.type.toUpperCase() as
+            | "GET"
+            | "POST"
+            | "PUT"
+            | "PATCH"
+            | "DELETE";
 
-        setFormData((prev) => ({
-          ...prev,
-          method: value,
-          playground: curl,
-        }));
-        return;
+          const url = new URL(selectedMethod.playground);
+          const baseUrl = `${url.origin}${url.pathname}`;
+          const params = new URLSearchParams();
+
+          if (updatedFormData.input) {
+            const [paramName, paramValue] = updatedFormData.input.split("=");
+            if (paramName && paramValue) {
+              params.set(paramName.trim(), paramValue.trim());
+            }
+          }
+
+          const fullUrl = params.toString()
+            ? `${baseUrl}?${params.toString()}`
+            : baseUrl;
+
+          const curl = CurlGenerator({
+            method: methodType,
+            url: fullUrl,
+          });
+          updatedFormData.playground = curl;
+        }
       }
-    }
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+      return updatedFormData;
+    });
   };
 
   const curlExecutor = async () => {
+    setLoading("curlExecuting");
+
     const selectedMethod = verifyData.find(
       (m: VerifyData) => m.method_name === formData.method
     );
@@ -140,67 +152,71 @@ export default function ProviderSubmissionForm() {
       }
       return response.data;
     } catch (error) {
-      console.error(
-        "Request Error:",
-        error instanceof Error ? error.message : "Unknown error occurred"
-      );
+      toast({
+        title: "Request Error",
+        description:
+          error instanceof Error ? error.message : "Unknown error occurred",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading("");
     }
   };
 
   const handleVerify = async () => {
-      const submissionData = {
-        url: formData.apiEndpoint,
-        apiKey: {
-          "api-key": formData.apiKey,
-        },
-        prUrl: formData.githubPR,
-        documentLink: formData.documentationLink,
-        configUrl: formData.ConfigurationFile,
-      };
-      try {
-        setLoading("verifying");
-        const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/providers/verifySubmission`,
-          submissionData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-  
-        if (response.status === 200 || response.status === 201) {
-          setverifyData(response.data.methods);
-          toast({
-            title: "Verified",
-            description: "Your data has been Verified successfully.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-          });
-        } else {
-          toast({
-            title: "Verified Error",
-            description:
-              response.data.message || "An error occurred during verification.",
-            status: "error",
-            duration: 3000,
-            isClosable: true,
-          });
+    const submissionData = {
+      url: formData.apiEndpoint,
+      apiKey: JSON.parse(formData.apiKey),
+      prUrl: formData.githubPR,
+      documentLink: formData.documentationLink,
+      configUrl: formData.ConfigurationFile,
+    };
+    try {
+      setLoading("verifying");
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}providers/verifySubmission`,
+        submissionData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      } catch (error) {
-        console.error("Error verification form:", error);
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setverifyData(response.data.methods);
         toast({
-          title: "Network Error",
-          description: "Failed to verify data. Please try again.",
+          title: "Verified",
+          description: "Your data has been Verified successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: "Verified Error",
+          description:
+            response.data.message || "An error occurred during verification.",
           status: "error",
           duration: 3000,
           isClosable: true,
         });
-      } finally {
-        setLoading("");
       }
-    };
+    } catch (error) {
+      console.error("Error verification form:", error);
+      toast({
+        title: "Network Error",
+        description: "Failed to verify data. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading("");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!verified) {
@@ -216,9 +232,7 @@ export default function ProviderSubmissionForm() {
 
     const submissionData = {
       url: formData.apiEndpoint,
-      apiKey: {
-        "api-key": formData.apiKey,
-      },
+      apiKey: JSON.parse(formData.apiKey),
       prUrl: formData.githubPR,
       documentLink: formData.documentationLink,
       configUrl: formData.ConfigurationFile,
@@ -227,7 +241,7 @@ export default function ProviderSubmissionForm() {
     try {
       setLoading("submitting");
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/providers/submission`,
+        `${process.env.NEXT_PUBLIC_API_URL}providers/submission`,
         submissionData,
         {
           headers: {
@@ -443,14 +457,28 @@ export default function ProviderSubmissionForm() {
               verifyData={verifyData}
               value={formData.playground}
               onChange={handleChange}
+              loading={loading}
               curlExecutor={curlExecutor}
             />
 
             {/* Method */}
-            <FormField label="Method:" placeholder="" name="method" value={formData.method} verifyData={verifyData} onChange={handleChange}/>
+            <FormField
+              label="Method:"
+              placeholder=""
+              name="method"
+              verifyData={verifyData}
+              value={formData.method}
+              onChange={handleChange}
+            />
 
             {/* Input */}
-            <FormField label="Input:" placeholder="" name={""} value={""}/>
+            <FormField
+              label="Input:"
+              placeholder=""
+              name={"input"}
+              value={formData.input}
+              onChange={handleChange}
+            />
 
             {/* Submit button */}
             <Flex justify={{ base: "center", sm: "flex-end" }} gap={2} mt={6}>
@@ -539,13 +567,14 @@ function FormField({
   value,
   curlExecutor,
   verifyData,
+  loading,
   onChange,
-  
 }: {
   label: string;
   placeholder: string;
   name: string;
   value: string;
+  loading?: string;
   verifyData?: VerifyData[];
   curlExecutor?: () => Promise<unknown>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
