@@ -15,7 +15,7 @@ import {
 import { X } from "lucide-react";
 import { FaArrowLeft, FaCheckDouble } from "react-icons/fa";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 interface VerifyData {
   method_name: string;
@@ -35,7 +35,7 @@ export default function ProviderSubmissionForm() {
     lg: "48px",
   });
   const toast = useToast();
-  const [loading, setloading] = useState("");
+  const [loading, setLoading] = useState("");
 
   interface FormDataType {
     apiEndpoint: string;
@@ -158,7 +158,7 @@ export default function ProviderSubmissionForm() {
         configUrl: formData.ConfigurationFile,
       };
       try {
-        setloading("verifying");
+        setLoading("verifying");
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/providers/verifySubmission`,
           submissionData,
@@ -198,7 +198,7 @@ export default function ProviderSubmissionForm() {
           isClosable: true,
         });
       } finally {
-        setloading("");
+        setLoading("");
       }
     };
 
@@ -225,7 +225,7 @@ export default function ProviderSubmissionForm() {
     };
 
     try {
-      setloading("submitting");
+      setLoading("submitting");
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/providers/submission`,
         submissionData,
@@ -237,7 +237,6 @@ export default function ProviderSubmissionForm() {
       );
 
       if (response.status === 200 || response.status === 201) {
-        setloading(false);
         toast({
           title: "Submitted",
           description: "Your data has been submitted successfully.",
@@ -265,7 +264,7 @@ export default function ProviderSubmissionForm() {
         isClosable: true,
       });
     } finally {
-      setloading("");
+      setLoading("");
     }
   };
 
