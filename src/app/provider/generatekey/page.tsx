@@ -93,15 +93,7 @@ export default function CreateApiKeyModal() {
         return;
       }
 
-      const message = "Welcome to ADCS.";
-      const signature = await signMessageAsync({ message });
-
-      const verifyResponse = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}auth/verify`,
-        { message, signature }
-      );
-
-      const accessToken = verifyResponse.data.accessToken;
+      const accessToken = localStorage.getItem("accessToken");
 
       const apiKeyResponse = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}auth/api-key/${keyName}`,
@@ -144,7 +136,6 @@ export default function CreateApiKeyModal() {
     <Flex py={"5rem"} justifyContent="center">
       <Box
         bg="#0C0E12"
-        // border={"1px solid white"}
         borderRadius="10px"
         position="relative"
         maxWidth="682px"
@@ -170,7 +161,6 @@ export default function CreateApiKeyModal() {
           <Flex justify="space-between" align="center" mb="8px">
             <Text
               pt={{ base: "20px", sm: "0" }}
-              //   fontSize="48px"
               fontSize={{ base: "24px", sm: "32px", md: "42px", lg: "48px" }}
               fontWeight="bold"
               color="white"
@@ -395,7 +385,7 @@ export default function CreateApiKeyModal() {
                 bg: "#69FF93",
                 color: "black",
               }}
-              disabled={isNameError}
+              disabled={isNameError || keyName === ""}
             >
               Create API Key
             </Button>
