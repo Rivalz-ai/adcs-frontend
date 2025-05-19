@@ -1,4 +1,5 @@
 import React from "react";
+import { useDisclosure } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -17,6 +18,7 @@ interface PopoverCompProps {
   data: { value: string | number; label: string; subLabel?: string }[];
   values: Array<string | number>;
   onSelected: (value: string | number) => void;
+  isSingleSelect?: boolean;
 }
 
 interface MethodsTypeProps {
@@ -41,7 +43,6 @@ export default function MethodsType({
       onSelected={(value) => {
         setselectedMethodstype(value as string);
       }}
-      //@ts-ignore
       isSingleSelect
     />
   );
@@ -54,8 +55,14 @@ function PopoverComp({
   values,
   onSelected,
 }: PopoverCompProps) {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const handleSelection = (value: string | number) => {
+        onSelected(value);
+        onClose();
+    }
   return (
-    <Popover>
+    <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
       <PopoverTrigger>
         <Button
           borderRadius="10px"
@@ -102,7 +109,7 @@ function PopoverComp({
         <PopoverBody gap="25px" display="flex" flexDir="column" py="20px">
           {data.map((item, index) => (
             <Flex
-              onClick={() => onSelected(item.value)}
+              onClick={() => handleSelection(item.value)}
               _hover={{ cursor: "pointer" }}
               w="full"
               gap="10px"
