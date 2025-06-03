@@ -9,23 +9,10 @@ import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
 import ProtectedPage from "@/libs/utls/ProtectedPage";
 import { AdaptorCreateModel } from "@/types/adapter-type";
 import CheckBoxCustom from "@/views/components/CheckBox";
-import ProvidersCom from "@/views/components/ProvidersCom";
-import {
-  Button,
-  Flex,
-  Input,
-  Spacer,
-  Text,
-  Textarea,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Flex, Input, Spacer, Text, Textarea } from "@chakra-ui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { FaArrowLeft, FaCheckDouble, FaSave, FaTrash } from "react-icons/fa";
-import ExcuteAiInferenceProvider from "@/views/ExcuteAiInferenceProvider";
-import ChainType from "@/views/components/ChainType";
-// import { Plus } from "lucide-react";
 
 export default function CreateProviderPage({
   params,
@@ -33,39 +20,28 @@ export default function CreateProviderPage({
   params: { adaptorId: string };
 }) {
   const isEdit = params.adaptorId !== "new-adapter";
-  const router = useRouter();
-  const toast = useToast();
 
   const { data: item } = useAdaptor(isEdit ? params.adaptorId : undefined);
 
-  const { createAdaptor, isLoading: isLoadingCreateAdaptor } =
-    useCreateAdapter();
-  const { updateAdaptor, isLoading: isLoadingUpdateAdaptor } =
-    useUpdateAdapter();
-  const { deleteAdaptor, isLoading: isLoadingDeleteAdaptor } =
-    useDeleteAdapter();
+  const { isLoading: isLoadingCreateAdaptor } = useCreateAdapter();
+  const { isLoading: isLoadingUpdateAdaptor } = useUpdateAdapter();
+  const { isLoading: isLoadingDeleteAdaptor } = useDeleteAdapter();
 
   const [adaptor, setAdaptor] = useState<AdaptorCreateModel>({
-    id: 0,
+    id: "",
     name: "",
-    chainType: "",
     description: "",
-    variables: "",
-    categoryId: 0,
     outputTypeId: 0,
-    dataProviderId: 0,
-    chainId: 1,
-    aiPrompt: "decision should buy or sell BTC at this time",
+    // variables: "",
+    // categoryId: 0,
+    // dataProviderId: 0,
+    // chainId: 1,
+    // aiPrompt: "decision should buy or sell BTC at this time",
   });
-  
+
   const [categoryInput, setCategoryInput] = useState("");
 
   // Function to handle the input change
-  const handleCategoryInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setCategoryInput(e.target.value);
-  };
 
   useEffect(() => {
     if (item) {
@@ -87,123 +63,57 @@ export default function CreateProviderPage({
     });
   }, [outputData]);
 
-  const categoriesRender = useMemo(() => {
-    return categories.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-        subLabel: item.name,
-      };
-    });
-  }, [categories]);
-
-  const chainsRender = useMemo(() => {
-    return chains.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-        subLabel: item.name,
-      };
-    });
-  }, [chains]);
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (
-      !adaptor.name ||
-      !adaptor.description ||
-      !adaptor.aiPrompt ||
-      !adaptor.categoryId ||
-      !adaptor.outputTypeId ||
-      !adaptor.dataProviderId ||
-      !adaptor.chainId
-    ) {
-      toast({
-        title: "Error",
-        description: "Please fill all the fields",
-        status: "warning",
-      });
-      return;
-    }
-    try {
-      if (isEdit) {
-        await updateAdaptor(adaptor);
-      } else {
-        await createAdaptor(adaptor);
-      }
-      toast({
-        title: "Success",
-        description: "Adaptor created successfully",
-        status: "success",
-      });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      router.push("/adaptor/me");
-    } catch (error: unknown) {
-      toast({
-        title: "Error",
-        description: (error as string) || "Something went wrong",
-        status: "error",
-      });
-    }
+    // if (
+
+    // ) {
+    //   toast({
+    //     title: "Error",
+    //     description: "Please fill all the fields",
+    //     status: "warning",
+    //   });
+    //   return;
+    // }
+    // try {
+    //   if (isEdit) {
+    //     await updateAdaptor(adaptor);
+    //   } else {
+    //     await createAdaptor(adaptor);
+    //   }
+    //   toast({
+    //     title: "Success",
+    //     description: "Adaptor created successfully",
+    //     status: "success",
+    //   });
+    //   await new Promise((resolve) => setTimeout(resolve, 1000));
+    //   router.push("/adaptor/me");
+    // } catch (error: unknown) {
+    //   toast({
+    //     title: "Error",
+    //     description: (error as string) || "Something went wrong",
+    //     status: "error",
+    //   });
+    // }
   };
 
   const onDeleteAdaptor = async () => {
-    try {
-      await deleteAdaptor(adaptor.id);
-      toast({
-        title: "Success",
-        description: "Adaptor deleted successfully",
-        status: "success",
-      });
-      router.push("/adaptor/me");
-    } catch {
-      toast({
-        title: "Error",
-        description: "Something went wrong",
-        status: "error",
-      });
-    }
-  };
-
-  const handleAddCategory = () => {
-    // Don't do anything if the input is empty
-    if (!categoryInput.trim()) return;
-
-    // Check if the category already exists
-    const existingCategory = categoriesRender.find(
-      (cat) => cat.label.toLowerCase() === categoryInput.toLowerCase()
-    );
-
-    if (existingCategory) {
-      // If it exists, select it
-      setAdaptor((prev) => ({
-        ...prev,
-        categoryId: existingCategory.value,
-      }));
-    } else {
-      // If it doesn't exist, create a new one
-      // Find the maximum ID in the categories array
-      const maxId = Math.max(...categories.map((cat) => cat.id), 0);
-
-      // Create a new category with id = maxId + 1 and add to categories array
-      const newCategory = {
-        id: maxId + 1,
-        label: categoryInput,
-        value: maxId + 1,
-        subLabel: categoryInput,
-      };
-
-      categoriesRender.push(newCategory);
-      // Select the new category
-      setAdaptor((prev) => ({
-        ...prev,
-        categoryId: newCategory.id,
-      }));
-    }
-
-    // Clear the input
-    setCategoryInput("");
+    // try {
+    //   await deleteAdaptor(adaptor.id);
+    //   toast({
+    //     title: "Success",
+    //     description: "Adaptor deleted successfully",
+    //     status: "success",
+    //   });
+    //   router.push("/adaptor/me");
+    // } catch {
+    //   toast({
+    //     title: "Error",
+    //     description: "Something went wrong",
+    //     status: "error",
+    //   });
+    // }
   };
 
   return (
@@ -296,7 +206,7 @@ export default function CreateProviderPage({
               </Flex>
 
               <Flex gap="20px" justifyContent="flex-end" w="fit-content">
-                <ProvidersCom
+                {/* <ProvidersCom
                   isShowValue
                   selectedProviders={
                     adaptor.dataProviderId ? [adaptor.dataProviderId] : []
@@ -304,7 +214,7 @@ export default function CreateProviderPage({
                   setSelectedProviders={(value) => {
                     setAdaptor({ ...adaptor, dataProviderId: Number(value) });
                   }}
-                />
+                /> */}
               </Flex>
             </Flex>
 
@@ -322,13 +232,13 @@ export default function CreateProviderPage({
               </Flex>
 
               <Flex gap="20px" justifyContent="flex-end">
-                <ChainType
+                {/* <ChainType
                   isShowValue
                   selectedChainType={adaptor.chainType}
                   setselectedchaintype={(value) => {
                     setAdaptor({ ...adaptor, chainType: value });
                   }}
-                />
+                /> */}
               </Flex>
             </Flex>
             <Flex
@@ -345,7 +255,7 @@ export default function CreateProviderPage({
               </Flex>
 
               <Flex gap={{ base: "10px", lg: "20px" }} flexWrap={"wrap"}>
-                {chainsRender.map((item, index) => (
+                {/* {chainsRender.map((item, index) => (
                   <Text
                     key={index}
                     fontSize="12px"
@@ -362,7 +272,7 @@ export default function CreateProviderPage({
                   >
                     {item.label}
                   </Text>
-                ))}
+                ))} */}
               </Flex>
             </Flex>
 
@@ -385,7 +295,7 @@ export default function CreateProviderPage({
                 </Flex>
 
                 <Flex gap="20px" flexWrap={"wrap"}>
-                  {categoriesRender.map((item, index) => (
+                  {/* {categoriesRender.map((item, index) => (
                     <CheckBoxCustom
                       item={item}
                       isChecked={adaptor.categoryId === item.value}
@@ -400,7 +310,7 @@ export default function CreateProviderPage({
                       }}
                       key={index}
                     />
-                  ))}
+                  ))} */}
                 </Flex>
               </Flex>
 
@@ -421,7 +331,7 @@ export default function CreateProviderPage({
                   w={{ base: "100%", sm: "fit-content" }}
                   flex={1.7}
                 >
-                  <Input
+                  {/* <Input
                     name="value"
                     placeholder="Category Name"
                     border="1px solid #272637"
@@ -433,12 +343,12 @@ export default function CreateProviderPage({
                     value={categoryInput}
                     onChange={handleCategoryInputChange}
                     isDisabled={!!adaptor.categoryId}
-                  />
+                  /> */}
                 </Flex>
               </Flex>
               <Flex justifyContent={"space-between"}>
                 <div>&nbsp;</div>
-                <Button
+                {/* <Button
                   // leftIcon={<FaPlus />}
                   bg="rgb(15,18,22)"
                   border={"1px solid #2D7D44"}
@@ -453,7 +363,7 @@ export default function CreateProviderPage({
                   onClick={handleAddCategory}
                 >
                   +&nbsp;Add Category
-                </Button>
+                </Button> */}
               </Flex>
             </Flex>
 
@@ -574,7 +484,7 @@ export default function CreateProviderPage({
                 w={{ base: "100%", sm: "fit-content" }}
                 flex={1.7}
               >
-                <Input
+                {/* <Input
                   name="value"
                   placeholder="Prompt"
                   border="1px solid #272637"
@@ -587,7 +497,7 @@ export default function CreateProviderPage({
                   onChange={(e) =>
                     setAdaptor({ ...adaptor, aiPrompt: e.target.value })
                   }
-                />
+                /> */}
               </Flex>
             </Flex>
 
@@ -629,12 +539,12 @@ export default function CreateProviderPage({
           </Flex>
         </form>
 
-        <ExcuteAiInferenceProvider
+        {/* <ExcuteAiInferenceProvider
           providerId={adaptor.dataProviderId}
           content={adaptor.aiPrompt}
           dataTypeId={adaptor.outputTypeId}
           categoryId={adaptor.categoryId}
-        />
+        /> */}
       </Flex>
     </ProtectedPage>
   );

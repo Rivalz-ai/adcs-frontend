@@ -12,14 +12,11 @@ import {
   InputRightElement,
   useToast,
 } from "@chakra-ui/react";
-import { AlertCircle,CheckIcon,X } from "lucide-react";
+import { AlertCircle, CheckIcon, X } from "lucide-react";
 import { FaCheckDouble } from "react-icons/fa";
 import { CopyIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import { useAccount, useSignMessage } from "wagmi";
-
-
-
+import { useAccount } from "wagmi";
 
 export default function CreateApiKeyModal() {
   const [keyName, setKeyName] = useState("");
@@ -31,7 +28,6 @@ export default function CreateApiKeyModal() {
   const [copied, setcopied] = useState(false);
   const toast = useToast();
   const { isConnected } = useAccount();
-  const { signMessageAsync } = useSignMessage();
 
   interface HandleNameChangeEvent {
     target: {
@@ -44,7 +40,6 @@ export default function CreateApiKeyModal() {
       value: string;
     };
   }
-  
 
   const handleNameChange = (e: HandleNameChangeEvent): void => {
     setKeyName(e.target.value);
@@ -54,8 +49,6 @@ export default function CreateApiKeyModal() {
       setIsNameError(false);
     }
   };
-
-  
 
   const handleSpendingLimitChange = (
     e: HandleSpendingLimitChangeEvent

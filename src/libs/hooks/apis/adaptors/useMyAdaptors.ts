@@ -7,7 +7,7 @@ export default function useMyAdaptors(address: string) {
     queryKey: ["use-my-adaptors", address],
     queryFn: async (): Promise<AdaptorItem[]> => {
       const response: AdaptorItem[] = await axiosInstance.get(
-        `/adaptors/by-address?address=${address}`
+        `v1/adaptors/by-address?address=${address}`
       );
       return response;
     },

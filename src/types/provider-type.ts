@@ -1,25 +1,32 @@
 export interface ProviderItem {
-  id: number;
+  id: string;
   name: string;
-  endpoint: string;
-  type: string;
-  active: boolean;
   description: string;
-  inputVariables: object;
-  outputVariables: {
-    final_decision: {
-      decision: boolean;
-      token_name: string;
-    };
-    memecoins_data: string;
-    market_research: string;
-  };
+  iconUrl: string;
+  documentLink: string;
   createdAt: string;
   updatedAt: string;
-  iconUrl: string;
-  exampleCall: string;
-  documentation?: string;
-  aiModel: string | null;
+  methods: MethodItem[];
+  category: string;
   categoryId: number;
-  outputTypeId: number;
+  requestCount: number;
+  entities: string[];
+}
+
+export interface MethodItem {
+  name: string;
+  description: string;
+  inputSchema: {
+    id: number;
+    name: string;
+    object: Record<string, unknown>;
+  };
+  inputType: string;
+  outputSchema: {
+    id: number;
+    name: string;
+    object: Record<string, unknown>;
+  };
+  playground: string;
+  type: string;
 }

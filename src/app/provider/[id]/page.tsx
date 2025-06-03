@@ -1,8 +1,5 @@
 "use client";
-import useExcuteCrulProvider from "@/libs/hooks/apis/useExcuteCrulProvider";
-import useExecuteProvider from "@/libs/hooks/apis/useExecuteProvider";
 import useProviderDetail from "@/libs/hooks/apis/useProviderDetail";
-import { parseCurl } from "@/libs/utls/parse-curl";
 import {
   Box,
   Flex,
@@ -21,44 +18,20 @@ import {
   Wrap,
   Badge,
 } from "@chakra-ui/react";
-import { CopyIcon, Github } from "lucide-react";
+import { CopyIcon, ExternalLinkIcon, Github } from "lucide-react";
+import Link from "next/link";
 import React, { useState } from "react";
-import { FaGlobeAfrica, FaPlay } from "react-icons/fa";
-import ReactJson from "react-json-view";
+import { FaGlobeAfrica } from "react-icons/fa";
+import Playground from "./components/Playground";
 
 export default function ProviderPageDetail({
   params,
 }: {
   params: { id: string };
 }) {
-  const [isTrigger, setIsTrigger] = useState(false);
   const [tab, setTab] = useState("code");
 
   const { data: detail } = useProviderDetail(params.id);
-  const { dataExecute, isLoadingExecute, refetchExecute } = useExecuteProvider(
-    isTrigger,
-    detail?.exampleCall
-  );
-
-  const {
-    mutate: executeCurl,
-    isPending: isLoadingExecuteCurl,
-    data: dataExecuteCurl,
-  } = useExcuteCrulProvider();
-
-  const onHandleExecute = () => {
-    const parsed = parseCurl(detail?.exampleCall || "");
-    if (parsed.url && parsed.method && parsed.data) {
-      executeCurl(parsed);
-      return;
-    }
-
-    if (!isTrigger) {
-      setIsTrigger(true);
-    } else {
-      refetchExecute();
-    }
-  };
 
   return (
     <Box pb={"6"} minH="100vh" color="white">
@@ -147,7 +120,7 @@ export default function ProviderPageDetail({
                     textAlign="right"
                     pr={{ base: "2", md: "4" }}
                   >
-                    0
+                    {detail?.requestCount || 0}
                   </Td>
                 </Tr>
                 <Tr>
@@ -163,7 +136,7 @@ export default function ProviderPageDetail({
                     textAlign="right"
                     pr={{ base: "2", md: "4" }}
                   >
-                    {"--- ---"}
+                    {detail?.category || "--- ---"}
                   </Td>
                 </Tr>
                 <Tr>
@@ -227,99 +200,47 @@ export default function ProviderPageDetail({
         <Box
           fontFamily="monospace"
           bg="transparent"
-      
           minH="30vh"
           borderRadius="md"
           display="flex"
           flexDirection="column"
           flexWrap="wrap"
         >
-        
-          {tab === "Playground" && (
-            <>
-              <Box
-                w={"full"}
-                minH="30vh"
-                borderBottomRadius={"lg"}
-                bg={"#0C0E12"}
-                color={"#49B267"}
-              >
-                <Flex w="full" flexDir="column" gap="5px" p="4">
-                  <Text
-                    fontFamily="monospace"
-                    as="pre"
-                    whiteSpace="pre-wrap"
-                    overflow="hidden"
-                    pr="50px"
-                    fontSize={"16px"}
-                  >
-                    Endpoint: {detail?.endpoint}
-                  </Text>
-                  <Text
-                    fontFamily="monospace"
-                    as="pre"
-                    whiteSpace="pre-wrap"
-                    overflow="hidden"
-                    pr="50px"
-                    fontSize={"16px"}
-                  >
-                    Example: {detail?.exampleCall}
+          {tab === "code" && (
+            <Flex
+              w={"full"}
+              minH="30vh"
+              borderBottomRadius={"lg"}
+              bg={"#0C0E12"}
+              color={"#49B267"}
+              flexDirection="column"
+              gap="5px"
+              p="4"
+              justifyContent="space-between"
+              // alignItems="center"
+            >
+              {detail?.documentLink && (
+                <Link href={detail?.documentLink} target="_blank">
+                  <Flex alignItems="center" gap="5px">
+                    <Text fontSize="16px" color="#94979C">
+                      {detail.documentLink}
+                    </Text>
+                    <ExternalLinkIcon />
+                  </Flex>
+                </Link>
+              )}
+              {!detail?.documentLink && (
+                <Flex alignItems="center" justifyContent="center" gap="5px">
+                  <Text fontSize="16px" color="#94979C">
+                    No documentation available
                   </Text>
                 </Flex>
-              </Box>
-
-              <Button
-                onClick={onHandleExecute}
-                leftIcon={<FaPlay />}
-                bg="rgb(15,18,22)"
-                border={"1px solid #2D7D44"}
-                color={"#3BB25D"}
-                borderRadius={"10px"}
-                _hover={{
-                  bg: "#69FF93",
-                  color: "black",
-                }}
-                w="fit-content"
-                px={"16px"}
-                py={"10px"}
-                my={"4"}
-                bgColor="transparent"
-                isDisabled={isLoadingExecute || isLoadingExecuteCurl}
-                isLoading={isLoadingExecute || isLoadingExecuteCurl}
-              >
-                Execute
-              </Button>
-
-              {(dataExecute || dataExecuteCurl) && (
-                <Box bg={"#0C0E12"} padding={"20px"} borderRadius={"10px"}>
-                  <Box bg={"#13161b"} borderRadius={"10px"} padding={"5px"}>
-                    {(dataExecute || dataExecuteCurl) && (
-                      <ReactJson
-                        theme={{
-                          base00: "#13161b", // Background color
-                          base01: "#1c1f26", // Lighter background
-                          base02: "#2e323c", // Selection background
-                          base03: "#3e4451", // Comments, invisibles, line highlighting
-                          base04: "#4b5263", // Darker foreground
-                          base05: "#FFFFFF", // Default foreground
-                          base06: "#d3dae3", // Light foreground
-                          base07: "#e6e9ef", // Light background
-                          base08: "#f2777a", // Variables, XML tags, markup link text, markup lists, diff deleted
-                          base09: "#F9C981", // Integers, booleans, constants, XML attributes, markup link URLs
-                          base0A: "#ffcc66", // Classes, markup bold, search text background
-                          base0B: "#F9C981", // Strings, inherited class, markup code, diff inserted
-                          base0C: "#99cc99", // Support, regular expressions, escape characters, markup quotes
-                          base0D: "#94979C", // Functions, methods, attribute IDs, headings
-                          base0E: "#cc99cc", // Keywords, storage, selector, markup italic, diff changed
-                          base0F: "#d27b53", // Deprecated, opening/closing embedded language tags, e.g. <?php ?>
-                        }}
-                        src={dataExecute || dataExecuteCurl}
-                      />
-                    )}
-                  </Box>
-                </Box>
               )}
-            </>
+            </Flex>
+          )}
+
+          {tab === "Playground" && (
+            <Playground methods={detail?.methods || []} />
           )}
 
           {tab === "About" && (
@@ -514,24 +435,22 @@ export default function ProviderPageDetail({
                     ENTITY TYPES:
                   </Text>
                   <Flex gap={2} wrap="wrap">
-                    {["DEFI", "MARKETPLACES", "INFRASTRUCTURE"].map(
-                      (type, index) => (
-                        <Badge
-                          key={index}
-                          px={"10px"}
-                          py={"2px"}
-                          fontSize="12px"
-                          borderRadius="full"
-                          fontWeight={"normal"}
-                          bg="transparent"
-                          border="1px solid #265C35"
-                          lineHeight={"16px"}
-                          color="#69FF93"
-                        >
-                          {type}
-                        </Badge>
-                      )
-                    )}
+                    {detail?.entities.map((type, index) => (
+                      <Badge
+                        key={index}
+                        px={"10px"}
+                        py={"2px"}
+                        fontSize="12px"
+                        borderRadius="full"
+                        fontWeight={"normal"}
+                        bg="transparent"
+                        border="1px solid #265C35"
+                        lineHeight={"16px"}
+                        color="#69FF93"
+                      >
+                        {type}
+                      </Badge>
+                    ))}
                   </Flex>
                 </Flex>
               </Box>

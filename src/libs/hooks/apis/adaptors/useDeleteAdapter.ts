@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 export default function useDeleteAdapter() {
   const deleteAdaptorMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await axiosInstance.delete(`/adaptors/${id}`);
+      const response = await axiosInstance.delete(`v1/adaptors/${id}`);
       return response;
     },
   });

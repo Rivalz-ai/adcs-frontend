@@ -8,7 +8,7 @@ export default function useCreateAdapter() {
       adaptor: AdaptorCreateModel
     ): Promise<AdaptorCreateModel> => {
       const response: AdaptorCreateModel = await axiosInstance.post(
-        "/adaptors",
+        "v1/adaptors",
         adaptor
       );
       return response;

@@ -6,7 +6,9 @@ export default function useGetAllProvider() {
   const getAdaptorsQuery = useQuery({
     queryKey: ["providers"],
     queryFn: async (): Promise<ProviderItem[]> => {
-      const response: ProviderItem[] = await axiosInstance.get("/providers");
+      const response: ProviderItem[] = await axiosInstance.get(
+        "v2/providers/all"
+      );
       return response;
     },
   });
