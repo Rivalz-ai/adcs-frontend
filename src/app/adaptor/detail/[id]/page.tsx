@@ -27,7 +27,7 @@ import { Playground } from "./components";
 import { AdaptorItem } from "@/types/adapter-type";
 import About from "./components/about";
 
-type TabType = "code" | "About" | "docs" | "Playground";
+type TabType = "About" | "Playground";
 
 export default function AdaptorDetailPage({
   params,
@@ -35,7 +35,7 @@ export default function AdaptorDetailPage({
   params: { id: string };
 }) {
   const { data: detail } = useAdaptorDetail(params.id);
-  const [tab, setTab] = useState<TabType>("code");
+  const [tab, setTab] = useState<TabType>("Playground");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -45,20 +45,6 @@ export default function AdaptorDetailPage({
 
   return (
     <>
-      {tab === "code" && (
-        <Flex
-          w="1500px"
-          h="1500px"
-          borderRadius="full"
-          bgColor="rgba(90, 254, 176, 0.10)"
-          zIndex={-1}
-          position="absolute"
-          top="-50%"
-          left="-50%"
-          filter="blur(200px)"
-        />
-      )}
-
       <Box minH="100vh" color="white">
         <SearchBar />
         <Spacer mb={"4rem"} />
@@ -370,7 +356,6 @@ export default function AdaptorDetailPage({
             borderRadius="md"
           >
             {[
-              { name: "Code Example", key: "code" },
               { name: "Playground", key: "Playground" },
               { name: "About", key: "About" },
             ].map(({ name, key }) => (
@@ -401,15 +386,6 @@ export default function AdaptorDetailPage({
             flexWrap="wrap"
             overflowX={"auto"}
           >
-            {tab === "code" && (
-              <Box position={"relative"} border="1px solid #23262E" p="4">
-                {/* <CodeBlock
-                  code={detail?.exampleCode || ""}
-                  language="solidity"
-                /> */}
-                <Text color="#94979C">Coming soon</Text>
-              </Box>
-            )}
             {tab === "Playground" && (
               <>
                 <Playground
