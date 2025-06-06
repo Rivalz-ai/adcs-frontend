@@ -7,7 +7,7 @@ export default function useGetCategories() {
     queryKey: ["adaptors-categories"],
     queryFn: async (): Promise<Category[]> => {
       const response: Category[] = await axiosInstance.get(
-        "/adaptors/category"
+        "v1/adaptors/category"
       );
       return response;
     },

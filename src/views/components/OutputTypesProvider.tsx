@@ -4,10 +4,6 @@ import React, { useMemo } from "react";
 import PopoverComp from "../PopoverComp";
 import { ProviderItem } from "@/types/provider-type";
 
-
-
-
-
 interface OutputTypesProps {
   selectedOutputType: Array<string | number>;
   setSelectedOutputType: (value: string | number) => void;
@@ -22,7 +18,9 @@ export default function OutputTypes({
   data,
 }: OutputTypesProps) {
   const outputDataRender = useMemo(() => {
-    const uniqueTypes = Array.from(new Set(data.map((item) => item.type)));
+    const uniqueTypes = Array.from(
+      new Set(data.map((item) => item.categoryId))
+    );
 
     return uniqueTypes.map((type) => ({
       label: type,
@@ -34,7 +32,7 @@ export default function OutputTypes({
   return (
     <PopoverComp
       lable={`${label || "Output Types"} `}
-      data={outputDataRender}
+      data={[]}
       values={selectedOutputType}
       onSelected={(value) => {
         setSelectedOutputType(value);

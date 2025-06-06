@@ -7,7 +7,7 @@ export default function useGetOutPutTypes() {
     queryKey: ["adaptors-out-types"],
     queryFn: async (): Promise<OutputType[]> => {
       const response: OutputType[] = await axiosInstance.get(
-        "/adaptors/outputType"
+        "v1/adaptors/outputType"
       );
       return response;
     },

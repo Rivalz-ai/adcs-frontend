@@ -9,10 +9,9 @@ import OutputTypes from "@/views/components/OutputTypes";
 import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { Input } from "@chakra-ui/react";
-
+import { AdaptorItem } from "@/types/adapter-type";
 
 export default function Home() {
-  
   const [selectedCategories, setSelectedCategories] = useState<
     Array<string | number>
   >([]);
@@ -23,15 +22,17 @@ export default function Home() {
 
   const { data, isLoading } = useGetAllAdaptor();
   const [search, setSearch] = useSearchAdaptorState();
-  const dataRender = useMemo(() => {
+
+  const dataRender: AdaptorItem[] = useMemo(() => {
     if (data.length === 0) return [];
 
     let output = [...data];
     if (selectedCategories.length > 0) {
       output = output.filter((item) =>
-        selectedCategories.includes(item.categoryId)
+        selectedCategories.includes(item.categoryId || "")
       );
     }
+
     if (selectedOutputType.length > 0) {
       output = output.filter((item) =>
         selectedOutputType.includes(item.outputTypeId)
@@ -44,7 +45,7 @@ export default function Home() {
       return (
         item.name.toLowerCase().includes(value) ||
         item.id.toString().includes(value) ||
-        item.jobId.toLowerCase().includes(value)
+        item.name.toLowerCase().includes(value)
       );
     });
   }, [search.keySearch, data, selectedCategories, selectedOutputType]);
@@ -103,9 +104,9 @@ export default function Home() {
         </Flex>
 
         <Flex
-           w={{ base: "full", sm: "unset" }}
-           gap={{ base: "10px", lg: "20px" }}
-         >
+          w={{ base: "full", sm: "unset" }}
+          gap={{ base: "10px", lg: "20px" }}
+        >
           <Categories
             selectedCategories={selectedCategories}
             setSelectedCategories={(value) => {
@@ -118,7 +119,6 @@ export default function Home() {
             }}
           />
 
-          
           <OutputTypes
             selectedOutputType={selectedOutputType}
             setSelectedOutputType={(value) => {

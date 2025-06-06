@@ -6,7 +6,7 @@ import useGetAllProvider from "@/libs/hooks/apis/useGetAllProvider";
 import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
-import OutputTypesProvider from "@/views/components/OutputTypesProvider";
+// import OutputTypesProvider from "@/views/components/OutputTypesProvider";
 
 export default function ProviderPage() {
   const { data, isLoading } = useGetAllProvider();
@@ -17,9 +17,9 @@ export default function ProviderPage() {
     Array<string | number>
   >([]);
 
-  const [selectedOutputType, setSelectedOutputType] = useState<
-    Array<string | number>
-  >([]);
+  // const [selectedOutputType, setSelectedOutputType] = useState<
+  //   Array<string | number>
+  // >([]);
 
   const dataRender = useMemo(() => {
     if (!data || data.length === 0) return [];
@@ -33,12 +33,12 @@ export default function ProviderPage() {
       );
     }
 
-    // Filter by selected output type (if applicable)
-    if (selectedOutputType.length > 0) {
-      output = output.filter(
-        (item) => selectedOutputType.includes(item.type) // Changed from outputTypeId to type
-      );
-    }
+    // // Filter by selected output type (if applicable)
+    // if (selectedOutputType.length > 0) {
+    //   output = output.filter(
+    //     (item) => selectedOutputType.includes(item.type) // Changed from outputTypeId to type
+    //   );
+    // }
 
     // Apply search filter
     if (search.keySearch) {
@@ -46,17 +46,14 @@ export default function ProviderPage() {
       output = output.filter((item) => {
         return (
           item?.name.toLowerCase().includes(value) ||
-          item?.aiModel?.toLowerCase().includes(value) ||
           item?.description.toLowerCase().includes(value) ||
-          item?.id.toString().includes(value) ||
-          item?.endpoint.toLowerCase().includes(value)
+          item?.id.toString().includes(value)
         );
       });
     }
 
     return output;
-  }, [search.keySearch, data, selectedCategories, selectedOutputType]);
-
+  }, [data, selectedCategories, search.keySearch]);
 
   return (
     <Flex flex={1} flexDir="column" gap="30px">
@@ -147,7 +144,7 @@ export default function ProviderPage() {
               });
             }}
           />
-          <OutputTypesProvider
+          {/* <OutputTypesProvider
             label="Data Provider"
             selectedOutputType={selectedOutputType}
             setSelectedOutputType={(value) => {
@@ -159,7 +156,7 @@ export default function ProviderPage() {
               });
             }}
             data={data}
-          />
+          /> */}
         </Flex>
       </Flex>
 

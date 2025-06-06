@@ -9,14 +9,12 @@ interface AdapterCardProps {
 }
 
 export default function AdapterCard({ item, isMe }: AdapterCardProps) {
+  const url = !isMe
+    ? `/adaptor/detail/${item.id}`
+    : `/adaptor/create/${item.id}`;
+
   return (
-    <Link
-      href={
-        !isMe
-          ? `/adaptor/detail/${item.jobId}`
-          : `/adaptor/create/${item.jobId}`
-      }
-    >
+    <Link href={url}>
       <Flex
         backgroundColor={"rgba(17,20,25,0.5)"}
         padding="20px"
@@ -39,7 +37,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             fallbackSrc="/logo.png"
           />
           <Box mt="10px">
-            <Tooltip label={item.jobId}>
+            <Tooltip label={item.id}>
               <Flex gap={"10px"} alignItems={"center"}>
                 <div
                   style={{
@@ -52,10 +50,19 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
                   &nbsp;
                 </div>
                 <Text color="#94979C" fontSize="16px">
-                  {item.jobId.substring(0, 10)}...
+                  {`${item.id}`.substring(0, 10)}...
                 </Text>
               </Flex>
             </Tooltip>
+            <Text
+              fontSize="20px"
+              fontWeight="700"
+              color="#fff"
+              lineHeight="28px"
+              mt="10px"
+            >
+              {item.name}
+            </Text>
             <Text
               pt={"10px"}
               fontSize="16px"
@@ -79,7 +86,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
               REQUESTS
             </Text>
             <Text color="rgba(255, 255, 255, 0.48)" fontSize="14px">
-              {item.requests || 0}
+              {item.requestCount || 0}
             </Text>
           </Flex>
 
@@ -97,10 +104,10 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
               fontWeight="500"
               textTransform="uppercase"
             >
-              {item.categoryName}
+              {item.category}
             </Text>
           </Flex>
-          <Flex justifyContent="space-between" mt="2">
+          {/* <Flex justifyContent="space-between" mt="2">
             <Text
               color="rgba(255, 255, 255, 0.48)"
               fontSize="14px"
@@ -116,7 +123,7 @@ export default function AdapterCard({ item, isMe }: AdapterCardProps) {
             >
               {item.chainType}
             </Text>
-          </Flex>
+          </Flex> */}
         </Flex>
       </Flex>
     </Link>

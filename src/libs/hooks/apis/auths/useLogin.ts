@@ -32,7 +32,7 @@ export default function useLogin() {
         const message = "Welcome to ADCS.";
         const signature = await signMessageAsync({ message });
         const response: { accessToken: string } = await axiosInstance.post(
-          "auth/verify",
+          "v1/auth/verify",
           {
             message,
             signature,

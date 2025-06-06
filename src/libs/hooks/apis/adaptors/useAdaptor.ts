@@ -7,20 +7,20 @@ export default function useAdaptor(jobId?: string) {
     queryKey: ["adaptor-detail-by-user", jobId],
     queryFn: async (): Promise<AdaptorCreateModel> => {
       const response: AdaptorItem = await axiosInstance.get(
-        `/adaptors/by-job-id?jobId=${jobId}`
+        `v1/adaptors/by-job-id?jobId=${jobId}`
       );
 
       const adaptor: AdaptorCreateModel = {
         id: response.id,
         name: response.name,
         description: response.description,
-        variables: response.variables,
-        categoryId: response.categoryId,
         outputTypeId: response.outputTypeId,
-        dataProviderId: response.dataProviderId,
-        chainId: response.chainId,
-        aiPrompt: response.aiPrompt,
-        chainType: response.chainType,
+        // variables: response.variables,
+        // categoryId: response.categoryId,
+        // dataProviderId: response.dataProviderId,
+        // chainId: response.chainId,
+        // aiPrompt: response.aiPrompt,
+        // chainType: response.chainType,
       };
       return adaptor;
     },

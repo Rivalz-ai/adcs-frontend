@@ -17,20 +17,17 @@ import {
   TableContainer,
   Thead,
   Th,
-  Badge,
-  WrapItem,
-  Wrap,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 import useAdaptorDetail from "@/libs/hooks/apis/useAdaptorDetail";
-import CodeBlock from "@/views/CodeBlock";
 import { useState } from "react";
-import PlaygroundContainer from "./playground-container";
 import SearchBar from "@/views/SearchBar";
-import { FaGlobeAfrica } from "react-icons/fa";
-import { CheckIcon, Github } from "lucide-react";
+import { CheckIcon } from "lucide-react";
+import { Playground } from "./components";
+import { AdaptorItem } from "@/types/adapter-type";
+import About from "./components/about";
 
-type TabType = "code" | "About" | "docs" | "Playground";
+type TabType = "About" | "Playground";
 
 export default function AdaptorDetailPage({
   params,
@@ -38,30 +35,16 @@ export default function AdaptorDetailPage({
   params: { id: string };
 }) {
   const { data: detail } = useAdaptorDetail(params.id);
-  const [tab, setTab] = useState<TabType>("code");
+  const [tab, setTab] = useState<TabType>("Playground");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); // resets after 2 seconds
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
     <>
-      {tab === "code" && (
-        <Flex
-          w="1500px"
-          h="1500px"
-          borderRadius="full"
-          bgColor="rgba(90, 254, 176, 0.10)"
-          zIndex={-1}
-          position="absolute"
-          top="-50%"
-          left="-50%"
-          filter="blur(200px)"
-        />
-      )}
-
       <Box minH="100vh" color="white">
         <SearchBar />
         <Spacer mb={"4rem"} />
@@ -123,22 +106,10 @@ export default function AdaptorDetailPage({
                   whiteSpace="pre-wrap"
                   overflow="hidden"
                   pr={{ base: "0", sm: "50px" }}
-                  // display={{ base: "none", lg: "block" }}
                 >
-                  {detail?.jobId.slice(0, 8)}
+                  {detail?.id.toString().padStart(6, "0")}
                 </Text>
               </Flex>
-
-              {/* <Text
-              color="#94979C"
-              as="pre"
-              whiteSpace="pre-wrap"
-              overflow="hidden"
-              pr={{ base: "0", sm: "50px" }}
-              display={{ base: "block", lg: "none" }}
-            >
-              {detail?.jobId.slice(0, 8) + "..." + detail?.jobId.slice(-8)}
-            </Text> */}
 
               <Heading size="lg" textTransform="capitalize">
                 {detail?.name}
@@ -177,7 +148,7 @@ export default function AdaptorDetailPage({
                       textAlign="right"
                       pr={{ base: "2", md: "4" }}
                     >
-                      {detail?.requests || 0}{" "}
+                      {detail?.requestCount || 0}
                     </Td>
                   </Tr>
                   <Tr>
@@ -193,7 +164,7 @@ export default function AdaptorDetailPage({
                       textAlign="right"
                       pr={{ base: "2", md: "4" }}
                     >
-                      {detail?.categoryName || "--- ---"}
+                      {detail?.category || "--- ---"}
                     </Td>
                   </Tr>
                   <Tr>
@@ -223,7 +194,7 @@ export default function AdaptorDetailPage({
             display="flex"
             justifyContent={{ base: "center", lg: "flex-start" }}
           >
-            <Tooltip label="Copy Job ID" hasArrow>
+            <Tooltip label="Copy ID" hasArrow>
               <Button
                 ml={{ base: "0", lg: "22px" }}
                 minW={"160px"}
@@ -238,12 +209,12 @@ export default function AdaptorDetailPage({
                 }}
                 leftIcon={copied ? <CheckIcon /> : <CopyIcon />}
                 onClick={() => {
-                  navigator.clipboard.writeText(detail?.jobId || "");
+                  navigator.clipboard.writeText(detail?.id || "");
                   handleCopy();
                 }}
                 colorScheme="purple"
               >
-                {copied ? "Copied!" : "Copy Job ID"}
+                {copied ? "Copied!" : "Copy ID"}
               </Button>
             </Tooltip>
           </Box>
@@ -349,21 +320,21 @@ export default function AdaptorDetailPage({
 
                 {/* Variables */}
                 <Td>
-                  <Text fontSize="sm">{detail?.variables || "From, to"}</Text>
+                  <Text fontSize="sm">
+                    {JSON.stringify(detail?.inputEntity) || "From, to"}
+                  </Text>
                 </Td>
 
                 {/* Output Format */}
                 <Td>
                   <Text fontSize="sm">
-                    {detail?.outputType.name || "Unit 256"}
+                    {JSON.stringify(detail?.outputEntity) || "Unit 256"}
                   </Text>
                 </Td>
 
                 {/* Provider */}
                 <Td>
-                  <Text fontSize="sm">
-                    {detail?.providerName || "Oracle Token Price"}
-                  </Text>
+                  <Text fontSize="sm">{detail?.name || "---"}</Text>
                 </Td>
               </Tr>
             </Tbody>
@@ -379,14 +350,12 @@ export default function AdaptorDetailPage({
           borderRadius="lg"
           mb={"20px"}
         >
-
           <Grid
             templateColumns="repeat(3, 1fr)"
             alignItems="center"
             borderRadius="md"
           >
             {[
-              { name: "Code Example", key: "code" },
               { name: "Playground", key: "Playground" },
               { name: "About", key: "About" },
             ].map(({ name, key }) => (
@@ -417,243 +386,17 @@ export default function AdaptorDetailPage({
             flexWrap="wrap"
             overflowX={"auto"}
           >
-            {tab === "code" && (
-              <Box position={"relative"}>
-                <CodeBlock
-                  code={detail?.exampleCode || ""}
-                  language="solidity"
-                />
-              </Box>
-            )}
             {tab === "Playground" && (
               <>
-                <PlaygroundContainer
-                  categoryId={detail?.categoryId || -1}
-                  adaptor={detail}
+                <Playground
+                  adaptorId={detail?.id || ""}
+                  inputEntity={
+                    detail?.inputEntity as Pick<AdaptorItem, "inputEntity">
+                  }
                 />
               </>
             )}
-            {tab === "About" && (
-              <Flex
-                w={"full"}
-                bg={"#0c0e12"}
-                h={{ base: "unset", md: "635px" }}
-                gap="20px"
-                p="20px"
-                flexDirection={"column"}
-                borderBottomRightRadius="10px"
-                borderBottomLeftRadius="10px"
-              >
-                <Text
-                  w={{ base: "unset", md: "502px" }}
-                  fontWeight="400"
-                  fontSize="16px"
-                  lineHeight="24px"
-                  letterSpacing="0px"
-                  color="#94979C"
-                >
-                  There should be some text, description or something like that
-                  here. Write something important here.
-                </Text>
-
-                <Flex
-                  //  flexDirection={{ base: "column", md: "row" }}
-                  flexWrap={"wrap"}
-                  gap={{ base: "4px", md: "20px" }}
-                  mt={"6px"}
-                >
-                  <Button
-                    bg="rgb(15,18,22)"
-                    border={"1px solid #2D7D44"}
-                    color={"#3BB25D"}
-                    borderRadius={"10px"}
-                    _hover={{
-                      bg: "#265C35",
-                      color: "#69FF93",
-                      borderColor: "#265C35",
-                    }}
-                    w="140px"
-                    h={"44px"}
-                    px={"16px"}
-                    py={"10px"}
-                    my={{ base: "4px", md: "4" }}
-                    display={"flex"}
-                    justifyContent={"space-between"}
-                  >
-                    <FaGlobeAfrica fontSize={"20px"} />
-                    Website
-                  </Button>
-                  <Button
-                    bg="rgb(15,18,22)"
-                    border={"1px solid #2D7D44"}
-                    color={"#3BB25D"}
-                    borderRadius={"10px"}
-                    _hover={{
-                      bg: "#265C35",
-                      color: "#69FF93",
-                      borderColor: "#265C35",
-                    }}
-                    w="140px"
-                    h={"44px"}
-                    px={"16px"}
-                    py={"10px"}
-                    my={{ base: "4px", md: "4" }}
-                    display={"flex"}
-                    justifyContent={"space-between"}
-                  >
-                    <Github width={25} height={25} />
-                    Github
-                  </Button>
-                  <Button
-                    bg="rgb(15,18,22)"
-                    border={"1px solid #94979C"}
-                    color={"#94979C"}
-                    borderRadius={"10px"}
-                    _hover={{
-                      bg: "#94979C",
-                      color: "white",
-                      borderColor: "#265C35",
-                    }}
-                    w="140px"
-                    h={"44px"}
-                    px={"16px"}
-                    py={"10px"}
-                    my={{ base: "4px", md: "4" }}
-                    display={"flex"}
-                    justifyContent={"space-between"}
-                  >
-                    <CopyIcon fontSize={"20px"} />
-                    Token ID
-                  </Button>
-                </Flex>
-
-                <Box
-                  mt={"6px"}
-                  bg="#0E0E0E"
-                  color="white"
-                  borderRadius="md"
-                  maxW="600px"
-                >
-                  <Flex
-                    justify="space-between"
-                    mb={"40px"}
-                    maxW={"317px"}
-                    flexWrap={"wrap"}
-                    gap={{ base: "20px", md: "unset" }}
-                  >
-                    <Box>
-                      <Text fontSize="16px" color="#94979C">
-                        CREATED:
-                      </Text>
-                      <Text fontSize="16px">
-                        {detail?.createdAt
-                          ? new Date(detail.createdAt).toLocaleDateString(
-                              "en-GB"
-                            )
-                          : "N/A"}
-                      </Text>
-                    </Box>
-                    <Box>
-                      <Text fontSize="16px" color="#94979C">
-                        LAST UPDATED:
-                      </Text>
-                      <Text fontSize="16px">
-                        {detail?.updatedAt
-                          ? new Date(detail.updatedAt).toLocaleDateString(
-                              "en-GB"
-                            )
-                          : "N/A"}
-                      </Text>
-                    </Box>
-                  </Flex>
-
-                  <Box mb={{ base: 1, md: 3 }}>
-                    <Flex align="center" gap={2}>
-                      <Text fontSize="16px" color="#94979C">
-                        ENTITY TYPES:
-                      </Text>
-                      <Flex
-                        bg="#265C35"
-                        color="#69FF93"
-                        borderRadius="full"
-                        px={"10px"}
-                        py={"1px"}
-                        fontSize="16px"
-                        fontWeight={"normal"}
-                      >
-                        89
-                      </Flex>
-                    </Flex>
-
-                    <Wrap
-                      mt={{ base: "20px", md: "42px" }}
-                      spacingY="8px"
-                      spacingX={"16px"}
-                    >
-                      {[
-                        "FactoryDayData",
-                        "TokenDayData",
-                        "TokenHourData",
-                        "TokenPairDayData",
-                        "TokenPairDayData",
-                        "TokenDayData",
-                        "FactoryDayData",
-                        "TokenHourData",
-                        "FactoryDayData",
-                        "TokenDayData",
-                        "TokenHourData",
-                      ].map((item, index) => (
-                        <WrapItem key={index}>
-                          <Text fontSize="16px" color="#69FF93">
-                            {item}
-                          </Text>
-                        </WrapItem>
-                      ))}
-
-                      <WrapItem>
-                        <Badge
-                          bg="#265C35"
-                          color="#69FF93"
-                          borderRadius="full"
-                          px={"10px"}
-                          py={"1px"}
-                          fontSize="16px"
-                          fontWeight={"normal"}
-                        >
-                          +78
-                        </Badge>
-                      </WrapItem>
-                    </Wrap>
-                  </Box>
-
-                  <Flex mt={"36px"} align="center" gap={2}>
-                    <Text fontSize="16px" color="#94979C">
-                      ENTITY TYPES:
-                    </Text>
-                    <Flex gap={2} wrap="wrap">
-                      {["DEFI", "MARKETPLACES", "INFRASTRUCTURE"].map(
-                        (type, index) => (
-                          <Badge
-                            key={index}
-                            px={"10px"}
-                            py={"2px"}
-                            fontSize="12px"
-                            borderRadius="full"
-                            fontWeight={"normal"}
-                            bg="transparent"
-                            border="1px solid #265C35"
-                            lineHeight={"16px"}
-                            color="#69FF93"
-                          >
-                            {type}
-                          </Badge>
-                        )
-                      )}
-                    </Flex>
-                  </Flex>
-                </Box>
-              </Flex>
-            )}
+            {tab === "About" && <About detail={detail} />}
           </Box>
         </Box>
       </Box>

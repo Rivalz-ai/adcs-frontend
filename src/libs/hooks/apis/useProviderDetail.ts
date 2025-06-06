@@ -7,7 +7,7 @@ export default function useProviderDetail(id?: string) {
     queryKey: ["provider-detail", id],
     queryFn: async (): Promise<ProviderItem> => {
       const response: ProviderItem = await axiosInstance.get(
-        `/providers/${id}`
+        `v2/providers/byId/${id}`
       );
       return response;
     },

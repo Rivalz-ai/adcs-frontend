@@ -14,40 +14,65 @@ export interface OutputType {
   updatedAt: string;
 }
 
-interface Chain {
-  id: number;
-  name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// interface Chain {
+//   id: number;
+//   name: string;
+//   description: string;
+//   createdAt: string;
+//   updatedAt: string;
+// }
+
+// export interface AdaptorItem {
+//   id: number;
+//   jobId: string;
+//   name: string;
+//   chainType: string;
+//   description: string;
+//   variables: string;
+//   categoryId: number;
+//   outputTypeId: number;
+//   createdAt: string;
+//   updatedAt: string;
+//   createdBy: string;
+//   status: string;
+//   iconUrl: string | null;
+//   requests: number;
+//   chainId: number;
+//   category: Category;
+//   outputType: OutputType;
+//   chain: Chain;
+//   categoryName: string;
+//   outputTypeName: string;
+//   chainName: string;
+//   exampleCode: string;
+//   providerName: string;
+//   aiPrompt: string;
+//   dataProviderId: number;
+// }
 
 export interface AdaptorItem {
-  id: number;
-  jobId: string;
+  id: string;
   name: string;
-  chainType: string;
   description: string;
-  variables: string;
-  categoryId: number;
+  iconUrl: string;
+  coreLLM: string;
+  staticContext: string;
+  nodesDefinition: {
+    P1: string;
+  };
+  graphFlow: unknown[];
+  inputEntity: Record<string, unknown>;
+  outputEntity: Record<string, unknown>;
+  requestCount: number;
+  categoryName?: string;
+  categoryId?: string | number;
+  category: string;
+  outputType: string;
   outputTypeId: number;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  status: string;
-  iconUrl: string | null;
-  requests: number;
-  chainId: number;
-  category: Category;
-  outputType: OutputType;
-  chain: Chain;
-  categoryName: string;
-  outputTypeName: string;
-  chainName: string;
-  exampleCode: string;
-  providerName: string;
-  aiPrompt: string;
-  dataProviderId: number;
+  entities: string[];
+  createdAt?: string; //local
+  updatedAt?: string; //local
+  chainName?: string; //local
 }
 
 export interface CoinData {
@@ -71,14 +96,14 @@ export interface InferenceResponse {
 }
 
 export interface AdaptorCreateModel {
+  id: string;
   name: string;
   description: string;
-  chainType: string;
-  variables: string;
-  categoryId: number;
   outputTypeId: number;
-  dataProviderId: number;
-  chainId: number;
-  aiPrompt: string;
-  id: number;
+  // chainType: string;
+  // variables: string;
+  // categoryId: number;
+  // dataProviderId: number;
+  // chainId: number;
+  // aiPrompt: string;
 }

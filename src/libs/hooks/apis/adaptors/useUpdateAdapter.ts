@@ -8,7 +8,7 @@ export default function useUpdateAdapter() {
       adaptor: AdaptorCreateModel
     ): Promise<AdaptorCreateModel> => {
       const response: AdaptorCreateModel = await axiosInstance.put(
-        `/adaptors/${adaptor.id}`,
+        `v1/adaptors/${adaptor.id}`,
         adaptor
       );
       return response;

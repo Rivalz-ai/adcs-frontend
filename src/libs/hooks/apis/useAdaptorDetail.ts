@@ -2,16 +2,16 @@ import axiosInstance from "@/libs/apis";
 import { AdaptorItem } from "@/types/adapter-type";
 import { useQuery } from "@tanstack/react-query";
 
-export default function useAdaptorDetail(jobId?: string) {
+export default function useAdaptorDetail(adaptorId?: string) {
   const getAdaptorDetailQuery = useQuery({
-    queryKey: ["adaptor-detail", jobId],
+    queryKey: ["adaptor-detail", adaptorId],
     queryFn: async (): Promise<AdaptorItem> => {
       const response: AdaptorItem = await axiosInstance.get(
-        `/adaptors/by-job-id?jobId=${jobId}`
+        `v2/adapter/by-code/${adaptorId}`
       );
       return response;
     },
-    enabled: !!jobId,
+    enabled: !!adaptorId,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
 

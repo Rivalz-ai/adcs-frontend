@@ -567,7 +567,7 @@ function FormField({
   value,
   curlExecutor,
   verifyData,
-  loading,
+  // loading,
   onChange,
 }: {
   label: string;

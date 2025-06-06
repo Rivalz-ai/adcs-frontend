@@ -6,7 +6,7 @@ export default function useGetAllAdaptor() {
   const getAdaptorsQuery = useQuery({
     queryKey: ["adaptors"],
     queryFn: async (): Promise<AdaptorItem[]> => {
-      const response: AdaptorItem[] = await axiosInstance.get("/adaptors");
+      const response: AdaptorItem[] = await axiosInstance.get("v2/adapter/all");
       return response;
     },
   });

@@ -2,7 +2,6 @@ import { ProviderItem } from "@/types/provider-type";
 import { Box, Flex, Image, Spacer, Text, Tooltip } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
-import AiTag from "./AiTag";
 
 interface ProviderCard {
   item: ProviderItem;
@@ -28,7 +27,6 @@ export default function ProviderCard({ item }: ProviderCard) {
         position="relative"
         overflow="hidden"
       >
-        {item.aiModel && <AiTag aiModel={item.aiModel} />}
         <Flex alignItems="flex-start" mb="4" flexDir="column">
           <Image
             src={
@@ -49,7 +47,7 @@ export default function ProviderCard({ item }: ProviderCard) {
               fontSize="20px"
               color="white"
               textTransform="uppercase"
-               sx={{
+              sx={{
                 display: "-webkit-box",
                 WebkitLineClamp: 1,
                 WebkitBoxOrient: "vertical",
@@ -59,14 +57,17 @@ export default function ProviderCard({ item }: ProviderCard) {
               {item.name}
             </Text>
             <Tooltip label={item.name}>
-              <Text 
-                 sx={{
+              <Text
+                sx={{
                   display: "-webkit-box",
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: "vertical",
                   overflow: "hidden",
                 }}
-                mt={"9px"} color="#94979C" fontSize="16px">
+                mt={"9px"}
+                color="#94979C"
+                fontSize="16px"
+              >
                 {item.description}
               </Text>
             </Tooltip>
@@ -91,7 +92,7 @@ export default function ProviderCard({ item }: ProviderCard) {
               fontWeight="bold"
               textTransform="uppercase"
             >
-              {item.type}
+              {item.category}
             </Text>
           </Flex>
         </Flex>
