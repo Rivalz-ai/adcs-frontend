@@ -1,4 +1,5 @@
 import CurlPlayground from "@/components/share-component/playground";
+import { useCurlGenerator } from "@/libs/hooks/common/useCurlGenerator";
 import { MethodItem } from "@/types/provider-type";
 import Button from "@/views/components/Button";
 import { Box, Tr, Table, Thead, Th, Tbody, Td } from "@chakra-ui/react";
@@ -7,15 +8,31 @@ import { FaPlay, FaTrash } from "react-icons/fa";
 
 interface PlaygroundProps {
   methods: MethodItem[];
+  providerId: string;
 }
 
-export default function Playground({ methods }: PlaygroundProps) {
+export default function Playground({ methods, providerId }: PlaygroundProps) {
   const [indexSelected, setIndexSelected] = useState<number | null>(null);
   const [curlCommand, setCurlCommand] = useState<string>("");
 
+  const apiConfig = {
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
+    endpoint: `v2/providers/executeMethod`,
+    method: "POST" as const,
+  };
+
+  const { generateCurlCommand } = useCurlGenerator(apiConfig);
+
   const onHandleExecute = async (method: MethodItem, index: number) => {
     setIndexSelected(index);
-    setCurlCommand(method.playground || "");
+
+    const curlCommand = generateCurlCommand({
+      providerId: providerId,
+      methodName: method.name,
+      input: method.inputSchema.object,
+    });
+
+    setCurlCommand(curlCommand);
   };
 
   return (

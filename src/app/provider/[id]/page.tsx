@@ -240,7 +240,10 @@ export default function ProviderPageDetail({
           )}
 
           {tab === "Playground" && (
-            <Playground methods={detail?.methods || []} />
+            <Playground
+              methods={detail?.methods || []}
+              providerId={params.id}
+            />
           )}
 
           {tab === "About" && (
