@@ -6,7 +6,6 @@ import useGetAllProvider from "@/libs/hooks/apis/useGetAllProvider";
 import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
-// import OutputTypesProvider from "@/views/components/OutputTypesProvider";
 
 export default function ProviderPage() {
   const { data, isLoading } = useGetAllProvider();
@@ -16,10 +15,6 @@ export default function ProviderPage() {
   const [selectedCategories, setSelectedCategories] = useState<
     Array<string | number>
   >([]);
-
-  // const [selectedOutputType, setSelectedOutputType] = useState<
-  //   Array<string | number>
-  // >([]);
 
   const dataRender = useMemo(() => {
     if (!data || data.length === 0) return [];
@@ -32,13 +27,6 @@ export default function ProviderPage() {
         selectedCategories.includes(item.categoryId)
       );
     }
-
-    // // Filter by selected output type (if applicable)
-    // if (selectedOutputType.length > 0) {
-    //   output = output.filter(
-    //     (item) => selectedOutputType.includes(item.type) // Changed from outputTypeId to type
-    //   );
-    // }
 
     // Apply search filter
     if (search.keySearch) {

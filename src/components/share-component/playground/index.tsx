@@ -9,23 +9,32 @@ import {
   copyToClipboard,
 } from "./components";
 import { cn } from "@/lib/utils";
+import { useToast } from "@chakra-ui/react";
 
 interface CurlPlaygroundProps {
   initialCurlCommand: string;
   direction?: "horizontal" | "vertical";
+  hideResponseWhenExcuseError?: boolean;
+  isShowDescription?: boolean;
   className?: string;
 }
 
 export default function CurlPlayground({
   initialCurlCommand,
   direction = "vertical",
+  hideResponseWhenExcuseError = false,
+  isShowDescription = true,
   className,
 }: CurlPlaygroundProps) {
+  const toast = useToast();
   const [curlCommand, setCurlCommand] = useState(initialCurlCommand);
   const [response, setResponse] = useState<ResponseData | null>(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("response");
   const [error, setError] = useState<string | null>(null);
+  const [isResponseVisible, setIsResponseVisible] = useState(
+    hideResponseWhenExcuseError
+  );
 
   useEffect(() => {
     setCurlCommand(initialCurlCommand);
@@ -34,11 +43,11 @@ export default function CurlPlayground({
   const executeCurl = async () => {
     setLoading(true);
     setError(null);
+    setIsResponseVisible(false);
 
     try {
       const { method, url, headers, body } = parseCurl(curlCommand);
       const startTime = Date.now();
-
       const fetchOptions: RequestInit = {
         method,
         headers,
@@ -70,6 +79,9 @@ export default function CurlPlayground({
         err instanceof Error ? err.message : "An unknown error occurred";
       setError(errorMessage);
       setResponse(null);
+      if (hideResponseWhenExcuseError) {
+        setIsResponseVisible(true);
+      }
     }
 
     setLoading(false);
@@ -99,6 +111,13 @@ export default function CurlPlayground({
   const handleCopyToClipboard = async (text: string) => {
     try {
       await copyToClipboard(text);
+      toast({
+        title: "Copied to clipboard",
+        description: "The curl command has been copied to your clipboard.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (err) {
       console.error("Copy failed:", err);
     }
@@ -116,20 +135,23 @@ export default function CurlPlayground({
           curlCommand={curlCommand}
           loading={loading}
           error={error}
+          isShowDescription={isShowDescription}
           setCurlCommand={setCurlCommand}
           onExecute={executeCurl}
           copyToClipboard={handleCopyToClipboard}
         />
 
-        <ResponseDisplay
-          response={response}
-          activeTab={activeTab}
-          loading={loading}
-          setActiveTab={setActiveTab}
-          onExport={exportResponse}
-          copyToClipboard={handleCopyToClipboard}
-          formatJson={formatJson}
-        />
+        {!isResponseVisible && (
+          <ResponseDisplay
+            response={response}
+            activeTab={activeTab}
+            loading={loading}
+            setActiveTab={setActiveTab}
+            onExport={exportResponse}
+            copyToClipboard={handleCopyToClipboard}
+            formatJson={formatJson}
+          />
+        )}
       </div>
     </div>
   );
