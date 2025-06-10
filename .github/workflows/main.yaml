@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    runs-on: rivalz-dc
+    runs-on: rivalz-fe
     outputs: 
       commit_hash: ${{ steps.build-image.outputs.COMMIT_HASH }}
     steps:
