@@ -25,14 +25,14 @@ interface MethodsTypeProps {
   isShowValue?: boolean;
   selectedMethodsType?: string;
   options?: { label: string; value: string }[];
-  setselectedMethodstype: (value: string) => void;
+  setSelectedMethodsType: (value: string) => void;
 }
 
 export default function MethodsType({
   isShowValue,
   selectedMethodsType,
   options,
-  setselectedMethodstype,
+  setSelectedMethodsType,
 }: MethodsTypeProps) {
   return (
     <PopoverComp
@@ -41,7 +41,7 @@ export default function MethodsType({
       data={options || []}
       values={selectedMethodsType ? [selectedMethodsType] : []}
       onSelected={(value) => {
-        setselectedMethodstype(value as string);
+        setSelectedMethodsType(value as string);
       }}
       isSingleSelect
     />
@@ -55,12 +55,12 @@ function PopoverComp({
   values,
   onSelected,
 }: PopoverCompProps) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const handleSelection = (value: string | number) => {
-        onSelected(value);
-        onClose();
-    }
+  const handleSelection = (value: string | number) => {
+    onSelected(value);
+    onClose();
+  };
   return (
     <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
       <PopoverTrigger>
@@ -81,7 +81,6 @@ function PopoverComp({
           gap={"4px"}
           position="relative"
           justifyContent="space-between"
-          
         >
           {!isShowValue && lable}
           {isShowValue && values.length === 0 && lable}

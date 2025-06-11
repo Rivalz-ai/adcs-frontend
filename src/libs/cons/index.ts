@@ -8,6 +8,16 @@ export const NAVS = [
   {
     label: "Provider",
     href: "/provider",
+    children: [
+      {
+        label: "Listing",
+        href: "/provider",
+      },
+      {
+        label: "Submission",
+        href: "/provider/submission",
+      },
+    ],
   },
   {
     label: "Participants",

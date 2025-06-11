@@ -1,9 +1,11 @@
 import { useMemo, useCallback } from "react";
 
-interface UseCurlGeneratorProps {
+export type MethodType = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+export interface UseCurlGeneratorProps {
   baseUrl: string;
   endpoint?: string;
-  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  method?: MethodType;
   additionalHeaders?: Record<string, string>;
 }
 
@@ -85,6 +87,31 @@ const methodNeedsBody = (method: string): boolean => {
   return ["POST", "PUT", "PATCH"].includes(method);
 };
 
+/**
+ * Convert data object to query string
+ * @param data - The data object to convert
+ * @returns The query string
+ */
+const buildQueryString = (data: Record<string, unknown>): string => {
+  const params = new URLSearchParams();
+
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          params.append(key, String(item));
+        });
+      } else if (typeof value === "object") {
+        params.append(key, JSON.stringify(value));
+      } else {
+        params.append(key, String(value));
+      }
+    }
+  });
+
+  return params.toString();
+};
+
 export function useCurlGenerator({
   baseUrl,
   endpoint = "",
@@ -92,7 +119,10 @@ export function useCurlGenerator({
   additionalHeaders = {},
 }: UseCurlGeneratorProps) {
   const fullUrl = useMemo(() => {
-    return `${baseUrl}${endpoint}`;
+    // Ensure there's exactly one "/" between baseUrl and endpoint
+    const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    return `${cleanBaseUrl}${cleanEndpoint}`;
   }, [baseUrl, endpoint]);
 
   const headers = useMemo(() => {
@@ -107,13 +137,26 @@ export function useCurlGenerator({
       data?: Record<string, unknown>,
       outputTemplate?: Record<string, unknown>
     ): string => {
+      let targetUrl = fullUrl;
+
+      // Handle GET requests with data - convert to query string
+      if (method === "GET" && data) {
+        const finalData = applyOutputTemplate(data, outputTemplate);
+        const queryString = buildQueryString(finalData);
+        if (queryString) {
+          targetUrl = `${fullUrl}${
+            fullUrl.includes("?") ? "&" : "?"
+          }${queryString}`;
+        }
+      }
+
       // Build base command
-      let curlCommand = `curl -X '${method}' \\\n  '${fullUrl}'`;
+      let curlCommand = `curl -X '${method}' \\\n  '${targetUrl}'`;
 
       // Add headers
       curlCommand += buildCurlHeaders(headers);
 
-      // Add body data for appropriate methods
+      // Add body data for appropriate methods (not GET)
       if (methodNeedsBody(method) && data) {
         const finalData = applyOutputTemplate(data, outputTemplate);
         const jsonData = JSON.stringify(finalData, null, 0);

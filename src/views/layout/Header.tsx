@@ -20,7 +20,7 @@ import {
   Image,
   ChakraProvider,
 } from "@chakra-ui/react";
-import { ChatIcon, HamburgerIcon } from "@chakra-ui/icons";
+import { ChatIcon, ChevronDownIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { FaEthereum } from "react-icons/fa";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -83,20 +83,64 @@ export default function Navbar() {
           >
             <Flex ml="67px">
               {NAVS.map((nav) => (
-                <Link
-                  key={nav.label}
-                  href={nav.href}
-                  mx="4"
-                  color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
-                  fontWeight="medium"
-                  fontSize="16px"
-                  lineHeight="24px"
-                  _hover={{
-                    color: "#69FF93",
-                  }}
-                >
-                  {nav.label}
-                </Link>
+                <Flex key={nav.label} gap={2}>
+                  {!nav.children && (
+                    <Link
+                      key={nav.label}
+                      href={nav.href}
+                      mx="4"
+                      color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
+                      fontWeight="medium"
+                      fontSize="16px"
+                      lineHeight="24px"
+                      _hover={{
+                        color: "#69FF93",
+                      }}
+                    >
+                      {nav.label}
+                    </Link>
+                  )}
+
+                  {nav.children && (
+                    <Menu>
+                      <MenuButton
+                        as={Button}
+                        rightIcon={<ChevronDownIcon />}
+                        color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
+                        bg="transparent"
+                        fontWeight="medium"
+                        fontSize="16px"
+                        py="0px"
+                        h="auto"
+                        _hover={{
+                          color: "#69FF93",
+                          bg: "transparent",
+                        }}
+                        _active={{
+                          bg: "transparent",
+                        }}
+                      >
+                        {nav.label}
+                      </MenuButton>
+                      <MenuList
+                        bg="rgba(19, 22, 27, 0.75)"
+                        rounded="10px"
+                        border="1px solid"
+                        borderColor="rgba(255,255,255, 0.08)"
+                        color={"white"}
+                        mt="10px"
+                      >
+                        {nav.children.map((child) => (
+                          <MenuItem key={child.label} bg="transparent">
+                            <Link key={child.label} href={child.href}>
+                              {child.label}
+                            </Link>
+                          </MenuItem>
+                        ))}
+                      </MenuList>
+                    </Menu>
+                  )}
+                </Flex>
               ))}
             </Flex>
           </Flex>
@@ -144,8 +188,8 @@ export default function Navbar() {
                     borderColor="rgba(255,255,255, 0.08)"
                   >
                     <MenuItem
-                    bg={"transparent"}
-                    color={"white"}
+                      bg={"transparent"}
+                      color={"white"}
                       onClick={() => logout()}
                     >
                       Logout
