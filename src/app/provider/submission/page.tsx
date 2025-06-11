@@ -1,9 +1,17 @@
+"use client";
 import { Box, Flex, Button, Text } from "@chakra-ui/react";
 import { X } from "lucide-react";
 import { FaArrowLeft } from "react-icons/fa";
 import SubmissionForm from "./components/SubmissionForm";
+import { useRouter } from "next/navigation";
 
 export default function ProviderSubmissionForm() {
+  const router = useRouter();
+
+  const onBack = () => {
+    router.back();
+  };
+
   return (
     <Box
       w="full"
@@ -63,6 +71,7 @@ export default function ProviderSubmissionForm() {
             gap={"12px"}
             mb={{ base: 4, sm: 0 }}
             mt={{ base: 2, sm: 0 }}
+            onClick={onBack}
           >
             <FaArrowLeft />
             Back

@@ -23,7 +23,7 @@ export const useSubmissionForm = () => {
     mode: "onChange",
     defaultValues: {
       url: "",
-      apiKey: { "api-key": "" },
+      api: { key: "", value: "" },
       prUrl: "",
       categoryId: 1,
       documentLink: "",
@@ -41,7 +41,8 @@ export const useSubmissionForm = () => {
     () =>
       Boolean(
         watchedValues.url &&
-          watchedValues.apiKey?.["api-key"] &&
+          watchedValues.api.key &&
+          watchedValues.api.value &&
           watchedValues.prUrl &&
           watchedValues.documentLink &&
           watchedValues.configUrl
@@ -55,9 +56,12 @@ export const useSubmissionForm = () => {
    * @returns SubmissionModel
    */
   const submissionModel = (data: SubmissionFormData) => {
+    const { api } = data;
     const model: SubmissionModel = {
       url: data.url,
-      apiKey: data.apiKey,
+      apiKey: {
+        [api.key]: api.value,
+      },
       prUrl: data.prUrl,
       categoryId: data.categoryId,
       documentLink: data.documentLink,
@@ -86,7 +90,7 @@ export const useSubmissionForm = () => {
     } catch (error) {
       toast({
         title: "Verification Failed",
-        description: "Please try again.",
+        description: (error as string) || "Please try again.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -121,10 +125,9 @@ export const useSubmissionForm = () => {
         isClosable: true,
       });
     } catch (error) {
-      console.error("Error submitting form:", error);
       toast({
         title: "Submission Failed",
-        description: "Please try again.",
+        description: (error as string) || "Please try again.",
         status: "error",
         duration: 3000,
         isClosable: true,

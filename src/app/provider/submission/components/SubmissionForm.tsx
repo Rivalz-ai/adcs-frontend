@@ -66,12 +66,19 @@ export default function SubmissionForm() {
           error={errors.url?.message}
         />
 
-        <AppInputApiKey
-          name="apiKey"
+        <AppInput
+          name="api.key"
           label="API Key"
-          placeholder="Enter API Key"
+          placeholder="Enter API Key (e.g. api-key)"
           control={control}
-          error={errors.apiKey?.["api-key"]?.message}
+          error={errors.api?.key?.message}
+        />
+        <AppInput
+          name="api.value"
+          label="API Value"
+          placeholder="Enter API Value (e.g. 1234567890)"
+          control={control}
+          error={errors.api?.value?.message}
         />
 
         <AppInput

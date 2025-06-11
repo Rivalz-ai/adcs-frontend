@@ -1,10 +1,18 @@
 import { z } from "zod";
 
-const apiKeySchema = z.record(z.string().min(1, "API Key is required"));
+const apiKeySchema = z
+  .record(z.string().min(1, "API Key is required"))
+  .optional();
+
+const apiSchema = z.object({
+  key: z.string().min(1, "API Key is required"),
+  value: z.string().min(1, "API Value is required"),
+});
 
 export const submissionFormSchema = z.object({
   url: z.string().url("Please enter a valid URL"),
   apiKey: apiKeySchema,
+  api: apiSchema,
   prUrl: z.string().url("Please enter a valid GitHub PR URL"),
   categoryId: z
     .number()
