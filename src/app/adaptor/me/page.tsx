@@ -8,7 +8,7 @@ import {
   Skeleton,
   Text,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useMyAdaptors from "@/libs/hooks/apis/adaptors/useMyAdaptors";
 import ProtectedPage from "@/libs/utls/ProtectedPage";
@@ -17,6 +17,8 @@ import OutputTypes from "@/views/components/OutputTypes";
 import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
+import { AdapterCard, AdapterCardSkeleton } from "@/views/adaptors";
+import ConfirmModal from "@/views/components/ConfirmModal";
 
 export default function MyAdaptorPage() {
   const { address } = useAccount();
@@ -31,30 +33,30 @@ export default function MyAdaptorPage() {
     Array<string | number>
   >([]);
 
-  // const dataRender = useMemo(() => {
-  //   if (data.length === 0) return [];
+  const dataRender = useMemo(() => {
+    if (data.length === 0) return [];
 
-  //   let output = [...data];
-  //   if (selectedCategories.length > 0) {
-  //     //  output = output.filter((item) =>
-  //     //    selectedCategories.includes(item.categoryId)
-  //     //  );
-  //   }
-  //   if (selectedOutputType.length > 0) {
-  //     output = output.filter((item) =>
-  //       selectedOutputType.includes(item.outputTypeId)
-  //     );
-  //   }
+    let output = [...data];
+    if (selectedCategories.length > 0) {
+      output = output.filter((item) =>
+        selectedCategories.includes(item.categoryId || "")
+      );
+    }
+    if (selectedOutputType.length > 0) {
+      output = output.filter((item) =>
+        selectedOutputType.includes(item.outputTypeId)
+      );
+    }
 
-  //   if (!search.keySearch) return output;
-  //   const value = search.keySearch.toLowerCase();
-  //   return output.filter((item) => {
-  //     return (
-  //       item.name.toLowerCase().includes(value) ||
-  //       item.id.toString().includes(value)
-  //     );
-  //   });
-  // }, [search.keySearch, data, selectedCategories, selectedOutputType]);
+    if (!search.keySearch) return output;
+    const value = search.keySearch.toLowerCase();
+    return output.filter((item) => {
+      return (
+        item.name.toLowerCase().includes(value) ||
+        item.id.toString().includes(value)
+      );
+    });
+  }, [search.keySearch, data, selectedCategories, selectedOutputType]);
 
   return (
     <ProtectedPage>
@@ -176,28 +178,13 @@ export default function MyAdaptorPage() {
         </Flex>
 
         <SimpleGrid w="full" columns={{ base: 1, lg: 5 }} gap="20px">
-          {/* //TODO: RENDER MY ADAPTOR V2 */}
-          {/* {dataRender.map((item, i) => (
+          {dataRender.map((item, i) => (
             <AdapterCard item={item} key={i} isMe />
-          ))} */}
+          ))}
           {isLoading &&
-            new Array(5).fill(0).map((_, index) => (
-              <Flex
-                key={index}
-                bgGradient="linear(to-b, #1b103d, #181a37)"
-                rounded="xl"
-                border="1px solid"
-                borderColor="rgba(255, 255, 255, 0.08)"
-                boxShadow="lg"
-                h="322px"
-                gap="10px"
-                w="full"
-                flexDir="column"
-                cursor="pointer"
-              >
-                <Skeleton flex={1} color="#280495" />
-              </Flex>
-            ))}
+            new Array(5)
+              .fill(0)
+              .map((_, index) => <AdapterCardSkeleton key={index} />)}
         </SimpleGrid>
         <Flex w="full" justifyContent="center">
           {data.length === 0 && !isLoading && (

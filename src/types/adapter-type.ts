@@ -98,12 +98,38 @@ export interface InferenceResponse {
 export interface AdaptorCreateModel {
   id: string;
   name: string;
+  icon: string;
   description: string;
   outputTypeId: number;
-  // chainType: string;
-  // variables: string;
-  // categoryId: number;
-  // dataProviderId: number;
-  // chainId: number;
-  // aiPrompt: string;
+  aiModelId?: string;
+
+  categoryId: number;
+  adaptorId?: string;
+  aiPrompt: string;
+
+  providerId?: string;
+  method?: string;
+}
+
+export type InputOutputSchema = Record<string, string>;
+
+export interface GraphFlow {
+  id: string;
+  input: string[];
+  input_method: string;
+  output: string;
+}
+
+export interface AdapterModel {
+  name: string;
+  description: string;
+  icon: string;
+  core_llm: string;
+  static_context: string;
+  input_schema: InputOutputSchema;
+  output_schema: InputOutputSchema;
+  output_type_id: number;
+  category_id: number;
+  nodes: Record<string, string>;
+  graph_flow: GraphFlow[];
 }

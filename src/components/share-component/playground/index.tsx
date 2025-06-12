@@ -17,6 +17,7 @@ interface CurlPlaygroundProps {
   hideResponseWhenExcuseError?: boolean;
   isShowDescription?: boolean;
   className?: string;
+  directionClassName?: string;
 }
 
 export default function CurlPlayground({
@@ -25,6 +26,7 @@ export default function CurlPlayground({
   hideResponseWhenExcuseError = false,
   isShowDescription = true,
   className,
+  directionClassName,
 }: CurlPlaygroundProps) {
   const toast = useToast();
   const [curlCommand, setCurlCommand] = useState(initialCurlCommand);
@@ -128,7 +130,8 @@ export default function CurlPlayground({
       <div
         className={cn(
           "flex w-full gap-6 flex-col",
-          direction === "horizontal" && "flex-row"
+          direction === "horizontal" && "flex-row",
+          directionClassName
         )}
       >
         <CurlInput

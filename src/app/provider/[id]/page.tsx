@@ -217,7 +217,6 @@ export default function ProviderPageDetail({
               gap="5px"
               p="4"
               justifyContent="space-between"
-              // alignItems="center"
             >
               {detail?.documentLink && (
                 <Link href={detail?.documentLink} target="_blank">

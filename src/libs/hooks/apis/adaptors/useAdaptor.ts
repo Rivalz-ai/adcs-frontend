@@ -14,13 +14,10 @@ export default function useAdaptor(jobId?: string) {
         id: response.id,
         name: response.name,
         description: response.description,
-        outputTypeId: response.outputTypeId,
-        // variables: response.variables,
-        // categoryId: response.categoryId,
-        // dataProviderId: response.dataProviderId,
-        // chainId: response.chainId,
-        // aiPrompt: response.aiPrompt,
-        // chainType: response.chainType,
+        outputTypeId: Number(response.outputTypeId),
+        icon: response.iconUrl,
+        categoryId: Number(response.categoryId),
+        aiPrompt: "",
       };
       return adaptor;
     },
