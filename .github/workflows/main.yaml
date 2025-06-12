@@ -50,11 +50,11 @@ jobs:
           fi
           if [[ ${{ github.ref_name }} == "testnet" ]]; then
             NAMESPACE="testnet-${NAMESPACE}"
-            DNS="testnet-v2-${DNS}"
+            DNS="testnet-adcs-v2.rivalz.ai"
           fi
           if [[ ${{ github.ref_name }} == "testnet-v2" ]]; then
             NAMESPACE="testnet-${NAMESPACE}"
-            DNS="testnet-v3-${DNS}"
+            DNS="testnet-acds-v3.rivalz.ai"
           fi
           echo "${{ vars.DC_KUBECONFIG }}" | base64 -d >> kubeconfig
           helm upgrade --install ${SERVICE_NAME} rivalz-chart -f values.yaml -n ${NAMESPACE} \
