@@ -54,3 +54,15 @@ export const openInNewTab = (url?: string) => {
   const newWindow = window.open(url, "_blank", "noopener,noreferrer");
   if (newWindow) newWindow.opener = null;
 };
+
+export const getAccessToken = () => {
+  //check localStorage has accessToken
+  if (typeof window === "undefined") {
+    return "";
+  }
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) {
+    return "";
+  }
+  return accessToken;
+};

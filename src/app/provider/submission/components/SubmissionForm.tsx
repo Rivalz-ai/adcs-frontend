@@ -1,7 +1,6 @@
 "use client";
 
 import AppInput from "@/components/share-component/app-input";
-import AppInputApiKey from "@/components/share-component/app-input-api-key";
 import { useSubmissionForm } from "@/app/provider/submission/hooks/useSubmissionForm";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { FaCheckDouble } from "react-icons/fa";

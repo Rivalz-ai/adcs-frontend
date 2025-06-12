@@ -1,5 +1,5 @@
 "use client";
-import AdapterCard from "@/views/AdapterCard";
+import AdapterCard from "@/views/adaptors/AdapterCard";
 import SearchBar from "@/views/SearchBar";
 import { Flex, SimpleGrid, Skeleton, Text } from "@chakra-ui/react";
 import useGetAllAdaptor from "@/libs/hooks/apis/useGetAllAdaptor";
@@ -10,6 +10,7 @@ import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { Input } from "@chakra-ui/react";
 import { AdaptorItem } from "@/types/adapter-type";
+import AdapterCardSkeleton from "@/views/adaptors/AdapterCardSkeleton";
 
 export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<
@@ -137,23 +138,9 @@ export default function Home() {
           <AdapterCard item={item} key={i} />
         ))}
         {isLoading &&
-          new Array(5).fill(0).map((_, index) => (
-            <Flex
-              key={index}
-              bgGradient="linear(to-b, #1b103d, #181a37)"
-              rounded="xl"
-              border="1px solid"
-              borderColor="rgba(255, 255, 255, 0.08)"
-              boxShadow="lg"
-              h="322px"
-              gap="10px"
-              w="full"
-              flexDir="column"
-              cursor="pointer"
-            >
-              <Skeleton flex={1} color="#280495" />
-            </Flex>
-          ))}
+          new Array(5)
+            .fill(0)
+            .map((_, index) => <AdapterCardSkeleton key={index} />)}
       </SimpleGrid>
       <Flex w="full" justifyContent="center">
         {dataRender.length === 0 && !isLoading && (

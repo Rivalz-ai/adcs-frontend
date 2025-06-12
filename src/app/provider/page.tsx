@@ -6,6 +6,7 @@ import useGetAllProvider from "@/libs/hooks/apis/useGetAllProvider";
 import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
+import { AdapterCardSkeleton } from "@/views/adaptors";
 
 export default function ProviderPage() {
   const { data, isLoading } = useGetAllProvider();
@@ -132,19 +133,6 @@ export default function ProviderPage() {
               });
             }}
           />
-          {/* <OutputTypesProvider
-            label="Data Provider"
-            selectedOutputType={selectedOutputType}
-            setSelectedOutputType={(value) => {
-              setSelectedOutputType((prev) => {
-                if (prev.includes(value)) {
-                  return prev.filter((item) => item !== value);
-                }
-                return [...prev, value];
-              });
-            }}
-            data={data}
-          /> */}
         </Flex>
       </Flex>
 
@@ -153,23 +141,9 @@ export default function ProviderPage() {
           <ProviderCard item={item} key={i} />
         ))}
         {isLoading &&
-          new Array(5).fill(0).map((_, index) => (
-            <Flex
-              key={index}
-              bgGradient="linear(to-b, #1b103d, #181a37)"
-              rounded="xl"
-              border="1px solid"
-              borderColor="rgba(255, 255, 255, 0.08)"
-              boxShadow="lg"
-              h="322px"
-              gap="10px"
-              w="full"
-              flexDir="column"
-              cursor="pointer"
-            >
-              <Skeleton flex={1} color="#280495" />
-            </Flex>
-          ))}
+          new Array(5)
+            .fill(0)
+            .map((_, index) => <AdapterCardSkeleton key={index} />)}
       </SimpleGrid>
       <Flex w="full" justifyContent="center">
         {data.length === 0 && !isLoading && (
