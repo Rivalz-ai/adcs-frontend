@@ -6,10 +6,12 @@ on:
       - 'main'
       - 'testnet'
       - 'staging'
+      - 'testnet-v2'
 env:
   REPO_URL: "asia-southeast1-docker.pkg.dev/rivalz-be/adcs"   #sjc.vultrcr.com/rome"
   SERVICE_NAME: "adcs-frontend"
   NAMESPACE: "adcs"
+  DNS: "adcs.rivalz.ai"
 
 jobs:
   build:
@@ -44,18 +46,19 @@ jobs:
       - run: |
           if [[ ${{ github.ref_name }} == "staging" ]]; then
             NAMESPACE="staging-${NAMESPACE}"
+            DNS="staging-${DNS}"
           fi
           if [[ ${{ github.ref_name }} == "testnet" ]]; then
             NAMESPACE="testnet-${NAMESPACE}"
+            DNS="testnet-v2-${DNS}"
+          fi
+          if [[ ${{ github.ref_name }} == "testnet-v2" ]]; then
+            NAMESPACE="testnet-${NAMESPACE}"
+            DNS="testnet-v3-${DNS}"
           fi
           echo "${{ vars.DC_KUBECONFIG }}" | base64 -d >> kubeconfig
-          helm upgrade --install ${SERVICE_NAME} rivalz-chart -f values.${{ github.ref_name }}.yaml -n ${NAMESPACE} \
+          helm upgrade --install ${SERVICE_NAME} rivalz-chart -f values.yaml -n ${NAMESPACE} \
             --kubeconfig kubeconfig \
             --set image.tag=${COMMIT_HASH} \
-            --create-namespace
-          rm -rf kubeconfig
-          echo "${{ vars.ROME_KUBECONFIG }}" | base64 -d >> kubeconfig
-          helm upgrade --install ${SERVICE_NAME} rivalz-chart -f values.${{ github.ref_name }}.yaml -n ${NAMESPACE} \
-            --kubeconfig kubeconfig \
-            --set image.tag=${COMMIT_HASH} \
+            --set ingress.hosts[0]=${DNS} \
             --create-namespace
