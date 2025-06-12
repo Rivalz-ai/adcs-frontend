@@ -24,7 +24,7 @@ jobs:
       - name: build and push image
         id: build-image
         run: |
-          if if [[ ${{ github.ref_name }} == "testnet-v2" ]]; then
+          if [[ ${{ github.ref_name }} == "testnet-v2" ]]; then
             mv .env.testnet .env.${{ github.ref_name }}
           fi
           mv .env.${{ github.ref_name }} .env
