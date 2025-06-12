@@ -24,6 +24,9 @@ jobs:
       - name: build and push image
         id: build-image
         run: |
+          if if [[ ${{ github.ref_name }} == "testnet-v2" ]]; then
+            mv .env.testnet .env.${{ github.ref_name }}
+          fi
           mv .env.${{ github.ref_name }} .env
           commit_hash=$(git rev-parse --short $GITHUB_SHA)
           docker build -t ${REPO_URL}/${SERVICE_NAME}:${commit_hash} -t ${REPO_URL}/${SERVICE_NAME}:${{ github.ref_name }}-latest .
