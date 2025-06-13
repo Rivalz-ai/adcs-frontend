@@ -18,11 +18,10 @@ import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
 import { AdapterCard, AdapterCardSkeleton } from "@/views/adaptors";
-import ConfirmModal from "@/views/components/ConfirmModal";
 
 export default function MyAdaptorPage() {
   const { address } = useAccount();
-  const { data, isLoading } = useMyAdaptors(address || "");
+  const { data, isLoading, refetchAdaptors } = useMyAdaptors(address || "");
   const [search, setSearch] = useSearchAdaptorState();
 
   const [selectedCategories, setSelectedCategories] = useState<
@@ -179,7 +178,14 @@ export default function MyAdaptorPage() {
 
         <SimpleGrid w="full" columns={{ base: 1, lg: 5 }} gap="20px">
           {dataRender.map((item, i) => (
-            <AdapterCard item={item} key={i} isMe />
+            <AdapterCard
+              item={item}
+              key={i}
+              isMe
+              onDeleteSuccess={() => {
+                refetchAdaptors();
+              }}
+            />
           ))}
           {isLoading &&
             new Array(5)

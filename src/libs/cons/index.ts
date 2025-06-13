@@ -1,5 +1,10 @@
 export const AI_INFERENCE_ID = 7;
 
+export const SKELETON_COLORS = {
+  startColor: "#539c68",
+  endColor: "#2D7D44",
+};
+
 export const NAVS = [
   {
     label: "Adaptors",

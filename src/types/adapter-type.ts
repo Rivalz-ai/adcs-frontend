@@ -14,42 +14,6 @@ export interface OutputType {
   updatedAt: string;
 }
 
-// interface Chain {
-//   id: number;
-//   name: string;
-//   description: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
-// export interface AdaptorItem {
-//   id: number;
-//   jobId: string;
-//   name: string;
-//   chainType: string;
-//   description: string;
-//   variables: string;
-//   categoryId: number;
-//   outputTypeId: number;
-//   createdAt: string;
-//   updatedAt: string;
-//   createdBy: string;
-//   status: string;
-//   iconUrl: string | null;
-//   requests: number;
-//   chainId: number;
-//   category: Category;
-//   outputType: OutputType;
-//   chain: Chain;
-//   categoryName: string;
-//   outputTypeName: string;
-//   chainName: string;
-//   exampleCode: string;
-//   providerName: string;
-//   aiPrompt: string;
-//   dataProviderId: number;
-// }
-
 export interface AdaptorItem {
   id: string;
   name: string;
@@ -57,9 +21,7 @@ export interface AdaptorItem {
   iconUrl: string;
   coreLLM: string;
   staticContext: string;
-  nodesDefinition: {
-    P1: string;
-  };
+  nodesDefinition: Record<string, string>;
   graphFlow: unknown[];
   inputEntity: Record<string, unknown>;
   outputEntity: Record<string, unknown>;
@@ -121,6 +83,7 @@ export interface GraphFlow {
 }
 
 export interface AdapterModel {
+  id?: string;
   name: string;
   description: string;
   icon: string;
