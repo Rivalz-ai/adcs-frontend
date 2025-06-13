@@ -1,5 +1,5 @@
 import axiosInstance from "@/libs/apis";
-import { AdaptorItem } from "@/types/adapter-type";
+import { AdapterModel, AdaptorItem } from "@/types/adapter-type";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useMyAdaptors(address: string) {
@@ -7,7 +7,7 @@ export default function useMyAdaptors(address: string) {
     queryKey: ["use-my-adaptors", address],
     queryFn: async (): Promise<AdaptorItem[]> => {
       const response: AdaptorItem[] = await axiosInstance.get(
-        `v1/adaptors/by-address?address=${address}`
+        `v2/adapter/by-creator`
       );
       return response;
     },
