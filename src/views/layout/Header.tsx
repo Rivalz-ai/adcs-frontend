@@ -84,62 +84,20 @@ export default function Navbar() {
             <Flex ml="67px">
               {NAVS.map((nav) => (
                 <Flex key={nav.label} gap={2}>
-                  {!nav.children && (
-                    <Link
-                      key={nav.label}
-                      href={nav.href}
-                      mx="4"
-                      color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
-                      fontWeight="medium"
-                      fontSize="16px"
-                      lineHeight="24px"
-                      _hover={{
-                        color: "#69FF93",
-                      }}
-                    >
-                      {nav.label}
-                    </Link>
-                  )}
-
-                  {nav.children && (
-                    <Menu>
-                      <MenuButton
-                        as={Button}
-                        rightIcon={<ChevronDownIcon />}
-                        color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
-                        bg="transparent"
-                        fontWeight="medium"
-                        fontSize="16px"
-                        py="0px"
-                        h="auto"
-                        _hover={{
-                          color: "#69FF93",
-                          bg: "transparent",
-                        }}
-                        _active={{
-                          bg: "transparent",
-                        }}
-                      >
-                        {nav.label}
-                      </MenuButton>
-                      <MenuList
-                        bg="rgba(19, 22, 27, 0.75)"
-                        rounded="10px"
-                        border="1px solid"
-                        borderColor="rgba(255,255,255, 0.08)"
-                        color={"white"}
-                        mt="10px"
-                      >
-                        {nav.children.map((child) => (
-                          <MenuItem key={child.label} bg="transparent">
-                            <Link key={child.label} href={child.href}>
-                              {child.label}
-                            </Link>
-                          </MenuItem>
-                        ))}
-                      </MenuList>
-                    </Menu>
-                  )}
+                  <Link
+                    key={nav.label}
+                    href={nav.href}
+                    mx="4"
+                    color={pathname === nav.href ? "#69FF93" : "#FAFAFA"}
+                    fontWeight="medium"
+                    fontSize="16px"
+                    lineHeight="24px"
+                    _hover={{
+                      color: "#69FF93",
+                    }}
+                  >
+                    {nav.label}
+                  </Link>
                 </Flex>
               ))}
             </Flex>
@@ -187,6 +145,16 @@ export default function Navbar() {
                     color={"white"}
                     borderColor="rgba(255,255,255, 0.08)"
                   >
+                    <Link href="/provider/submission">
+                      <MenuItem bg={"transparent"} color={"white"}>
+                        Provider submission
+                      </MenuItem>
+                    </Link>
+                    <Link href="/generatekey">
+                      <MenuItem bg={"transparent"} color={"white"}>
+                        Api key
+                      </MenuItem>
+                    </Link>
                     <MenuItem
                       bg={"transparent"}
                       color={"white"}

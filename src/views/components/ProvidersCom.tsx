@@ -32,11 +32,13 @@ export default function ProvidersCom({
     setSelectedProviders(value);
     if (onGetMethods) {
       const provider = providers.find((item) => item.id === value);
+
       if (provider) {
         onGetMethods(
           provider.methods.map((item) => ({
             label: item.name,
             value: item.name,
+            inputSchema: item.inputSchema,
           }))
         );
       }
