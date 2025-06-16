@@ -1,8 +1,5 @@
 "use client";
-import useAdaptor from "@/libs/hooks/apis/adaptors/useAdaptor";
 import useCreateAdapter from "@/libs/hooks/apis/adaptors/useCreateAdapter";
-import useDeleteAdapter from "@/libs/hooks/apis/adaptors/useDeleteAdapter";
-import useUpdateAdapter from "@/libs/hooks/apis/adaptors/useUpdateAdapter";
 import useGetCategories from "@/libs/hooks/apis/useGetCategories";
 import useGetOutPutTypes from "@/libs/hooks/apis/useGetOutPutTypes";
 import ProtectedPage from "@/libs/utls/ProtectedPage";
@@ -10,20 +7,20 @@ import {
   AdapterModel,
   AdaptorCreateModel,
   GraphFlow,
+  InputOutputSchema,
 } from "@/types/adapter-type";
 import CheckBoxCustom from "@/views/components/CheckBox";
 import {
   Button,
   Flex,
   Input,
-  Spacer,
   Text,
   Textarea,
   useToast,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { FaArrowLeft, FaCheckDouble, FaSave, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaCheckDouble } from "react-icons/fa";
 import InputOutput, {
   InputOutputRef,
 } from "@/views/adaptors/components/InputOutput";
@@ -55,7 +52,6 @@ export default function CreateProviderPage({
   const toast = useToast();
   const router = useRouter();
 
-  const inputRef = useRef<InputOutputRef>(null);
   const outputRef = useRef<InputOutputRef>(null);
 
   const { address } = useAccount();
@@ -63,6 +59,7 @@ export default function CreateProviderPage({
   //States
   const [option, setOption] = useState<string>("provider");
   const [providerMethods, setProviderMethods] = useState<CommonItem[]>([]);
+  const [inputData, setInputData] = useState<Record<string, unknown>>();
 
   //Queries
   const { refetchAdaptors } = useMyAdaptors(address || "");
@@ -134,10 +131,9 @@ export default function CreateProviderPage({
       return false;
     }
 
-    const inputData = inputRef.current?.getData() || [];
     const outputData = outputRef.current?.getData() || [];
 
-    if (inputData.length === 0 || outputData.length === 0) {
+    if (Object.keys(inputData || {}).length === 0 || outputData.length === 0) {
       onToast("Please fill the input and output");
       return false;
     }
@@ -146,16 +142,9 @@ export default function CreateProviderPage({
   };
 
   const convertDataToModel = () => {
-    const inputData = inputRef.current?.getData() || [];
     const outputData = outputRef.current?.getData() || [];
-    const inputSchema: Record<string, string> = {};
+    const inputSchema = inputData || {};
     const outputSchema: Record<string, string> = {};
-
-    inputData.forEach((item) => {
-      const key = Object.keys(item)[0];
-      const value = Object.values(item)[0] as string;
-      inputSchema[key] = value;
-    });
 
     outputData.forEach((item) => {
       const key = Object.keys(item)[0];
@@ -187,7 +176,7 @@ export default function CreateProviderPage({
       category_id: adaptor.categoryId,
       output_type_id: adaptor.outputTypeId,
 
-      input_schema: inputSchema,
+      input_schema: inputSchema as InputOutputSchema,
       output_schema: outputSchema,
       nodes: nodes,
       graph_flow: [graphFlow],
@@ -228,6 +217,33 @@ export default function CreateProviderPage({
         status: "error",
       });
     }
+  };
+
+  const onGetInputSchema = (
+    inputSchemaObject?: Record<string, unknown> | undefined
+  ) => {
+    const inputSchema = inputSchemaObject?.object as Record<string, unknown>;
+    const inputSchemaData: Record<string, string> = {};
+    Object.keys(inputSchema).forEach((key) => {
+      const value = inputSchema[key];
+      let dataType = "";
+      switch (typeof value) {
+        case "string":
+          dataType = "string";
+          break;
+        case "boolean":
+          dataType = "boolean";
+          break;
+        case "number":
+          dataType = "number";
+          break;
+        default:
+          dataType = "string";
+          break;
+      }
+      inputSchemaData[key] = dataType;
+    });
+    setInputData(inputSchemaData);
   };
 
   const outputDataRender = useMemo(() => {
@@ -484,6 +500,7 @@ export default function CreateProviderPage({
                       setAdaptor({ ...adaptor, providerId: value.toString() });
                     }}
                     onGetMethods={(value) => {
+                      console.log({ onGetMethods: value });
                       setProviderMethods(value);
                     }}
                   />
@@ -494,7 +511,11 @@ export default function CreateProviderPage({
                     data={providerMethods}
                     values={adaptor.method ? [adaptor.method] : []}
                     onSelected={(value) => {
+                      const method = providerMethods.find(
+                        (item) => item.value === value
+                      );
                       setAdaptor({ ...adaptor, method: value.toString() });
+                      onGetInputSchema(method?.inputSchema);
                     }}
                   />
                 </Flex>
@@ -521,8 +542,9 @@ export default function CreateProviderPage({
                     selectedAdaptors={
                       adaptor.adaptorId ? [adaptor.adaptorId] : []
                     }
-                    setSelectedAdaptors={(value) => {
+                    setSelectedAdaptors={(value, inputSchema) => {
                       setAdaptor({ ...adaptor, adaptorId: value.toString() });
+                      setInputData(inputSchema);
                     }}
                   />
                 </Flex>
@@ -651,7 +673,7 @@ export default function CreateProviderPage({
                 w={{ base: "100%", sm: "fit-content" }}
                 flex={1.7}
               >
-                <Input
+                <Textarea
                   name="value"
                   placeholder="Prompt"
                   border="1px solid #272637"
@@ -668,12 +690,34 @@ export default function CreateProviderPage({
               </Flex>
             </Flex>
 
-            <InputOutput
-              ref={inputRef}
-              title="Input:"
-              keyPlaceholder="Input Key (e.g. price, volume, etc.)"
-              valuePlaceholder="Select Data Type"
-            />
+            <Flex
+              gap={{ base: "10px", lg: "20px" }}
+              alignItems={{ base: "start", lg: "start" }}
+              flexDirection={{ base: "column", sm: "row" }}
+              borderBottom="1px solid #282828"
+              py="17px"
+            >
+              <Flex flex={1} alignItems="start" justifyContent="start">
+                <Text color="white" fontSize="18px" fontWeight="semibold">
+                  Input:
+                </Text>
+              </Flex>
+              <Flex
+                justifyContent="flex-end"
+                w={{ base: "100%", sm: "fit-content", lg: "full" }}
+                flex={1.7}
+              >
+                <div className="flex flex-col gap-4 w-full">
+                  <div className="flex gap-4 items-center">
+                    {inputData && (
+                      <div className="flex-1 text-white">
+                        <pre>{JSON.stringify(inputData, null, 2)}</pre>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Flex>
+            </Flex>
 
             <InputOutput
               ref={outputRef}

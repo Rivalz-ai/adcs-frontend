@@ -5,7 +5,10 @@ import PopoverComp from "../PopoverComp";
 interface AdaptorsComProps {
   isShowValue?: boolean;
   selectedAdaptors: Array<string | number>;
-  setSelectedAdaptors: (value: string | number) => void;
+  setSelectedAdaptors: (
+    value: string | number,
+    inputSchema?: Record<string, unknown>
+  ) => void;
 }
 
 export default function AdaptorsCom({
@@ -21,9 +24,11 @@ export default function AdaptorsCom({
         label: item.name,
         value: item.id,
         subLabel: item.name,
+        inputSchema: item.inputEntity,
       };
     });
   }, [data]);
+
   return (
     <PopoverComp
       isShowValue={isShowValue}
@@ -31,7 +36,10 @@ export default function AdaptorsCom({
       data={adaptorsRender}
       values={selectedAdaptors}
       onSelected={(value) => {
-        setSelectedAdaptors(value);
+        setSelectedAdaptors(
+          value,
+          adaptorsRender.find((item) => item.value === value)?.inputSchema
+        );
       }}
     />
   );
