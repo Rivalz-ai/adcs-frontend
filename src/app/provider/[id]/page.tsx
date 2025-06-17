@@ -29,7 +29,7 @@ export default function ProviderPageDetail({
 }: {
   params: { id: string };
 }) {
-  const [tab, setTab] = useState("code");
+  const [tab, setTab] = useState("Playground");
 
   const { data: detail } = useProviderDetail(params.id);
 
@@ -175,7 +175,6 @@ export default function ProviderPageDetail({
           borderRadius="md"
         >
           {[
-            { name: "Code Example", key: "code" },
             { name: "Playground", key: "Playground" },
             { name: "About", key: "About" },
           ].map(({ name, key }) => (
@@ -206,38 +205,6 @@ export default function ProviderPageDetail({
           flexDirection="column"
           flexWrap="wrap"
         >
-          {tab === "code" && (
-            <Flex
-              w={"full"}
-              minH="30vh"
-              borderBottomRadius={"lg"}
-              bg={"#0C0E12"}
-              color={"#49B267"}
-              flexDirection="column"
-              gap="5px"
-              p="4"
-              justifyContent="space-between"
-            >
-              {detail?.documentLink && (
-                <Link href={detail?.documentLink} target="_blank">
-                  <Flex alignItems="center" gap="5px">
-                    <Text fontSize="16px" color="#94979C">
-                      {detail.documentLink}
-                    </Text>
-                    <ExternalLinkIcon />
-                  </Flex>
-                </Link>
-              )}
-              {!detail?.documentLink && (
-                <Flex alignItems="center" justifyContent="center" gap="5px">
-                  <Text fontSize="16px" color="#94979C">
-                    No documentation available
-                  </Text>
-                </Flex>
-              )}
-            </Flex>
-          )}
-
           {tab === "Playground" && (
             <Playground
               methods={detail?.methods || []}
@@ -272,69 +239,75 @@ export default function ProviderPageDetail({
                 gap={{ base: "4px", md: "20px" }}
                 mt={"6px"}
               >
-                <Button
-                  bg="rgb(15,18,22)"
-                  border={"1px solid #2D7D44"}
-                  color={"#3BB25D"}
-                  borderRadius={"10px"}
-                  _hover={{
-                    bg: "#265C35",
-                    color: "#69FF93",
-                    borderColor: "#265C35",
-                  }}
-                  w="140px"
-                  h={"44px"}
-                  px={"16px"}
-                  py={"10px"}
-                  my={{ base: "4px", md: "4" }}
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                >
-                  <FaGlobeAfrica fontSize={"20px"} />
-                  Website
-                </Button>
-                <Button
-                  bg="rgb(15,18,22)"
-                  border={"1px solid #2D7D44"}
-                  color={"#3BB25D"}
-                  borderRadius={"10px"}
-                  _hover={{
-                    bg: "#265C35",
-                    color: "#69FF93",
-                    borderColor: "#265C35",
-                  }}
-                  w="140px"
-                  h={"44px"}
-                  px={"16px"}
-                  py={"10px"}
-                  my={{ base: "4px", md: "4" }}
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                >
-                  <Github width={25} height={25} />
-                  Github
-                </Button>
-                <Button
-                  bg="rgb(15,18,22)"
-                  border={"1px solid #94979C"}
-                  color={"#94979C"}
-                  borderRadius={"10px"}
-                  _hover={{
-                    bg: "#94979C",
-                    color: "white",
-                    borderColor: "#265C35",
-                  }}
-                  w="140px"
-                  h={"44px"}
-                  px={"16px"}
-                  py={"10px"}
-                  my={{ base: "4px", md: "4" }}
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                >
-                  <CopyIcon fontSize={"20px"} />
-                  Token ID
-                </Button>
+                <Link href={detail?.website || "#"}>
+                  <Button
+                    bg="rgb(15,18,22)"
+                    border={"1px solid #2D7D44"}
+                    color={"#3BB25D"}
+                    borderRadius={"10px"}
+                    _hover={{
+                      bg: "#265C35",
+                      color: "#69FF93",
+                      borderColor: "#265C35",
+                    }}
+                    w="140px"
+                    h={"44px"}
+                    px={"16px"}
+                    py={"10px"}
+                    my={{ base: "4px", md: "4" }}
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                  >
+                    <FaGlobeAfrica fontSize={"20px"} />
+                    Website
+                  </Button>
+                </Link>
+                <Link href={detail?.github || "#"}>
+                  <Button
+                    bg="rgb(15,18,22)"
+                    border={"1px solid #2D7D44"}
+                    color={"#3BB25D"}
+                    borderRadius={"10px"}
+                    _hover={{
+                      bg: "#265C35",
+                      color: "#69FF93",
+                      borderColor: "#265C35",
+                    }}
+                    w="140px"
+                    h={"44px"}
+                    px={"16px"}
+                    py={"10px"}
+                    my={{ base: "4px", md: "4" }}
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                  >
+                    <Github width={25} height={25} />
+                    Github
+                  </Button>
+                </Link>
+                <Link href={detail?.tokenId || "#"}>
+                  <Button
+                    bg="rgb(15,18,22)"
+                    border={"1px solid #94979C"}
+                    color={"#94979C"}
+                    borderRadius={"10px"}
+                    _hover={{
+                      bg: "#94979C",
+                      color: "white",
+                      borderColor: "#265C35",
+                    }}
+                    w="140px"
+                    h={"44px"}
+                    px={"16px"}
+                    py={"10px"}
+                    my={{ base: "4px", md: "4" }}
+                    display={"flex"}
+                    justifyContent={"space-between"}
+                  >
+                    <CopyIcon fontSize={"20px"} />
+                    Token ID
+                  </Button>
+                </Link>
               </Flex>
 
               <Box
@@ -387,7 +360,7 @@ export default function ProviderPageDetail({
                       fontSize="16px"
                       fontWeight={"normal"}
                     >
-                      89
+                      {detail?.entities.length || 0}
                     </Flex>
                   </Flex>
 
@@ -396,19 +369,7 @@ export default function ProviderPageDetail({
                     spacingY="8px"
                     spacingX={"16px"}
                   >
-                    {[
-                      "FactoryDayData",
-                      "TokenDayData",
-                      "TokenHourData",
-                      "TokenPairDayData",
-                      "TokenPairDayData",
-                      "TokenDayData",
-                      "FactoryDayData",
-                      "TokenHourData",
-                      "FactoryDayData",
-                      "TokenDayData",
-                      "TokenHourData",
-                    ].map((item, index) => (
+                    {detail?.entities.map((item, index) => (
                       <WrapItem key={index}>
                         <Text fontSize="16px" color="#69FF93">
                           {item}
@@ -416,7 +377,7 @@ export default function ProviderPageDetail({
                       </WrapItem>
                     ))}
 
-                    <WrapItem>
+                    {/* <WrapItem>
                       <Badge
                         bg="#265C35"
                         color="#69FF93"
@@ -428,11 +389,11 @@ export default function ProviderPageDetail({
                       >
                         +78
                       </Badge>
-                    </WrapItem>
+                    </WrapItem> */}
                   </Wrap>
                 </Box>
 
-                <Flex mt={"36px"} align="center" gap={2}>
+                {/* <Flex mt={"36px"} align="center" gap={2}>
                   <Text fontSize="16px" color="#94979C">
                     ENTITY TYPES:
                   </Text>
@@ -454,7 +415,7 @@ export default function ProviderPageDetail({
                       </Badge>
                     ))}
                   </Flex>
-                </Flex>
+                </Flex> */}
               </Box>
             </Flex>
           )}

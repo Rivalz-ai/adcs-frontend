@@ -2,6 +2,7 @@ import { AdaptorItem } from "@/types/adapter-type";
 import Button from "@/views/components/Button";
 import { Badge, Box, Flex, Text, Wrap, WrapItem } from "@chakra-ui/react";
 import { CopyIcon, Github } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { FaGlobeAfrica } from "react-icons/fa";
 
@@ -39,69 +40,75 @@ export default function About({ detail }: AboutProps) {
         gap={{ base: "4px", md: "20px" }}
         mt={"6px"}
       >
-        <Button
-          bg="rgb(15,18,22)"
-          border={"1px solid #2D7D44"}
-          color={"#3BB25D"}
-          borderRadius={"10px"}
-          _hover={{
-            bg: "#265C35",
-            color: "#69FF93",
-            borderColor: "#265C35",
-          }}
-          w="140px"
-          h={"44px"}
-          px={"16px"}
-          py={"10px"}
-          my={{ base: "4px", md: "4" }}
-          display={"flex"}
-          justifyContent={"space-between"}
-        >
-          <FaGlobeAfrica fontSize={"20px"} />
-          Website
-        </Button>
-        <Button
-          bg="rgb(15,18,22)"
-          border={"1px solid #2D7D44"}
-          color={"#3BB25D"}
-          borderRadius={"10px"}
-          _hover={{
-            bg: "#265C35",
-            color: "#69FF93",
-            borderColor: "#265C35",
-          }}
-          w="140px"
-          h={"44px"}
-          px={"16px"}
-          py={"10px"}
-          my={{ base: "4px", md: "4" }}
-          display={"flex"}
-          justifyContent={"space-between"}
-        >
-          <Github width={25} height={25} />
-          Github
-        </Button>
-        <Button
-          bg="rgb(15,18,22)"
-          border={"1px solid #94979C"}
-          color={"#94979C"}
-          borderRadius={"10px"}
-          _hover={{
-            bg: "#94979C",
-            color: "white",
-            borderColor: "#265C35",
-          }}
-          w="140px"
-          h={"44px"}
-          px={"16px"}
-          py={"10px"}
-          my={{ base: "4px", md: "4" }}
-          display={"flex"}
-          justifyContent={"space-between"}
-        >
-          <CopyIcon fontSize={"20px"} />
-          Token ID
-        </Button>
+        <Link href={detail?.website || "#"}>
+          <Button
+            bg="rgb(15,18,22)"
+            border={"1px solid #2D7D44"}
+            color={"#3BB25D"}
+            borderRadius={"10px"}
+            _hover={{
+              bg: "#265C35",
+              color: "#69FF93",
+              borderColor: "#265C35",
+            }}
+            w="140px"
+            h={"44px"}
+            px={"16px"}
+            py={"10px"}
+            my={{ base: "4px", md: "4" }}
+            display={"flex"}
+            justifyContent={"space-between"}
+          >
+            <FaGlobeAfrica fontSize={"20px"} />
+            Website
+          </Button>
+        </Link>
+        <Link href={detail?.github || "#"}>
+          <Button
+            bg="rgb(15,18,22)"
+            border={"1px solid #2D7D44"}
+            color={"#3BB25D"}
+            borderRadius={"10px"}
+            _hover={{
+              bg: "#265C35",
+              color: "#69FF93",
+              borderColor: "#265C35",
+            }}
+            w="140px"
+            h={"44px"}
+            px={"16px"}
+            py={"10px"}
+            my={{ base: "4px", md: "4" }}
+            display={"flex"}
+            justifyContent={"space-between"}
+          >
+            <Github width={25} height={25} />
+            Github
+          </Button>
+        </Link>
+        <Link href={detail?.tokenId || "#"}>
+          <Button
+            bg="rgb(15,18,22)"
+            border={"1px solid #94979C"}
+            color={"#94979C"}
+            borderRadius={"10px"}
+            _hover={{
+              bg: "#94979C",
+              color: "white",
+              borderColor: "#265C35",
+            }}
+            w="140px"
+            h={"44px"}
+            px={"16px"}
+            py={"10px"}
+            my={{ base: "4px", md: "4" }}
+            display={"flex"}
+            justifyContent={"space-between"}
+          >
+            <CopyIcon fontSize={"20px"} />
+            Token ID
+          </Button>
+        </Link>
       </Flex>
 
       <Box mt={"6px"} bg="#0E0E0E" color="white" borderRadius="md" maxW="600px">
@@ -148,7 +155,7 @@ export default function About({ detail }: AboutProps) {
               fontSize="16px"
               fontWeight={"normal"}
             >
-              89
+              {detail?.entities.length || 0}
             </Flex>
           </Flex>
 
@@ -157,19 +164,7 @@ export default function About({ detail }: AboutProps) {
             spacingY="8px"
             spacingX={"16px"}
           >
-            {[
-              "FactoryDayData",
-              "TokenDayData",
-              "TokenHourData",
-              "TokenPairDayData",
-              "TokenPairDayData",
-              "TokenDayData",
-              "FactoryDayData",
-              "TokenHourData",
-              "FactoryDayData",
-              "TokenDayData",
-              "TokenHourData",
-            ].map((item, index) => (
+            {detail?.entities.map((item, index) => (
               <WrapItem key={index}>
                 <Text fontSize="16px" color="#69FF93">
                   {item}
@@ -177,7 +172,7 @@ export default function About({ detail }: AboutProps) {
               </WrapItem>
             ))}
 
-            <WrapItem>
+            {/* <WrapItem>
               <Badge
                 bg="#265C35"
                 color="#69FF93"
@@ -189,11 +184,11 @@ export default function About({ detail }: AboutProps) {
               >
                 +78
               </Badge>
-            </WrapItem>
+            </WrapItem> */}
           </Wrap>
         </Box>
 
-        <Flex mt={"36px"} align="center" gap={2}>
+        {/* <Flex mt={"36px"} align="center" gap={2}>
           <Text fontSize="16px" color="#94979C">
             ENTITY TYPES:
           </Text>
@@ -215,7 +210,7 @@ export default function About({ detail }: AboutProps) {
               </Badge>
             ))}
           </Flex>
-        </Flex>
+        </Flex> */}
       </Box>
     </Flex>
   );

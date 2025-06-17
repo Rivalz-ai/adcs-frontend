@@ -11,6 +11,9 @@ export interface ProviderItem {
   categoryId: number;
   requestCount: number;
   entities: string[];
+  website?: string;
+  github?: string;
+  tokenId?: string;
 }
 
 export interface MethodItem {

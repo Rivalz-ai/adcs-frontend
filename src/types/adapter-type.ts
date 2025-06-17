@@ -35,6 +35,9 @@ export interface AdaptorItem {
   createdAt?: string; //local
   updatedAt?: string; //local
   chainName?: string; //local
+  website?: string;
+  github?: string;
+  tokenId?: string;
 }
 
 export interface CoinData {

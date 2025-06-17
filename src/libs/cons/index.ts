@@ -5,6 +5,17 @@ export const SKELETON_COLORS = {
   endColor: "#2D7D44",
 };
 
+export const AppLinks = {
+  rivalz: "https://rivalz.ai",
+  rome: "https://rome.rivalz.ai",
+  rival_alliance: "https://rivalz.ai/alliance",
+  vord: "https://app.vord.ai/",
+  docs: "https://docs.rivalz.ai/adcs-connectivity",
+  github: "https://github.com/Rivalz-ai/ADCS-core",
+  vision: "https://docs.rivalz.ai/",
+  // dapp_examples: "/",
+};
+
 export const NAVS = [
   {
     label: "Adaptors",
@@ -14,17 +25,17 @@ export const NAVS = [
     label: "Provider",
     href: "/provider",
   },
-  {
-    label: "Participants",
-    href: "/participants",
-  },
+  // {
+  //   label: "Participants",
+  //   href: "/participants",
+  // },
   {
     label: "Network",
     href: "/network",
   },
   {
     label: "Docs",
-    href: "/docs",
+    href: AppLinks.docs,
   },
 ];
 
@@ -41,31 +52,17 @@ export const social_links = [
 ];
 
 export const dev_resources_links = [
-  { label: "Documentation", href: "/" },
-  { label: "GitHub", href: "/" },
-  {
-    label: "Vision",
-    href: "/",
-  },
-  {
-    label: "Dapp Examples",
-    href: "/",
-  },
+  { label: "Documentation", href: AppLinks.docs },
+  { label: "GitHub", href: AppLinks.github },
+  { label: "Vision", href: AppLinks.vision },
 ];
 
 export const our_products_links = [
-  { label: "Rivalz", href: "https://rivalz.ai/" },
-  { label: "ROME", href: "https://rome.rivalz.ai/" },
-  {
-    label: "VORD",
-    href: "https://docs.rivalz.ai/vord-application",
-  },
+  { label: "Rivalz", href: AppLinks.rivalz },
+  { label: "ROME", href: AppLinks.rome },
+  { label: "VORD", href: AppLinks.vord },
   {
     label: "Rivalz Alliance",
-    href: "/",
-  },
-  {
-    label: "VORD",
-    href: "/",
+    href: AppLinks.rival_alliance,
   },
 ];
