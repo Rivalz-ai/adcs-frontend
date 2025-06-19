@@ -7,9 +7,13 @@ import Categories from "@/views/components/Categories";
 import { SearchIcon } from "@chakra-ui/icons";
 import { useSearchAdaptorState } from "@/libs/hooks/stores/useSearchAdaptor";
 import { AdapterCardSkeleton } from "@/views/adaptors";
+import useGetAiModel from "@/libs/hooks/apis/useGetAiModel";
+import AiModelCard from "@/views/AiModelCard";
 
 export default function ProviderPage() {
   const { data, isLoading } = useGetAllProvider();
+
+  const { data: aiModelData, isLoading: aiModelLoading } = useGetAiModel();
 
   const [search, setSearch] = useSearchAdaptorState();
 
@@ -140,6 +144,11 @@ export default function ProviderPage() {
         {dataRender.map((item, i) => (
           <ProviderCard item={item} key={i} />
         ))}
+
+        {aiModelData?.map((item, i) => (
+          <AiModelCard item={item} key={i} />
+        ))}
+
         {isLoading &&
           new Array(5)
             .fill(0)

@@ -16,9 +16,8 @@ import {
   Button,
   WrapItem,
   Wrap,
-  Badge,
 } from "@chakra-ui/react";
-import { CopyIcon, ExternalLinkIcon, Github } from "lucide-react";
+import { CopyIcon, Github } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaGlobeAfrica } from "react-icons/fa";
