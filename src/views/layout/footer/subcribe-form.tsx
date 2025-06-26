@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Input } from "@chakra-ui/react";
+import { Flex, Input, useToast } from "@chakra-ui/react";
 import AppButton from "@/views/components/Button";
 import { useState } from "react";
 
@@ -10,8 +10,46 @@ export function isValidEmail(email: string): boolean {
 
 export default function SubcribeForm() {
   const [userEmail, setEmail] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const toast = useToast();
 
-  const onSubscribe = async () => {};
+  const onSubscribe = async () => {
+    if (!isValidEmail(userEmail)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      toast({
+        title: "Subscribed!",
+        description: "You have successfully subscribed to our newsletter.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      setEmail("");
+    } catch (error) {
+      toast({
+        title: "Subscription Failed",
+        description: "Something went wrong. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onEmailChange = (v: string) => {
     setEmail(v);
@@ -40,6 +78,7 @@ export default function SubcribeForm() {
         px="16px"
         py="10px"
         onClick={onSubscribe}
+        isLoading={isLoading}
       >
         Subscribe
       </AppButton>
