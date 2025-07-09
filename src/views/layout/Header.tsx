@@ -190,7 +190,21 @@ export default function Navbar() {
           </DrawerHeader>
 
           <DrawerBody>
-            <Link
+            {NAVS.map((nav) => (
+              <Link
+                key={nav.label}
+                href={nav.href}
+                mx="4"
+                color="gray.300"
+                fontWeight="bold"
+                display="block"
+                borderBottom="1px solid rgba(255,255,255, 0.08)"
+                py="10px"
+              >
+                {nav.label}
+              </Link>
+            ))}
+            {/* <Link
               href="/"
               mx="4"
               color="gray.300"
@@ -220,8 +234,8 @@ export default function Navbar() {
               py="10px"
             >
               Participants
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               href="#"
               mx="4"
               color="gray.300"
@@ -230,7 +244,7 @@ export default function Navbar() {
               py="10px"
             >
               Docs
-            </Link>
+            </Link> */}
             <Spacer />
             <HStack w="full" alignItems="flex-start" mt="20px">
               <Link href="#" mx="4" color="gray.300">
