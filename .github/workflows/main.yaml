@@ -59,11 +59,11 @@ jobs:
           fi
           if [[ ${{ github.ref_name }} == "testnet-v2" ]]; then
             NAMESPACE="testnet-${NAMESPACE}-v3"
-            DNS="testnet-acds-v3.rivalz.ai"
+            DNS="testnet-adcs-v3.rivalz.ai"
           fi
           echo "${{ vars.DC_KUBECONFIG }}" | base64 -d >> kubeconfig
           helm upgrade --install ${SERVICE_NAME} rivalz-chart -f values.yaml -n ${NAMESPACE} \
             --kubeconfig kubeconfig \
             --set image.tag=${COMMIT_HASH} \
-            --set ingress.hosts[0]=${DNS} \
+            --set ingress.hosts=${DNS} \
             --create-namespace
